@@ -1,5 +1,7 @@
 # Getting Started with Create React App
 
+## Note : this project is using pnpm instead of npm!!!
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
