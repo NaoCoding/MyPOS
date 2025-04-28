@@ -22,7 +22,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start":"react-scripts start && nodemon --watch backend --ext ts --exec 'ts-node backend/server.ts'",
+    "frontend-start": "react-scripts start",
+    "backend-start": "nodemon --watch backend --ext ts --exec 'ts-node backend/server.ts'",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
