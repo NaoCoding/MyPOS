@@ -4,6 +4,8 @@
 
 ```bash
 pnpm build
-pnpm start
+pnpm start // for both frontend and backend
+pnpm backend-start // for only backend
+pnpm frontend-start // for only frontend
 pnpm test
 ```
