@@ -17,6 +17,7 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
+    "npm-run-all": "^4.1.5",
     "pnpm": "^10.8.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -26,12 +27,11 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start && nodemon --watch backend --ext ts --exec \"ts-node backend/server.ts\"",
+    "start": "npm-run-all frontend-start backend-start",
+    "start:windows":"npm-run-all frontend-start backend-start:windows",
     "frontend-start": "react-scripts start",
     "backend-start": "nodemon --watch backend --ext ts --exec \"ts-node backend/server.ts\"",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "backend-start:windows": "cross-env NODE_ENV=development nodemon --watch backend --ext ts --exec \"node backend/server.ts\""
   },
   "eslintConfig": {
     "extends": [
