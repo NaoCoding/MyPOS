@@ -28,7 +28,7 @@ export default function Login() {
                     <header>Login</header>
                 </div>
                 <div className="input-box">
-                    <input type="text" className="input-field" placeholder="StudentID" autoComplete="on" required onChange={e => setUserName(e.target.value)} />
+                    <input type="text" className="input-field" placeholder="Email / ID" autoComplete="on" required onChange={e => setUserName(e.target.value)} />
                 </div>
                 <div className="input-box">
                     <input type="password" className="input-field" placeholder="Password" autoComplete="off" required onChange={e => setPassword(e.target.value)} />
