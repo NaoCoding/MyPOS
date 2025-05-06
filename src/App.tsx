@@ -13,6 +13,8 @@ function App() {
     return <Login />
   }
 
+
+  //ToDo connect to backend to detect role for different routes
   return (
     <div className="app_container">
       <Navbar />
