@@ -15,23 +15,26 @@
     "@types/react-dom": "^19.0.4",
     "@types/react-router-dom": "^5.3.3",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
+    "nodemon": "^3.1.10",
     "npm-run-all": "^4.1.5",
     "pnpm": "^10.8.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.5.3",
     "react-scripts": "^5.0.1",
+    "ts-node": "^10.9.2",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "npm-run-all frontend-start backend-start",
-    "start:windows":"npm-run-all frontend-start backend-start:windows",
+    "start": "npm-run-all --parallel frontend-start backend-start",
+    "start:windows": "npm-run-all --parallel frontend-start backend-start:windows",
     "frontend-start": "react-scripts start",
     "backend-start": "nodemon --watch backend --ext ts --exec \"ts-node backend/server.ts\"",
-    "backend-start:windows": "cross-env NODE_ENV=development nodemon --watch backend --ext ts --exec \"node backend/server.ts\""
+    "backend-start:windows": "cross-env NODE_ENV=development nodemon --watch backend --ext ts --exec 'ts-node backend/server.ts'"
   },
   "eslintConfig": {
     "extends": [
