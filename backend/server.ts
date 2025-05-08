@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import loginRouter from './routes/login'
+import cookieParser from 'cookie-parser'
 
 const corsOpt = {
     origin: "http://localhost:3000",
@@ -9,6 +10,7 @@ const corsOpt = {
 
 const app = express()
 app.use(cors(corsOpt))
+app.use(cookieParser())
 app.use(express.json())
 
 app.use(loginRouter)
