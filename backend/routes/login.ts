@@ -1,4 +1,5 @@
 import { Router, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
 
 interface User {
     username: string;
@@ -12,6 +13,18 @@ const users: User[] = [
 ];
 
 const loginRouter = Router();
+const JWT_SECRET  = process.env.JWT_TOKEN;
+if (!JWT_SECRET) {
+    throw new Error("JWT_TOKEN is not defined in .env file");
+}
+
+let JWT_TOKEN_EXPIRY_DAYS = 30;
+if (process.env.JWT_TOKEN_EXPIRY_DAYS !== undefined) {
+    JWT_TOKEN_EXPIRY_DAYS = parseInt(process.env.JWT_TOKEN_EXPIRY_DAYS);
+    if (isNaN(JWT_TOKEN_EXPIRY_DAYS) || JWT_TOKEN_EXPIRY_DAYS <= 0) {
+        throw new Error("JWT_TOKEN_EXPIRY_DAYS is not a valid number in .env file");
+    }
+}
 
 loginRouter.post('/login', (req: Request, res: Response) => {
     try {
@@ -41,7 +54,25 @@ loginRouter.post('/login', (req: Request, res: Response) => {
             return;
         }
 
-        res.status(200).json({
+        // Generate JWT token
+        let expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + JWT_TOKEN_EXPIRY_DAYS);
+
+        const newAuthToken = jwt.sign({ username }, JWT_SECRET, {
+            expiresIn: `${JWT_TOKEN_EXPIRY_DAYS}d`,
+        });
+
+        // TODO: insert the token into the database
+
+        // Set the token in the cookie and send the response
+        res.status(200)
+        .cookie('token', newAuthToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            expires: expiryDate,
+        })
+        .json({
             message: "登入成功",
             user: { username: user.username },
         });
