@@ -1,6 +1,4 @@
-// load environment variables before importing other modules
-import dotenvFlow from 'dotenv-flow';
-dotenvFlow.config();
+import './init';
 
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
