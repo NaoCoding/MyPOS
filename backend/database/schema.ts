@@ -7,6 +7,9 @@ import {
     Updateable,
 } from 'kysely';
 
+type createdAtColumn = ColumnType<Date, never, never>;
+type deletedAtColumn = ColumnType<Date | null, never, Date | null>;
+
 export interface Database {
     user: UserTable;
 }
@@ -17,9 +20,8 @@ export interface UserTable {
     email: string;
     telephone: string;
     password: string;
-    created_at: ColumnType<Date, string | undefined, never>;
-    updated_at: ColumnType<Date, string | undefined, Date>;
-    deleted_at: ColumnType<Date | null, never, Date | null>;
+    created_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
 }
 
 export type User = Selectable<UserTable>;

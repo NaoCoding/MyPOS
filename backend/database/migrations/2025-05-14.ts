@@ -1,4 +1,4 @@
-import type { Kysely } from 'kysely';
+import { sql, type Kysely } from 'kysely';
 
 export async function up(db: Kysely<any>): Promise<void> {
     await db.schema
@@ -8,9 +8,8 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('email', 'text', (col) => col.notNull().unique())
         .addColumn('telephone', 'text', (col) => col.notNull().unique())
         .addColumn('password', 'text', (col) => col.notNull())
-        .addColumn('created_at', 'datetime', (col) => col.defaultTo(Date.now()))
-        .addColumn('updated_at', 'datetime', (col) => col.defaultTo(Date.now()))
-        .addColumn('deleted_at', 'datetime')
+        .addColumn('created_at', 'datetime', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`))
+        .addColumn('deleted_at', 'datetime', (col) => col.defaultTo(null))
         .execute();
 }
 
