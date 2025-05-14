@@ -8,7 +8,6 @@ async function init() {
 
     // run database migrations
     await migrateToLatest();
-    console.log("Database migrations completed");
 }
 
 init();

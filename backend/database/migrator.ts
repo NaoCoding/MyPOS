@@ -31,6 +31,8 @@ export async function migrateToLatest() {
             console.error(`Failed to execute migration ${result.migrationName}`);
         }
     });
+
+    console.log("Database migrations completed");
 };
 
 export async function migrateDown() {
@@ -53,4 +55,6 @@ export async function migrateDown() {
             console.error(`Failed to roll back migration ${result.migrationName}`);
         }
     });
+
+    console.log("Database migrations rolled back");
 };
