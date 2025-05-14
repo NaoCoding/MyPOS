@@ -37,7 +37,7 @@ loginRouter.post('/login', async (req: Request, res: Response) => {
     }
 
     try {
-        const user = await findUser(username);
+        const user = await findUser({ username });
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
             res.status(401).json({
