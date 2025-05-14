@@ -57,7 +57,8 @@ loginRouter.post('/login', async (req: Request, res: Response) => {
         // TODO: insert the token into the database
 
         // Set the token in the cookie and send the response
-        res.cookie('token', newAuthToken, {
+        res.status(200)
+        .cookie('token', newAuthToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
@@ -66,8 +67,7 @@ loginRouter.post('/login', async (req: Request, res: Response) => {
         .json({
             message: "登入成功",
             user: { username: user.username },
-        })
-        .redirect(200, '/');
+        });
     }
     catch (error) {
         console.error("Error during login:", error);
