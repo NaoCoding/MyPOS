@@ -1,8 +1,10 @@
 import React from 'react';
+import NextTopLoader from 'nextjs-toploader';
 import { Routes, Route, useLocation } from "react-router-dom";
 import './styles/App.css';
 import Login from './components/login';
 import Navbar from './components/nav';
+import SignUp from './components/signup';
 
 function App() {
 
@@ -10,7 +12,15 @@ function App() {
   var token = false;
 
   if(!token){
-    return <Login />
+    return (
+      <div>
+        <NextTopLoader color='#565656' showSpinner={false} />
+        <Login />
+        <Routes>
+          <Route path="/signup" element={<SignUp />} /> 
+        </Routes>
+      </div>
+    )
   }
 
 
@@ -18,6 +28,7 @@ function App() {
   return (
     <div className="app_container">
       <Navbar />
+      <NextTopLoader color='#565656' showSpinner={false} />
     </div>
   );
 }
