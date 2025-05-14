@@ -1,16 +1,8 @@
 import { Router, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
-interface User {
-    username: string;
-    password: string;
-}
-
-// TODO: connect to the database and get the user data
-const users: User[] = [
-    { username: 'admin', password: '12345678' },
-    { username: 'user',  password: 'password' },
-];
+import { findUser } from '../models/user';
 
 const loginRouter = Router();
 const JWT_SECRET  = process.env.JWT_TOKEN;
@@ -26,28 +18,28 @@ if (process.env.JWT_TOKEN_EXPIRY_DAYS !== undefined) {
     }
 }
 
-loginRouter.post('/login', (req: Request, res: Response) => {
+loginRouter.post('/login', async (req: Request, res: Response) => {
+    const authToken = req.cookies.token;
+
+    if (authToken) {
+        res.status(400).json({
+            message: "已登入",
+        });
+        return;
+    }
+
+    const { username, password } = req.body;
+    if (!username || !password) {
+        res.status(400).json({
+            message: "請輸入用戶名和密碼",
+        });
+        return;
+    }
+
     try {
-        const authToken = req.cookies.token;
+        const user = await findUser(username);
 
-        if (authToken) {
-            res.status(400).json({
-                message: "已登入",
-            });
-            return;
-        };
-
-        const { username, password } = req.body;
-        if (!username || !password) {
-            res.status(400).json({
-                message: "請輸入用戶名和密碼",
-            });
-            return;
-        }
-
-        // TODO: connect to the database and get the user data
-        const user = users.find((u) => u.username === username && u.password === password);
-        if (!user) {
+        if (!user || !(await bcrypt.compare(password, user.password))) {
             res.status(401).json({
                 message: "用戶名或密碼錯誤",
             });
@@ -58,15 +50,14 @@ loginRouter.post('/login', (req: Request, res: Response) => {
         let expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + JWT_TOKEN_EXPIRY_DAYS);
 
-        const newAuthToken = jwt.sign({ username }, JWT_SECRET, {
+        const newAuthToken = jwt.sign({ username: user.username }, JWT_SECRET, {
             expiresIn: `${JWT_TOKEN_EXPIRY_DAYS}d`,
         });
 
         // TODO: insert the token into the database
 
         // Set the token in the cookie and send the response
-        res.status(200)
-        .cookie('token', newAuthToken, {
+        res.cookie('token', newAuthToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
@@ -75,7 +66,8 @@ loginRouter.post('/login', (req: Request, res: Response) => {
         .json({
             message: "登入成功",
             user: { username: user.username },
-        });
+        })
+        .redirect(200, '/');
     }
     catch (error) {
         console.error("Error during login:", error);
