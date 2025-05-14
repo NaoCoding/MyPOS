@@ -12,13 +12,37 @@ interface LoginProps {
 }
 
 
-export default function Login() {
+
+
+export default function Login(props: LoginProps) {
     const [username, setUserName] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        //ToDo : fetch backend api and get token
-    }
+        e.preventDefault();
+        
+        try {
+          const response = await fetch('http://localhost:5000/login', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password }),
+            credentials: 'include'
+          });
+          
+          const data = await response.json();
+          
+          if (response.ok) {
+            props.setToken(data.user.username);
+          } else {
+            alert(data.message);
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          alert('登錄失敗，請稍後再試');
+        }
+    };
 
     return (
         <>

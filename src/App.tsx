@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import NextTopLoader from 'nextjs-toploader';
 import { Routes, Route, useLocation } from "react-router-dom";
 import './styles/App.css';
@@ -9,15 +9,15 @@ import SignUp from './components/signup';
 function App() {
 
   //ToDo token connection with backend api
-  var token = false;
+  const [token, setToken] = useState<string>('');
 
   if(!token){
     return (
       <div>
         <NextTopLoader color='#565656' showSpinner={false} />
-        <Login />
+        <Login setToken={setToken} />
         <Routes>
-          <Route path="/signup" element={<SignUp />} /> 
+          <Route path="/signup" element={<SignUp setToken={setToken} />} /> 
         </Routes>
       </div>
     )
