@@ -10,6 +10,19 @@
     border: rgb(89, 70, 22) 2px solid;
 }
 
+.sign-up-label{
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 15%;
+
+}
+
+.sign-up-label a{
+    color: #ecb2b2;
+}
+
 .login-box{
     position:absolute;
     top: 50%;

@@ -19,6 +19,7 @@
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "nodemon": "^3.1.10",
+    "nextjs-toploader": "^3.8.16",
     "npm-run-all": "^4.1.5",
     "pnpm": "^10.8.1",
     "react": "^19.1.0",
