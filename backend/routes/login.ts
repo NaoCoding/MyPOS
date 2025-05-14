@@ -5,8 +5,8 @@ import bcrypt from 'bcrypt';
 import { findUser } from '../models/user';
 
 const loginRouter = Router();
-const JWT_SECRET  = process.env.JWT_TOKEN;
-if (!JWT_SECRET) {
+const JWT_TOKEN   = process.env.JWT_TOKEN;
+if (!JWT_TOKEN) {
     throw new Error("JWT_TOKEN is not defined in .env file");
 }
 
@@ -50,7 +50,7 @@ loginRouter.post('/login', async (req: Request, res: Response) => {
         let expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + JWT_TOKEN_EXPIRY_DAYS);
 
-        const newAuthToken = jwt.sign({ username: user.username }, JWT_SECRET, {
+        const newAuthToken = jwt.sign({ username: user.username }, JWT_TOKEN, {
             expiresIn: `${JWT_TOKEN_EXPIRY_DAYS}d`,
         });
 
