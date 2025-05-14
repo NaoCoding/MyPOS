@@ -6,6 +6,9 @@ async function init() {
     dotenvFlow.config();
     console.log("Environment variables loaded");
 
+    // migrate down to the last migration
+    // await migrateDown();
+
     // run database migrations
     await migrateToLatest();
 }
