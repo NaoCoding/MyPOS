@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createUser } from '../models/user';
+import { createUser, findUser } from '../models/user';
 import bcrypt from 'bcrypt';
 
 const registerRouter = Router();
@@ -22,6 +22,15 @@ registerRouter.post('/register', async (req: Request, res: Response) => {
     }
 
     try {
+        if (await findUser({ username })) {
+            res.status(400).json({ message: 'Username already exists' });
+            return;
+        }
+        else if (await findUser({ email })) {
+            res.status(400).json({ message: 'Email already exists' });
+            return;
+        }
+
         const user = await createUser({
             username,
             email,
