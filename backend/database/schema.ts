@@ -7,8 +7,8 @@ import {
     Updateable,
 } from 'kysely';
 
-type createdAtColumn = ColumnType<Date, never, never>;
-type deletedAtColumn = ColumnType<Date | null, never, string | null>;
+type createdAtColumn = ColumnType<string, never, never>;
+type deletedAtColumn = ColumnType<string | null, never, string | null>;
 
 export interface Database {
     user: UserTable;
@@ -29,7 +29,7 @@ export interface SessionTable {
     id: Generated<number>;
     user_id: number;
     token: string;
-    expired_at: ColumnType<Date, string, string>;
+    expired_at: string;
 }
 
 export type User = Selectable<UserTable>;

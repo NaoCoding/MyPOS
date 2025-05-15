@@ -8,7 +8,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('email', 'text', (col) => col.notNull().unique())
         .addColumn('telephone', 'text', (col) => col.notNull())
         .addColumn('password', 'text', (col) => col.notNull())
-        .addColumn('created_at', 'datetime', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`))
+        .addColumn('created_at', 'datetime', (col) => col.defaultTo(new Date().toISOString()))
         .addColumn('deleted_at', 'datetime', (col) => col.defaultTo(null))
         .execute();
 }
