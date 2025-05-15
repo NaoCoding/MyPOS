@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
 import { findUser } from '../models/user';
+import { createOrUpdateSession } from '../models/session';
 
 const loginRouter = Router();
 const JWT_TOKEN   = process.env.JWT_TOKEN;
@@ -50,15 +51,20 @@ loginRouter.post('/login', async (req: Request, res: Response) => {
         let expiryDate = new Date();
         expiryDate.setDate(expiryDate.getDate() + JWT_TOKEN_EXPIRY_DAYS);
 
-        const newAuthToken = jwt.sign({ username: user.username }, JWT_TOKEN, {
+        const newToken = jwt.sign({ username: user.username }, JWT_TOKEN, {
             expiresIn: `${JWT_TOKEN_EXPIRY_DAYS}d`,
         });
 
         // TODO: insert the token into the database
+        await createOrUpdateSession({
+            user_id: user.id,
+            token: newToken,
+            expired_at: expiryDate.toISOString(),
+        });
 
         // Set the token in the cookie and send the response
         res.status(200)
-        .cookie('token', newAuthToken, {
+        .cookie('token', newToken, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
