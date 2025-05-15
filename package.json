@@ -27,8 +27,8 @@
     "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
     "kysely": "^0.28.2",
-    "nodemon": "^3.1.10",
     "nextjs-toploader": "^3.8.16",
+    "nodemon": "^3.1.10",
     "npm-run-all": "^4.1.5",
     "pnpm": "^10.8.1",
     "react": "^19.1.0",
@@ -42,8 +42,8 @@
     "start": "npm-run-all --parallel frontend-start backend-start",
     "start:windows": "npm-run-all --parallel frontend-start backend-start:windows",
     "frontend-start": "react-scripts start",
-    "backend-start": "nodemon --watch backend --ext ts --exec \"ts-node backend/server.ts\"",
-    "backend-start:windows": "cross-env NODE_ENV=development nodemon --watch backend --ext ts --exec 'ts-node backend/server.ts'"
+    "backend-start": "nodemon --delay 1.0 --watch backend --ext ts --exec \"ts-node backend/server.ts\"",
+    "backend-start:windows": "cross-env NODE_ENV=development nodemon --delay 1.0 --watch backend --ext ts --exec 'ts-node backend/server.ts'"
   },
   "eslintConfig": {
     "extends": [
