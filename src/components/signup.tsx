@@ -50,6 +50,7 @@ export default function SignUp(props: LoginProps) {
           if (response.ok) {
             //props.setToken(data.user.username);
             alert('註冊成功！');
+            window.location.href = '/login';
           } else {
             alert(data.message);
           }
