@@ -19,17 +19,23 @@ registerRouter.post('/register', checkNotLogin, async (req: Request, res: Respon
 
     // Validate request body
     if (!username || !email || !telephone || !password) {
-        res.status(400).json({ message: 'All fields are required' });
+        res.status(400).json({
+            message: "所有欄位都是必填"
+        });
         return;
     }
 
     try {
         if (await findUser({ username })) {
-            res.status(400).json({ message: 'Username already exists' });
+            res.status(400).json({
+                message: "用戶名已存在"
+            });
             return;
         }
         else if (await findUser({ email })) {
-            res.status(400).json({ message: 'Email already exists' });
+            res.status(400).json({
+                message: "電子郵件已存在"
+            });
             return;
         }
 
@@ -41,12 +47,12 @@ registerRouter.post('/register', checkNotLogin, async (req: Request, res: Respon
         });
 
         res.status(201).json({
-            message: 'User created successfully',
+            message: "用戶創建成功"
         });
     } catch (error) {
-        console.error('Error creating user:', error);
-        res.status(500).json({ 
-            message: 'Internal server error'
+        console.error("Error creating user:", error);
+        res.status(500).json({
+            message: "伺服器錯誤"
         });
     }
 });

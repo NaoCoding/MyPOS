@@ -47,7 +47,7 @@ loginRouter.post('/login', checkNotLogin, async (req: Request, res: Response) =>
             expiresIn: `${JWT_TOKEN_EXPIRY_DAYS}d`,
         });
 
-        // TODO: insert the token into the database
+        // Insert the token into the database
         await createOrUpdateSession({
             user_id: user.id,
             token: newToken,
