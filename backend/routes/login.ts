@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 
 import { findUser } from '../models/user';
 import { createOrUpdateSession } from '../models/session';
+import { checkNotLogin } from '../middleware';
 
 const loginRouter = Router();
 const JWT_TOKEN   = process.env.JWT_TOKEN;
@@ -19,16 +20,7 @@ if (process.env.JWT_TOKEN_EXPIRY_DAYS !== undefined) {
     }
 }
 
-loginRouter.post('/login', async (req: Request, res: Response) => {
-    const authToken = req.cookies.token;
-
-    if (authToken) {
-        res.status(400).json({
-            message: "已登入",
-        });
-        return;
-    }
-
+loginRouter.post('/login', checkNotLogin, async (req: Request, res: Response) => {
     const { username, password } = req.body;
     if (!username || !password) {
         res.status(400).json({

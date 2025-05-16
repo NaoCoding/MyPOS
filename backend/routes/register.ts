@@ -2,6 +2,8 @@ import { Router, Request, Response } from 'express';
 import { createUser, findUser } from '../models/user';
 import bcrypt from 'bcrypt';
 
+import { checkNotLogin } from '../middleware';
+
 const registerRouter = Router();
 
 let BCRYPT_SALT_ROUNDS = 10;
@@ -12,7 +14,7 @@ if (process.env.BCRYPT_SALT_ROUNDS !== undefined) {
     }
 }
 
-registerRouter.post('/register', async (req: Request, res: Response) => {
+registerRouter.post('/register', checkNotLogin, async (req: Request, res: Response) => {
     const { username, email, telephone, password } = req.body;
 
     // Validate request body
