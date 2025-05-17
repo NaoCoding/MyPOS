@@ -61,7 +61,7 @@ export default function SignUp() {
                     <input type="email" className="input-field" placeholder="Email" autoComplete="on" required onChange={e => setEmail(e.target.value)} />
                 </div>
                 <div className="input-box">
-                    <input type="tel" className="input-field" placeholder="Telphone" autoComplete="off" required onChange={e => setTelephone(e.target.value)} />
+                    <input type="tel" className="input-field" placeholder="Telephone" autoComplete="off" required onChange={e => setTelephone(e.target.value)} />
                 </div>
                 <div className="input-box">
                     <input type="password" className="input-field" placeholder="Password" autoComplete="off" required onChange={e => setPassword(e.target.value)} />
