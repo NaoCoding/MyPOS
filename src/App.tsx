@@ -17,7 +17,7 @@ function App() {
         <NextTopLoader color='#565656' showSpinner={false} />
         <Login setToken={setToken} />
         <Routes>
-          <Route path="/signup" element={<SignUp setToken={setToken} />} /> 
+          <Route path="/signup" element={<SignUp/>} /> 
         </Routes>
       </div>
     )

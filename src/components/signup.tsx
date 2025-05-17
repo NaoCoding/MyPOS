@@ -1,20 +1,7 @@
 import "../styles/login.css"
 import React, { useState } from 'react';
 
-//TODO : connect with backend and backend should return a token
-interface Credentials {
-    username: string;
-    telphone: string;
-    email: string;
-    password: string;
-}
-
-interface LoginProps {
-    setToken: React.Dispatch<React.SetStateAction<string>>;
-}
-
-
-export default function SignUp(props: LoginProps) {
+export default function SignUp() {
     const [username, setUserName] = useState<string>('');
     const [telephone, setTelephone] = useState<string>('');
     const [email, setEmail] = useState<string>('');
