@@ -20,6 +20,13 @@ export async function updateSession(session: SessionUpdate) {
         .executeTakeFirstOrThrow();
 }
 
+export async function getSessions() {
+    return await db
+        .selectFrom('session')
+        .selectAll()
+        .execute();
+}
+
 export async function findSession(session: Partial<Session>) {
     let query = db.selectFrom('session');
 
@@ -46,4 +53,19 @@ export async function createOrUpdateSession(session: SessionInsert) {
     } else {
         return await createSession(session);
     }
+}
+
+export async function deleteExpiredSessions() {
+    const currentDate = new Date();
+    const tokens = await getSessions();
+
+    tokens.filter(token => {
+        const expiredAt = new Date(token.expired_at);
+        return expiredAt < currentDate;
+    }).forEach(async (token) => {
+        await db
+            .deleteFrom('session')
+            .where('id', '=', token.id)
+            .execute();
+    });
 }
