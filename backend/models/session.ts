@@ -59,13 +59,15 @@ export async function deleteExpiredSessions() {
     const currentDate = new Date();
     const tokens = await getSessions();
 
-    tokens.filter(token => {
+    const expiredTokens = tokens.filter(token => {
         const expiredAt = new Date(token.expired_at);
         return expiredAt < currentDate;
-    }).forEach(async (token) => {
+    });
+
+    await Promise.all(expiredTokens.map(async (token) => {
         await db
             .deleteFrom('session')
             .where('id', '=', token.id)
             .execute();
-    });
+    }));
 }
