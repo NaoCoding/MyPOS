@@ -1,29 +1,51 @@
 import "../styles/login.css"
 import React, { useState } from 'react';
 
-//TODO : connect with backend and backend should return a token
-interface Credentials {
-    username: string;
-    telphone: string;
-    email: string;
-    password: string;
-}
-
-interface LoginProps {
-    setToken: React.Dispatch<React.SetStateAction<string>>;
-}
-
-
-export default function Login() {
+export default function SignUp() {
     const [username, setUserName] = useState<string>('');
-    const [telphone, setTelphone] = useState<string>('');
+    const [telephone, setTelephone] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [confirmPassword, setConfirmPassword] = useState<string>('');
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        //ToDo : fetch backend api and get token
-    }
+        e.preventDefault();
+        
+        if (password !== confirmPassword) {
+          alert('密碼和確認密碼不符！');
+          return;
+        }
+        
+        try {
+          const response = await fetch('http://localhost:5000/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              username, 
+              email, 
+              telephone, 
+              password 
+            }),
+            credentials: 'include'
+          });
+          
+          const data = await response.json();
+          console.log(data, response);
+          
+          if (response.ok) {
+            //props.setToken(data.user.username);
+            alert('註冊成功！');
+            window.location.href = '/login';
+          } else {
+            alert(data.message);
+          }
+        } catch (error) {
+          console.error('Registration error:', error);
+          alert('註冊失敗，請稍後再試');
+        }
+    };
 
     return (
         <>
@@ -36,10 +58,10 @@ export default function Login() {
                     <input type="text" className="input-field" placeholder="Username" autoComplete="off" required onChange={e => setUserName(e.target.value)} />
                 </div>
                 <div className="input-box">
-                    <input type="text" className="input-field" placeholder="Email" autoComplete="on" required onChange={e => setEmail(e.target.value)} />
+                    <input type="email" className="input-field" placeholder="Email" autoComplete="on" required onChange={e => setEmail(e.target.value)} />
                 </div>
                 <div className="input-box">
-                    <input type="text" className="input-field" placeholder="Telphone" autoComplete="off" required onChange={e => setTelphone(e.target.value)} />
+                    <input type="tel" className="input-field" placeholder="Telephone" autoComplete="off" required onChange={e => setTelephone(e.target.value)} />
                 </div>
                 <div className="input-box">
                     <input type="password" className="input-field" placeholder="Password" autoComplete="off" required onChange={e => setPassword(e.target.value)} />
@@ -49,7 +71,7 @@ export default function Login() {
                 </div>
                 
                 <div className="input-submit">
-                    <button type="submit" className="submit-btn" id="submit">
+                    <button type="submit" className="submit-btn" id="submit-signup">
                         <label htmlFor="submit">Sign Up</label>
                     </button>
                 </div>

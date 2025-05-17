@@ -7,19 +7,29 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
+    "@types/bcrypt": "^5.0.2",
     "@types/body-parser": "^1.19.5",
+    "@types/cookie-parser": "^1.4.8",
     "@types/cors": "^2.8.17",
     "@types/express-session": "^1.18.1",
     "@types/jest": "^27.5.2",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.4",
     "@types/react-router-dom": "^5.3.3",
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^11.10.0",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
+    "dotenv-flow": "^4.1.0",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
-    "nodemon": "^3.1.10",
+    "jsonwebtoken": "^9.0.2",
+    "kysely": "^0.28.2",
     "nextjs-toploader": "^3.8.16",
+    "node-cron": "^4.0.5",
+    "nodemon": "^3.1.10",
     "npm-run-all": "^4.1.5",
     "pnpm": "^10.8.1",
     "react": "^19.1.0",
@@ -27,15 +37,14 @@
     "react-router-dom": "^7.5.3",
     "react-scripts": "^5.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "npm-run-all --parallel frontend-start backend-start",
     "start:windows": "npm-run-all --parallel frontend-start backend-start:windows",
     "frontend-start": "react-scripts start",
-    "backend-start": "nodemon --watch backend --ext ts --exec \"ts-node backend/server.ts\"",
-    "backend-start:windows": "cross-env NODE_ENV=development nodemon --watch backend --ext ts --exec 'ts-node backend/server.ts'"
+    "backend-start": "nodemon --delay 1.0 --watch backend --ext ts --exec \"ts-node backend/server.ts\"",
+    "backend-start:windows": "cross-env NODE_ENV=development nodemon --delay 1.0 --watch backend --ext ts --exec 'ts-node backend/server.ts'"
   },
   "eslintConfig": {
     "extends": [
@@ -57,7 +66,11 @@
   },
   "packageManager": "pnpm@8.6.5+sha512.9b3b5fbe7789978a3d80259f42514a8a8ea05588496c56b3594541728989f6eff2b29c127075313325afc4e79dd5ae78deba28f9a7888e9e554241cea1358502",
   "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^5.0.1",
-    "@types/node": "^16.18.126"
+    "@types/node": "^16.18.126",
+    "@types/node-cron": "^3.0.11",
+    "tsx": "^4.19.4",
+    "typescript": "^4.9.5"
   }
 }

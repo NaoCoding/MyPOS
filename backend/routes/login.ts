@@ -1,33 +1,78 @@
 import { Router, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
-
-interface User {
-username: string;
-password: string;
-}
-
-//ToDo : connect to the database and get the user data
-const users: User[] = [
-{ username: 'admin', password: '123456' },
-{ username: 'user', password: 'password' },
-];
+import { findUser } from '../models/user';
+import { createOrUpdateSession } from '../models/session';
+import { checkNotLogin } from '../middleware';
 
 const loginRouter = Router();
-
-loginRouter.post('/login', (req: Request, res: Response) => {
-const { username, password } = req.body;
-
-const user = users.find(
-    (u) => u.username === username && u.password === password
-);
-
-//ToDo : return session id and token
-if (user) {
-    res.status(200).json({ message: '登入成功', user: { username: user.username } });
-} else {
-    res.status(401).json({ message: '用戶名或密碼錯誤' });
+const JWT_TOKEN   = process.env.JWT_TOKEN;
+if (!JWT_TOKEN) {
+    throw new Error("JWT_TOKEN is not defined in .env file");
 }
-});
 
+let JWT_TOKEN_EXPIRY_DAYS = 30;
+if (process.env.JWT_TOKEN_EXPIRY_DAYS !== undefined) {
+    JWT_TOKEN_EXPIRY_DAYS = parseInt(process.env.JWT_TOKEN_EXPIRY_DAYS);
+    if (isNaN(JWT_TOKEN_EXPIRY_DAYS) || JWT_TOKEN_EXPIRY_DAYS <= 0) {
+        throw new Error("JWT_TOKEN_EXPIRY_DAYS is not a valid number in .env file");
+    }
+}
+
+loginRouter.post('/login', checkNotLogin, async (req: Request, res: Response) => {
+    const { username, password } = req.body;
+    if (!username || !password) {
+        res.status(400).json({
+            message: "請輸入用戶名和密碼",
+        });
+        return;
+    }
+
+    try {
+        const user = await findUser({ username });
+
+        if (!user || !(await bcrypt.compare(password, user.password))) {
+            res.status(401).json({
+                message: "用戶名或密碼錯誤",
+            });
+            return;
+        }
+
+        // Generate JWT token
+        let expiryDate = new Date();
+        expiryDate.setDate(expiryDate.getDate() + JWT_TOKEN_EXPIRY_DAYS);
+
+        const newToken = jwt.sign({ username: user.username }, JWT_TOKEN, {
+            expiresIn: `${JWT_TOKEN_EXPIRY_DAYS}d`,
+        });
+
+        // Insert the token into the database
+        await createOrUpdateSession({
+            user_id: user.id,
+            token: newToken,
+            expired_at: expiryDate.toISOString(),
+        });
+
+        // Set the token in the cookie and send the response
+        res.status(200)
+        .cookie('token', newToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict',
+            expires: expiryDate,
+        })
+        .json({
+            message: "登入成功",
+            user: { username: user.username },
+        });
+    }
+    catch (error) {
+        console.error("Error during login:", error);
+        res.status(500).json({
+            message: "伺服器錯誤"
+        });
+    }
+});
 
 export default loginRouter;
