@@ -16,7 +16,7 @@ async function init() {
     // await migrateDownAll();
     // console.log("All database migrations rolled back");
 
-    cron.schedule('* 8 * * *', async () => {
+    cron.schedule('0 8 * * *', async () => {
         console.log("Deleting expired sessions");
         await deleteExpiredSessions();
         console.log("Expired sessions deleted");
