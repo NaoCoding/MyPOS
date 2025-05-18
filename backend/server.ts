@@ -5,6 +5,7 @@ import cors from 'cors';
 import express from 'express';
 
 import loginRouter from './routes/login';
+import productRouter from './routes/product';
 import registerRouter from './routes/register';
 
 const BACKEND_PORT = process.env.BACKEND_PORT || 5000;
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.use(express.json());
 
 app.use('/login', loginRouter);
+app.use('/product', productRouter);
 app.use('/register', registerRouter);
 
 app.listen(BACKEND_PORT, () => {
