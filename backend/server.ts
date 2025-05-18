@@ -5,7 +5,6 @@ import cors from 'cors';
 import express from 'express';
 
 import loginRouter from './routes/login';
-import productRouter from './routes/product';
 import registerRouter from './routes/register';
 
 const BACKEND_PORT = process.env.BACKEND_PORT || 5000;
