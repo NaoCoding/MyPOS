@@ -14,7 +14,7 @@ if (process.env.BCRYPT_SALT_ROUNDS !== undefined) {
     }
 }
 
-registerRouter.post('/register', checkNotLogin, async (req: Request, res: Response) => {
+registerRouter.post('/', checkNotLogin, async (req: Request, res: Response) => {
     const { username, email, telephone, password } = req.body;
 
     // Validate request body

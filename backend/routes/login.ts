@@ -20,7 +20,7 @@ if (process.env.JWT_TOKEN_EXPIRY_DAYS !== undefined) {
     }
 }
 
-loginRouter.post('/login', checkNotLogin, async (req: Request, res: Response) => {
+loginRouter.post('/', checkNotLogin, async (req: Request, res: Response) => {
     const { username, password } = req.body;
     if (!username || !password) {
         res.status(400).json({
