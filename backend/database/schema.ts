@@ -12,6 +12,7 @@ type deletedAtColumn = ColumnType<string | null, never, string | null>;
 
 export interface Database {
     user: UserTable;
+    product: ProductTable;
     session: SessionTable;
 }
 
@@ -21,6 +22,14 @@ export interface UserTable {
     email: string;
     telephone: string;
     password: string;
+    created_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
+}
+
+export interface ProductTable {
+    id: Generated<number>;
+    name: string;
+    description: string | null;
     created_at: createdAtColumn;
     deleted_at: deletedAtColumn;
 }
@@ -35,6 +44,10 @@ export interface SessionTable {
 export type User = Selectable<UserTable>;
 export type UserInsert = Insertable<UserTable>;
 export type UserUpdate = Updateable<UserTable>;
+
+export type Product = Selectable<ProductTable>;
+export type ProductInsert = Insertable<ProductTable>;
+export type ProductUpdate = Updateable<ProductTable>;
 
 export type Session = Selectable<SessionTable>;
 export type SessionInsert = Insertable<SessionTable>;
