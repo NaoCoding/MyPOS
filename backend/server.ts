@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 
+import itemRouter from './routes/item';
 import loginRouter from './routes/login';
 import productRouter from './routes/product';
 import registerRouter from './routes/register';
@@ -20,6 +21,7 @@ app.use(cors(corsOpt));
 app.use(cookieParser());
 app.use(express.json());
 
+app.use('/item', itemRouter);
 app.use('/login', loginRouter);
 app.use('/product', productRouter);
 app.use('/register', registerRouter);
