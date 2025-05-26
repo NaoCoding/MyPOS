@@ -1,72 +1,60 @@
-import React, { useState , useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import NextTopLoader from 'nextjs-toploader';
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import './styles/App.css';
 import Login from './components/login';
 import Navbar from './components/nav';
 import SignUp from './components/signup';
 
 function App() {
-
-  //ToDo token connection with backend api
   const [token, setToken] = useState<string>('');
-
   const [roleId, setRoleId] = useState<number>(0);
 
+  // 檢查登入狀態
   useEffect(() => {
-    if (token) {
-      fetchUserRole(token).then(setRoleId);
-    }
-  }, [token]);
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/auth/checkAuth', {
+          method: 'GET',
+          credentials: 'include', // 重要：包含 httpOnly cookies
+        });
 
-
-  const fetchUserRole = async (token: string) => {
-    try {
-
-      
-
-      const response = await fetch('http://localhost:5000/role/getRole', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include'
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        console.log('User role_id:', data.role_id);
-        return data.role_id;
-      } else {
-        console.error('Failed to fetch user role');
-        return 0;
+        if (response.ok) {
+          const data = await response.json();
+          if (data.authenticated) {
+            setToken(data.token);
+            setRoleId(data.role_id);
+          }
+        }
+      } catch (error) {
+        console.error('Error checking auth:', error);
+      } finally {
       }
-    } catch (error) {
-      console.error('Error fetching user role:', error);
-      return 0;
-    }
-  };
-  
-  //console.log('token:', token);
+    };
 
-  if(!token){
+    checkAuth();
+  }, []);
+
+
+
+  // 如果沒有 token，顯示登入頁面
+  if (!token) {
     return (
       <div>
         <NextTopLoader color='#565656' showSpinner={false} />
         <Routes>
+          <Route path="/" element={<Login setToken={setToken} />} />
           <Route path="/login" element={<Login setToken={setToken} />} />
-          <Route path="/signup" element={<SignUp/>} /> 
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </div>
-    )
+    );
   }
 
-
-  //ToDo connect to backend to detect role for different routes
+  // 如果有 token，顯示主頁面
   return (
     <div className="app_container">
-      <Navbar role_id={roleId}/>
+      <Navbar role_id={roleId} setToken={setToken} />
       <NextTopLoader color='#565656' showSpinner={false} />
     </div>
   );
