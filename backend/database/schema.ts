@@ -13,6 +13,9 @@ type deletedAtColumn = ColumnType<string | null, never, string | null>;
 export interface Database {
     user: UserTable;
     session: SessionTable;
+    role: RoleTable;
+    permission: PermissionTable;
+    role_permission: RolePermissionTable;
 }
 
 export interface UserTable {

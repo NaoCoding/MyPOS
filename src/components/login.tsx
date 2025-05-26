@@ -32,9 +32,10 @@ export default function Login(props: LoginProps) {
           });
           
           const data = await response.json();
+          console.log(data)
           
           if (response.ok) {
-            props.setToken(data.user.username);
+            props.setToken(data.user.token);
           } else {
             alert(data.message);
           }
