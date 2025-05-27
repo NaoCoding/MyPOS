@@ -43,8 +43,37 @@
   padding: .25rem;
 }
 
-
-
 .nav li:hover {
   background-color: #565252;
 }
+
+/* nav.css */
+.logout-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0;
+  margin: 0;
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+
+/* 如果你的導航項目有特定樣式，複製到按鈕上 */
+.nav ul li {
+  list-style: none;
+}
+
+.nav ul li a,
+.nav ul li .logout-button {
+  text-decoration: none;
+  color: inherit;
+  padding: 0.5rem 1rem;
+  display: block;
+  transition: color 0.3s ease;
+}
+

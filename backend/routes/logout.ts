@@ -3,7 +3,7 @@ import { db } from '../database/db';
 
 const logoutRouter = express.Router();
 
-logoutRouter.post('/logout', async (req, res) => {
+logoutRouter.post('/', async (req, res) => {
   try {
     const token = req.cookies.token; // 從 httpOnly cookie 中讀取 token
     
