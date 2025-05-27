@@ -188,7 +188,7 @@ export default function UserManagement() {
   const getRoleClass = (roleId: number) => {
     switch (roleId) {
       case 1: return 'role-user';
-      case 4: return 'role-manager';
+      case 4: return 'role-admin';
       default: return 'role-user';
     }
   };
