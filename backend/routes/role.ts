@@ -1,6 +1,5 @@
 import express from 'express';
 import { getUserRole } from '../models/role';
-import jwt from 'jsonwebtoken';
 import { db } from '../database/db';
 
 const JWT_TOKEN = process.env.JWT_TOKEN || 'your-default-secret-key';
