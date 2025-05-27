@@ -10,7 +10,9 @@ interface NavbarProps {
 export default function Navbar({ role_id, setToken }: NavbarProps) {
   role_id = role_id || 0; // Default to 0 if role_id is not provided
 
-  console.log("role_id:", role_id);
+  if (process.env.NODE_ENV === "development") {
+    console.log("role_id:", role_id);
+  }
 
   const logout = async () => {
     try {
