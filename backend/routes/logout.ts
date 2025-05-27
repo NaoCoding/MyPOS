@@ -9,6 +9,7 @@ logoutRouter.post('/', async (req, res) => {
     
     if (!token) {
       res.status(401).json({ message: 'No token provided' });
+      return;
     }
 
     // 刪除資料庫中的 session

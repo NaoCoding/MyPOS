@@ -5,6 +5,7 @@ import './styles/App.css';
 import Login from './components/login';
 import Navbar from './components/nav';
 import SignUp from './components/signup';
+import UserManagement from './components/userManagement';
 
 function App() {
   const [token, setToken] = useState<string>('');
@@ -52,12 +53,36 @@ function App() {
   }
 
   // 如果有 token，顯示主頁面
-  return (
-    <div className="app_container">
-      <Navbar role_id={roleId} setToken={setToken} />
-      <NextTopLoader color='#565656' showSpinner={false} />
-    </div>
-  );
+  if(roleId === 1){
+    return (
+      <div className="app_container">
+        <NextTopLoader color='#565656' showSpinner={false} />
+        <Navbar role_id={roleId} setToken={setToken} />
+        <Routes>
+          <Route path="/" element={<div>Home Page</div>} />
+          <Route path="/history" element={<div>Order History Page</div>} />
+          <Route path="/setting" element={<div>Setting Page</div>} />
+        </Routes>
+      </div>
+    );
+  }
+
+  else if(roleId === 4) {
+    return (
+      <div className="app_container">
+        <NextTopLoader color='#565656' showSpinner={false} />
+        <Navbar role_id={roleId} setToken={setToken} />
+        <Routes>
+          <Route path="/" element={<div>Manager Home Page</div>} />
+          <Route path="/manage/user" element={<UserManagement/>} />
+        </Routes>
+      </div>
+    );
+  }
+
+  else{
+    return (<div></div>)
+  }
 }
 
 export default App;

@@ -36,6 +36,7 @@ export default function Login(props: LoginProps) {
           
           if (response.ok) {
             props.setToken(data.user.token);
+            window.location.href = '/';
           } else {
             alert(data.message);
           }

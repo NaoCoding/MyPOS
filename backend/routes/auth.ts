@@ -10,6 +10,7 @@ authRouter.get('/checkAuth', async (req, res) => {
     
     if (!token) {
       res.status(401).json({ authenticated: false });
+      return;
     }
 
     // 檢查 token 是否有效並獲取角色
@@ -17,6 +18,7 @@ authRouter.get('/checkAuth', async (req, res) => {
     
     if (!userRole) {
       res.status(200).json({ authenticated: false });
+      return;
     }
 
     res.status(200).json({ 

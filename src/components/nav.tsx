@@ -22,6 +22,7 @@ export default function Navbar({ role_id, setToken }: NavbarProps) {
       if (response.ok) {
         console.log('Logged out successfully');
         setToken(''); // 清除應用程式中的 token 狀態
+        window.location.href = '/login'; 
       } else {
         console.error('Failed to log out');
       }
@@ -38,7 +39,7 @@ export default function Navbar({ role_id, setToken }: NavbarProps) {
         </Link>
         <ul>
           <CustomLink to="/">Home</CustomLink>
-          <CustomLink to="/upload">Order History</CustomLink>
+          <CustomLink to="/history">Order History</CustomLink>
           <CustomLink to="/setting">Setting</CustomLink>
           <li>
             <button onClick={logout} className="logout-button">Logout</button> {/* 修改為按鈕 */}
@@ -46,6 +47,24 @@ export default function Navbar({ role_id, setToken }: NavbarProps) {
         </ul>
       </nav>
     );
+  }
+
+  else if (role_id === 4) {
+    return (
+      <nav className="nav">
+        <Link to="/" className="site-title">
+          MyPos
+        </Link>
+        <ul>
+          <CustomLink to="/">Home</CustomLink>
+          <CustomLink to="/manage/user">User Management</CustomLink>
+          <li>    
+            <button onClick={logout} className="logout-button">Logout</button> {/* 修改為按鈕 */}
+          </li>
+        </ul>
+      </nav>
+    );
+
   }
 
   return null;

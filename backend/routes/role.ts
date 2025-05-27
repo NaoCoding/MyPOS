@@ -40,8 +40,6 @@ export async function getUserRoleByToken(token: string) {
         .where('session.token', '=', token)
         .select('user.role_id')
         .executeTakeFirst();
-
-        roleRouter
 }
 
 
