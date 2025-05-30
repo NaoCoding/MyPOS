@@ -6,7 +6,7 @@ export async function up(db: Kysely<any>) {
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('item_id', 'integer', (col) => col.notNull())
         .addColumn('unit_price', 'decimal', (col) => col.notNull())
-        .addColumn('start_datetime', 'datetime', (col) => col.notNull())
+        .addColumn('start_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
         .addColumn('end_datetime', 'datetime', (col) => col.defaultTo(null))
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
         .addColumn('deleted_at', 'datetime', (col) => col.defaultTo(null))

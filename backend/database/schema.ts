@@ -42,7 +42,7 @@ export interface PriceTable {
     id: Generated<number>;
     item_id: number;
     unit_price: number;
-    start_datetime: string;
+    start_datetime: string | null;
     end_datetime: string | null;
     created_at: createdAtColumn;
     deleted_at: deletedAtColumn;
