@@ -6,6 +6,7 @@ import express from 'express';
 
 import itemRouter from './routes/item';
 import loginRouter from './routes/login';
+import priceRouter from './routes/price';
 import productRouter from './routes/product';
 import registerRouter from './routes/register';
 import storeRouter from './routes/store';
@@ -23,6 +24,7 @@ app.use(express.json());
 
 app.use('/item', itemRouter);
 app.use('/login', loginRouter);
+app.use('/price', priceRouter);
 app.use('/product', productRouter);
 app.use('/register', registerRouter);
 app.use('/store', storeRouter);
