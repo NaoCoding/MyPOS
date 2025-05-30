@@ -3,6 +3,7 @@ import { createItem, findItem, getItems, updateItem } from '../models/item';
 import { checkLogin } from '../middleware';
 import { findProduct } from '../models/product';
 import { findStore } from '../models/store';
+import { findCurrentPrice } from '../models/price';
 
 const itemRouter = Router();
 itemRouter.use(checkLogin);
@@ -84,7 +85,13 @@ itemRouter.get('/:id', async (req: Request, res: Response) => {
             });
             return;
         }
-        res.status(200).json(item);
+
+        const price = await findCurrentPrice({ item_id: item.id });
+
+        res.status(200).json({
+            item,
+            price: price ? price.unit_price : 0
+        });
     }
     catch (error) {
         console.error("Error fetching item:", error);
