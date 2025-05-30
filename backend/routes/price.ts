@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createPrice, findPrice, getPrices, updatePrice } from '../models/price';
+import { createPrice, findCurrentPrice, findPrices, getPrices, updatePrice } from '../models/price';
 import { checkLogin } from '../middleware';
 import { findItem } from '../models/item';
 
@@ -7,12 +7,12 @@ const priceRouter = Router();
 priceRouter.use(checkLogin);
 
 priceRouter.post('/', async (req: Request, res: Response) => {
-    const { item_id, unit_price, start_datetime, end_datetime } = req.body;
+    const { item_id, unit_price } = req.body;
 
     // Validate request body
-    if (!item_id || !unit_price || !start_datetime) {
+    if (!item_id || !unit_price) {
         res.status(400).json({
-            message: "Item ID, Unit Price, and Start Datetime are required"
+            message: "Item ID and unit price are required"
         });
         return;
     }
@@ -32,16 +32,28 @@ priceRouter.post('/', async (req: Request, res: Response) => {
             return;
         }
 
-        const newPrice = await createPrice({
+        const lastPrice = await findCurrentPrice({ item_id });
+        if (lastPrice) {
+            if (lastPrice.unit_price === unit_price) {
+                res.status(400).json({
+                    message: "Old price is the same as the new price"
+                });
+                return;
+            }
+
+            await updatePrice({
+                id: lastPrice.id,
+                end_datetime: new Date().toISOString(),
+            });
+        }
+
+        await createPrice({
             item_id,
-            unit_price,
-            start_datetime,
-            end_datetime: end_datetime || null,
+            unit_price
         });
 
         res.status(201).json({
             message: "Price created successfully",
-            price: newPrice
         });
     }
     catch (error) {
@@ -69,7 +81,7 @@ priceRouter.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const price = await findPrice({ id: Number(id) });
+        const price = await findPrices({ id: Number(id) });
         if (!price) {
             res.status(404).json({
                 message: "Price not found"
@@ -105,7 +117,7 @@ priceRouter.put('/:id', async (req: Request, res: Response) => {
     }
 
     try {
-        const price = await findPrice({ id: Number(id) });
+        const price = await findCurrentPrice({ id: Number(id) });
         if (!price) {
             res.status(404).json({
                 message: "Price not found"
