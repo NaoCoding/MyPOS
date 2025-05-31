@@ -14,8 +14,8 @@ export default function Navbar() {
             </Link>
             <ul>
                 <CustomLink to="/">Home</CustomLink>
-                <CustomLink to="/upload">Order History</CustomLink>
-                <CustomLink to="/setting">Setting</CustomLink>
+                <CustomLink to="/訂單管理">Order History</CustomLink>
+                <CustomLink to="/系統設定">Setting</CustomLink>
                 <CustomLink to="/">Logout</CustomLink>
             </ul>
         </nav>
