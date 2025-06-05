@@ -11,12 +11,24 @@ type createdAtColumn = ColumnType<string, never, never>;
 type deletedAtColumn = ColumnType<string | null, never, string | null>;
 
 export interface Database {
+    discount: DiscountTable;
     item: ItemTable;
     user: UserTable;
     price: PriceTable;
     product: ProductTable;
     session: SessionTable;
     store: StoreTable;
+}
+
+export interface DiscountTable {
+    id: Generated<number>;
+    item_id: number;
+    type: string;
+    amount: number;
+    start_datetime: string | null;
+    end_datetime: string | null;
+    created_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
 }
 
 export interface ItemTable {
@@ -73,6 +85,10 @@ export interface StoreTable {
     created_at: createdAtColumn;
     deleted_at: deletedAtColumn;
 }
+
+export type Discount = Selectable<DiscountTable>;
+export type DiscountInsert = Insertable<DiscountTable>;
+export type DiscountUpdate = Updateable<DiscountTable>;
 
 export type Item = Selectable<ItemTable>;
 export type ItemInsert = Insertable<ItemTable>;
