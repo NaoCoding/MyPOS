@@ -3,6 +3,7 @@ import { createItem, findItem, getItems, updateItem } from '../models/item';
 import { checkLogin } from '../middleware';
 import { findProduct } from '../models/product';
 import { findCurrentPrice } from '../models/price';
+import { findCurrentDiscount } from '../models/discount';
 
 const itemRouter = Router();
 itemRouter.use(checkLogin);
@@ -76,10 +77,15 @@ itemRouter.get('/:id', async (req: Request, res: Response) => {
         }
 
         const price = await findCurrentPrice({ item_id: item.id });
+        const discount = await findCurrentDiscount({ item_id: item.id });
 
         res.status(200).json({
-            item,
-            price: price ? price.unit_price : 0
+            id: item.id,
+            product_id: item.product_id,
+            quantity: item.quantity,
+            price: price ? price.unit_price : 0,
+            discount_type: discount ? discount.type : null,
+            discount: discount ? discount.amount : 0
         });
     }
     catch (error) {

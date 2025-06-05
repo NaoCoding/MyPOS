@@ -30,6 +30,22 @@ export async function findDiscount(data: Partial<Discount>) {
     return await query.selectAll().executeTakeFirst();
 }
 
+export async function findCurrentDiscount(data: Partial<Discount>) {
+    let query = db.selectFrom('discount')
+        .where('discount.deleted_at', 'is', null)
+        .where('discount.end_datetime', 'is', null);
+
+    if (data.id) {
+        query = query.where('discount.id', '=', data.id);
+    }
+
+    if (data.item_id) {
+        query = query.where('discount.item_id', '=', data.item_id);
+    }
+
+    return await query.selectAll().executeTakeFirst();
+}
+
 export async function updateDiscount(discount: DiscountUpdate) {
     if (!discount.id) {
         throw new Error('id is required to update discount');
