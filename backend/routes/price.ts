@@ -27,24 +27,17 @@ priceRouter.post('/', async (req: Request, res: Response) => {
         const item = await findItem({ id: item_id });
         if (!item) {
             res.status(400).json({
-                message: "Item with this ID does not exist"
+                message: "Item with ID " + item_id + " does not exist"
             });
             return;
         }
 
-        const lastPrice = await findCurrentPrice({ item_id });
-        if (lastPrice) {
-            if (lastPrice.unit_price === unit_price) {
-                res.status(400).json({
-                    message: "Old price is the same as the new price"
+        const oldPrice = await findCurrentPrice({ item_id });
+        if (oldPrice) {
+            res.status(400).json({
+                    message: "Item with ID " + item_id + " already has a current price"
                 });
                 return;
-            }
-
-            await updatePrice({
-                id: lastPrice.id,
-                end_datetime: new Date().toISOString(),
-            });
         }
 
         await createPrice({
