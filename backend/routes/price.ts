@@ -93,12 +93,12 @@ priceRouter.get('/:id', async (req: Request, res: Response) => {
 
 priceRouter.put('/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { item_id, unit_price, start_datetime, end_datetime } = req.body;
+    const { item_id, unit_price, end_datetime } = req.body;
 
     // Validate request body
-    if (!item_id || !unit_price || !start_datetime) {
+    if (!item_id || !unit_price) {
         res.status(400).json({
-            message: "Item ID, Unit Price, and Start Datetime are required"
+            message: "Item ID and unit price are required"
         });
         return;
     }
@@ -118,17 +118,15 @@ priceRouter.put('/:id', async (req: Request, res: Response) => {
             return;
         }
 
-        const updatedPrice = await updatePrice({
+        await updatePrice({
             id: Number(id),
             item_id,
             unit_price,
-            start_datetime,
             end_datetime: end_datetime || null,
         });
 
         res.status(200).json({
             message: "Price updated successfully",
-            price: updatedPrice
         });
     }
     catch (error) {
