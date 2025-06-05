@@ -17,7 +17,6 @@ export interface Database {
     price: PriceTable;
     product: ProductTable;
     session: SessionTable;
-    store: StoreTable;
 }
 
 export interface DiscountTable {
@@ -34,7 +33,6 @@ export interface DiscountTable {
 export interface ItemTable {
     id: Generated<number>;
     product_id: number;
-    store_id: number;
     quantity: number;
     created_at: createdAtColumn;
     deleted_at: deletedAtColumn;
@@ -75,17 +73,6 @@ export interface SessionTable {
     expired_at: string;
 }
 
-export interface StoreTable {
-    id: Generated<number>;
-    name: string;
-    address: string;
-    telephone: string;
-    open_time: string;
-    close_time: string;
-    created_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
-}
-
 export type Discount = Selectable<DiscountTable>;
 export type DiscountInsert = Insertable<DiscountTable>;
 export type DiscountUpdate = Updateable<DiscountTable>;
@@ -109,7 +96,3 @@ export type ProductUpdate = Updateable<ProductTable>;
 export type Session = Selectable<SessionTable>;
 export type SessionInsert = Insertable<SessionTable>;
 export type SessionUpdate = Updateable<SessionTable>;
-
-export type Store = Selectable<StoreTable>;
-export type StoreInsert = Insertable<StoreTable>;
-export type StoreUpdate = Updateable<StoreTable>;

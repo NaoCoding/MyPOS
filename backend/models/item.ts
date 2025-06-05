@@ -27,10 +27,6 @@ export async function findItem(data: Partial<Item>) {
         query = query.where('item.product_id', '=', data.product_id);
     }
 
-    if (data.store_id) {
-        query = query.where('item.store_id', '=', data.store_id);
-    }
-
     return await query.selectAll().executeTakeFirst();
 }
 

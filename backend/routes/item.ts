@@ -2,19 +2,18 @@ import { Router, Request, Response } from 'express';
 import { createItem, findItem, getItems, updateItem } from '../models/item';
 import { checkLogin } from '../middleware';
 import { findProduct } from '../models/product';
-import { findStore } from '../models/store';
 import { findCurrentPrice } from '../models/price';
 
 const itemRouter = Router();
 itemRouter.use(checkLogin);
 
 itemRouter.post('/', async (req: Request, res: Response) => {
-    const { product_id, store_id, quantity } = req.body;
+    const { product_id, quantity } = req.body;
 
     // Validate request body
-    if (!product_id || !store_id || !quantity) {
+    if (!product_id || !quantity) {
         res.status(400).json({
-            message: "Product ID, Store ID, and Quantity are required"
+            message: "Product ID and quantity are required"
         });
         return;
     }
@@ -26,15 +25,9 @@ itemRouter.post('/', async (req: Request, res: Response) => {
             });
             return;
         }
-        else if (await findStore({ id: store_id }) === undefined) {
+        else if (await findItem({ product_id })) {
             res.status(400).json({
-                message: "Store with this ID does not exist"
-            });
-            return;
-        }
-        else if (await findItem({ product_id, store_id })) {
-            res.status(400).json({
-                message: "Item with this Product ID and Store ID already exists"
+                message: "Item with this Product ID already exists"
             });
             return;
         }
@@ -45,11 +38,7 @@ itemRouter.post('/', async (req: Request, res: Response) => {
             return;
         }
 
-        await createItem({
-            product_id,
-            store_id,
-            quantity,
-        });
+        await createItem({ product_id, quantity });
 
         res.status(201).json({
             message: "Item created successfully"
@@ -102,6 +91,7 @@ itemRouter.get('/:id', async (req: Request, res: Response) => {
 });
 
 itemRouter.put('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
     const { quantity } = req.body;
 
     // Validate request body
@@ -128,10 +118,7 @@ itemRouter.put('/:id', async (req: Request, res: Response) => {
             return;
         }
 
-        await updateItem({
-            id: parseInt(req.params.id),
-            quantity,
-        });
+        await updateItem({ id: Number(id), quantity });
 
         res.status(200).json({
             message: "Item updated successfully"

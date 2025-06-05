@@ -10,7 +10,6 @@ import loginRouter from './routes/login';
 import priceRouter from './routes/price';
 import productRouter from './routes/product';
 import registerRouter from './routes/register';
-import storeRouter from './routes/store';
 
 const BACKEND_PORT = process.env.BACKEND_PORT || 5000;
 const corsOpt = {
@@ -29,7 +28,6 @@ app.use('/login', loginRouter);
 app.use('/price', priceRouter);
 app.use('/product', productRouter);
 app.use('/register', registerRouter);
-app.use('/store', storeRouter);
 
 app.listen(BACKEND_PORT, () => {
     console.log(`Server is running on port ${BACKEND_PORT}`);
