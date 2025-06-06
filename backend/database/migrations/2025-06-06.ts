@@ -58,7 +58,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('name', 'varchar', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
-        .addColumn('updated_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
         .addPrimaryKeyConstraint('pk_customization_group', ['id'])
         .execute();
@@ -69,7 +68,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('item_id', 'integer', (col) => col.notNull())
         .addColumn('customization_group_id', 'integer', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
-        .addColumn('updated_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
         .addPrimaryKeyConstraint('pk_item_customization', ['id'])
         .addForeignKeyConstraint('fk_item_id', ['item_id'], 'item', ['id'], (col) =>
@@ -89,7 +87,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('price_delta', 'decimal', (col) => col.notNull())
         .addColumn('customization_group_id', 'integer', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
-        .addColumn('updated_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
         .addPrimaryKeyConstraint('pk_customization', ['id'])
         .addForeignKeyConstraint('fk_customization_group_id', ['customization_group_id'], 'customization_group', ['id'], (col) =>
@@ -104,7 +101,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('user_id', 'integer', (col) => col.notNull())
         .addColumn('status', 'varchar', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
-        .addColumn('updated_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
         .addPrimaryKeyConstraint('pk_trade_id', ['id'])
         .addForeignKeyConstraint('fk_user_id', ['user_id'], 'user', ['id'], (col) =>
@@ -119,7 +115,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('item_id', 'integer', (col) => col.notNull())
         .addColumn('quantity', 'integer', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
-        .addColumn('updated_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
         .addPrimaryKeyConstraint('pk_trade_item_id', ['id'])
         .addForeignKeyConstraint('fk_trade_id', ['trade_id'], 'trade', ['id'],
@@ -136,7 +131,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('customization_id', 'integer', (col) => col.notNull())
         .addColumn('price_delta_snapshot' , 'decimal')
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
-        .addColumn('updated_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
         .addForeignKeyConstraint('fk_trade_item_id', ['trade_item_id'], 'trade_item', ['id'],
             (col) => col.onDelete('cascade').onUpdate('cascade')
@@ -153,7 +147,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('telephone', 'varchar')
         .addColumn('address', 'varchar')
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
-        .addColumn('updated_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
         .addPrimaryKeyConstraint('pk_manufacturer_id', ['id'])
         .execute();
@@ -166,7 +159,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('order_datetime', 'datetime')
         .addColumn('status' , 'varchar')
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
-        .addColumn('updated_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
         .addPrimaryKeyConstraint('pk_purchase_order_id', ['id'])
         .addForeignKeyConstraint('fk_manufacturer_id', ['manufacturer_id'], 'manufacturer', ['id'], 
