@@ -157,17 +157,17 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-    await db.schema.dropTable('product').execute();
-    await db.schema.dropTable('item').execute();
-    await db.schema.dropTable('price').execute();
-    await db.schema.dropTable('discount').execute();
-    await db.schema.dropTable('customization_group').execute();
-    await db.schema.dropTable('item_customization').execute();
-    await db.schema.dropTable('customization').execute();
     await db.schema.dropTable('purchase_order_item').execute();
     await db.schema.dropTable('purchase_order').execute();
     await db.schema.dropTable('manufacturer').execute();
     await db.schema.dropTable('trade_item_customization').execute();
     await db.schema.dropTable('trade_item').execute();
     await db.schema.dropTable('trade').execute();
+    await db.schema.dropTable('customization').execute();
+    await db.schema.dropTable('item_customization_group').execute();
+    await db.schema.dropTable('customization_group').execute();
+    await db.schema.dropTable('discount').execute();
+    await db.schema.dropTable('price').execute();
+    await db.schema.dropTable('item').execute();
+    await db.schema.dropTable('product').execute();
 }
