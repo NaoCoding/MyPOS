@@ -38,16 +38,12 @@ export interface DiscountTable {
     amount: number;
     start_datetime: string | null;
     end_datetime: string | null;
-    created_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
 }
 
 export interface ItemTable {
     id: Generated<number>;
     product_id: number;
     quantity: number;
-    created_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
 }
 
 export interface UserTable {
@@ -67,16 +63,12 @@ export interface PriceTable {
     unit_price: number;
     start_datetime: string | null;
     end_datetime: string | null;
-    created_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
 }
 
 export interface ProductTable {
     id: Generated<number>;
     name: string;
     description: string | null;
-    created_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
 }
 
 export interface RoleTable {
