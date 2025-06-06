@@ -55,7 +55,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('customization_group')
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'varchar', (col) => col.notNull())
-        .addColumn('description', 'text', (col) => col.notNull())
+        .addColumn('description', 'text', (col) => col.defaultTo(null))
         .execute();
 
     await db.schema
@@ -76,9 +76,9 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('customization_group_id', 'integer', (col) => col.notNull())
         .addColumn('name', 'varchar', (col) => col.notNull())
-        .addColumn('description', 'text', (col) => col.notNull())
+        .addColumn('description', 'text', (col) => col.defaultTo(null))
         .addColumn('is_available', 'boolean', (col) => col.notNull())
-        .addColumn('price_delta', 'decimal', (col) => col.notNull())
+        .addColumn('price_delta', 'decimal', (col) => col.defaultTo(0))
         .addForeignKeyConstraint('fk_customization_group_id', ['customization_group_id'], 'customization_group', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
@@ -112,7 +112,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('trade_item_customization')
         .addColumn('trade_item_id', 'integer', (col) => col.notNull())
         .addColumn('customization_id', 'integer', (col) => col.notNull())
-        .addColumn('price_delta_snapshot' , 'decimal')
+        .addColumn('price_delta_snapshot' , 'decimal', (col) => col.notNull())
         .addForeignKeyConstraint('fk_trade_item_id', ['trade_item_id'], 'trade_item', ['id'],
             (col) => col.onDelete('cascade').onUpdate('cascade')
         )
@@ -125,16 +125,16 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('manufacturer')
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('name' , 'varchar', (col) => col.notNull())
-        .addColumn('telephone', 'varchar')
-        .addColumn('address', 'varchar')
+        .addColumn('telephone', 'varchar', (col) => col.defaultTo(null))
+        .addColumn('address', 'varchar', (col) => col.defaultTo(null))
         .execute();
 
     await db.schema
         .createTable('purchase_order')
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
-        .addColumn('manufacturer_id', 'integer')
-        .addColumn('user_id' , 'integer')
-        .addColumn('order_datetime', 'datetime')
+        .addColumn('manufacturer_id', 'integer', (col) => col.notNull())
+        .addColumn('user_id' , 'integer', (col) => col.notNull())
+        .addColumn('order_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
         .addColumn('status' , 'varchar', (col) => col.notNull().check(sql`status IN ('pending', 'delivered')`))
         .addForeignKeyConstraint('fk_manufacturer_id', ['manufacturer_id'], 'manufacturer', ['id'], 
             (col) => col.onUpdate('cascade').onDelete('cascade')
@@ -147,9 +147,9 @@ export async function up(db: Kysely<any>): Promise<void> {
     await db.schema
         .createTable('purchase_order_item')
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
-        .addColumn('purchase_order_id', 'integer')
-        .addColumn('item_id', 'integer')
-        .addColumn('quantity', 'integer')
+        .addColumn('purchase_order_id', 'integer', (col) => col.notNull())
+        .addColumn('item_id', 'integer', (col) => col.notNull())
+        .addColumn('quantity', 'integer', (col) => col.notNull())
         .addForeignKeyConstraint('fk_purchase_order_id', ['purchase_order_id'], 'purchase_order', ['id'],
             (col) => col.onUpdate('cascade').onDelete('cascade')
         )
