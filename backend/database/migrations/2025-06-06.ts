@@ -56,6 +56,8 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'varchar', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.defaultTo(null))
+        .addColumn('is_required', 'boolean', (col) => col.notNull().defaultTo(false))
+        .addColumn('is_multiple_choice', 'boolean', (col) => col.notNull().defaultTo(false))
         .execute();
 
     await db.schema
@@ -88,6 +90,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('trade')
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('user_id', 'integer', (col) => col.notNull())
+        .addColumn('trade_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
         .addColumn('status', 'varchar', (col) => col.notNull().check(sql`status IN ('pending', 'completed')`))
         .addForeignKeyConstraint('fk_user_id', ['user_id'], 'user', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
