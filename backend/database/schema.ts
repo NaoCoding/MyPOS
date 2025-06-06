@@ -21,7 +21,7 @@ export interface Database {
     permission: PermissionTable;
     role_permission: RolePermissionTable;
     customization_group: CustomizationGroupTable;
-    item_customization: ItemCustomizationTable;
+    item_customization_group: ItemCustomizationGroupTable;
     customization: CustomizationTable;
     trade: TradeTable;
     trade_item: TradeItemTable;
@@ -128,7 +128,7 @@ export interface CustomizationGroupTable {
     deleted_at: deletedAtColumn;
 }
 
-export interface ItemCustomizationTable {
+export interface ItemCustomizationGroupTable {
     id: Generated<number>;
     item_id: number;
     customization_group_id: number;
@@ -240,9 +240,9 @@ export type CustomizationGroup = Selectable<CustomizationGroupTable>;
 export type CustomizationGroupInsert = Insertable<CustomizationGroupTable>;
 export type CustomizationGroupUpdate = Updateable<CustomizationGroupTable>;
 
-export type ItemCustomization = Selectable<ItemCustomizationTable>;
-export type ItemCustomizationInsert = Insertable<ItemCustomizationTable>;
-export type ItemCustomizationUpdate = Updateable<ItemCustomizationTable>;
+export type ItemCustomization = Selectable<ItemCustomizationGroupTable>;
+export type ItemCustomizationInsert = Insertable<ItemCustomizationGroupTable>;
+export type ItemCustomizationUpdate = Updateable<ItemCustomizationGroupTable>;
 
 export type Customization = Selectable<CustomizationTable>;
 export type CustomizationInsert = Insertable<CustomizationTable>;
