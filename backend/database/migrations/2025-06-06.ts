@@ -17,7 +17,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('quantity', 'integer', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
         .addColumn('deleted_at', 'datetime', (col) => col.defaultTo(null))
-        .addForeignKeyConstraint('fk_item_product', ['product_id'], 'product', ['id'], (col) =>
+        .addForeignKeyConstraint('fk_product_id', ['product_id'], 'product', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
         .execute();
@@ -31,7 +31,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('end_datetime', 'datetime', (col) => col.defaultTo(null))
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
         .addColumn('deleted_at', 'datetime', (col) => col.defaultTo(null))
-        .addForeignKeyConstraint('fk_price_item', ['item_id'], 'item', ['id'], (col) =>
+        .addForeignKeyConstraint('fk_item_id', ['item_id'], 'item', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
         .execute();
@@ -46,7 +46,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('end_datetime', 'datetime', (col) => col.defaultTo(null))
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
         .addColumn('deleted_at', 'datetime', (col) => col.defaultTo(null))
-        .addForeignKeyConstraint('fk_discount_item', ['item_id'], 'item', ['id'], (col) =>
+        .addForeignKeyConstraint('fk_item_id', ['item_id'], 'item', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
         .execute();
