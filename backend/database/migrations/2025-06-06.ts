@@ -64,7 +64,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .execute();
     
     await db.schema
-        .createTable('item_customization')
+        .createTable('item_customization_group')
         .addColumn('id', 'integer', (col) => col.notNull())
         .addColumn('item_id', 'integer', (col) => col.notNull())
         .addColumn('customization_group_id', 'integer', (col) => col.notNull())
