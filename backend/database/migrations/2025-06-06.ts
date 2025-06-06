@@ -6,8 +6,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'varchar', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.defaultTo(null))
-        .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
-        .addColumn('deleted_at', 'datetime', (col) => col.defaultTo(null))
         .execute();
 
     await db.schema
@@ -15,8 +13,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('product_id', 'integer', (col) => col.notNull())
         .addColumn('quantity', 'integer', (col) => col.notNull())
-        .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
-        .addColumn('deleted_at', 'datetime', (col) => col.defaultTo(null))
         .addForeignKeyConstraint('fk_product_id', ['product_id'], 'product', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
@@ -29,8 +25,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('unit_price', 'decimal', (col) => col.notNull())
         .addColumn('start_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
         .addColumn('end_datetime', 'datetime', (col) => col.defaultTo(null))
-        .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
-        .addColumn('deleted_at', 'datetime', (col) => col.defaultTo(null))
         .addForeignKeyConstraint('fk_item_id', ['item_id'], 'item', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
@@ -44,8 +38,6 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('amount', 'decimal', (col) => col.notNull())
         .addColumn('start_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
         .addColumn('end_datetime', 'datetime', (col) => col.defaultTo(null))
-        .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
-        .addColumn('deleted_at', 'datetime', (col) => col.defaultTo(null))
         .addForeignKeyConstraint('fk_item_id', ['item_id'], 'item', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
