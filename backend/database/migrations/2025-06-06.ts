@@ -50,26 +50,23 @@ export async function up(db: Kysely<any>): Promise<void> {
             col.onDelete('cascade').onUpdate('cascade')
         )
         .execute();
-    
 
     await db.schema
         .createTable('customization_group')
-        .addColumn('id', 'integer', (col) => col.notNull().autoIncrement())
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'varchar', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
-        .addPrimaryKeyConstraint('pk_customization_group', ['id'])
         .execute();
-    
+
     await db.schema
         .createTable('item_customization_group')
-        .addColumn('id', 'integer', (col) => col.notNull())
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('item_id', 'integer', (col) => col.notNull())
         .addColumn('customization_group_id', 'integer', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
-        .addPrimaryKeyConstraint('pk_item_customization', ['id'])
         .addForeignKeyConstraint('fk_item_id', ['item_id'], 'item', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
@@ -80,43 +77,39 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('customization')
-        .addColumn('id', 'integer', (col) => col.notNull())
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('customization_group_id', 'integer', (col) => col.notNull())
         .addColumn('name', 'varchar', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.notNull())
         .addColumn('is_available', 'boolean', (col) => col.notNull())
         .addColumn('price_delta', 'decimal', (col) => col.notNull())
-        .addColumn('customization_group_id', 'integer', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
-        .addPrimaryKeyConstraint('pk_customization', ['id'])
         .addForeignKeyConstraint('fk_customization_group_id', ['customization_group_id'], 'customization_group', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
         .execute();
 
-    
     await db.schema
         .createTable('trade')
-        .addColumn('id', 'integer', (col) => col.notNull())
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('user_id', 'integer', (col) => col.notNull())
         .addColumn('status', 'varchar', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
-        .addPrimaryKeyConstraint('pk_trade_id', ['id'])
         .addForeignKeyConstraint('fk_user_id', ['user_id'], 'user', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
         .execute();
-    
+
     await db.schema
         .createTable('trade_item')
-        .addColumn('id', 'integer', (col) => col.notNull())
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('trade_id', 'integer', (col) => col.notNull())
         .addColumn('item_id', 'integer', (col) => col.notNull())
         .addColumn('quantity', 'integer', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
-        .addPrimaryKeyConstraint('pk_trade_item_id', ['id'])
         .addForeignKeyConstraint('fk_trade_id', ['trade_id'], 'trade', ['id'],
             (col) => col.onDelete('cascade').onUpdate('cascade')
         )
@@ -139,28 +132,26 @@ export async function up(db: Kysely<any>): Promise<void> {
             (col) => col.onDelete('cascade').onUpdate('cascade')
         )
         .execute();
-    
+
     await db.schema
         .createTable('manufacturer')
-        .addColumn('id', 'integer', (col) => col.notNull())
-        .addColumn('name' , 'varchar')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('name' , 'varchar', (col) => col.notNull())
         .addColumn('telephone', 'varchar')
         .addColumn('address', 'varchar')
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
-        .addPrimaryKeyConstraint('pk_manufacturer_id', ['id'])
         .execute();
-    
+
     await db.schema
         .createTable('purchase_order')
-        .addColumn('id', 'integer', (col) => col.notNull())
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('manufacturer_id', 'integer')
         .addColumn('user_id' , 'integer')
         .addColumn('order_datetime', 'datetime')
         .addColumn('status' , 'varchar')
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
-        .addPrimaryKeyConstraint('pk_purchase_order_id', ['id'])
         .addForeignKeyConstraint('fk_manufacturer_id', ['manufacturer_id'], 'manufacturer', ['id'], 
             (col) => col.onUpdate('cascade').onDelete('cascade')
         )
@@ -171,20 +162,17 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('purchase_order_item')
-        .addColumn('id', 'integer', (col) => col.notNull())
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('purchase_order_id', 'integer')
         .addColumn('item_id', 'integer')
         .addColumn('quantity', 'integer')
-        .addPrimaryKeyConstraint('pk_purchase_order_item_id', ['id'])
         .addForeignKeyConstraint('fk_purchase_order_id', ['purchase_order_id'], 'purchase_order', ['id'],
             (col) => col.onUpdate('cascade').onDelete('cascade')
         )
         .execute();
-
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  
     await db.schema.dropTable('product').execute();
     await db.schema.dropTable('item').execute();
     await db.schema.dropTable('price').execute();
@@ -198,5 +186,4 @@ export async function down(db: Kysely<any>): Promise<void> {
     await db.schema.dropTable('trade_item_customization').execute();
     await db.schema.dropTable('trade_item').execute();
     await db.schema.dropTable('trade').execute();
-
 }
