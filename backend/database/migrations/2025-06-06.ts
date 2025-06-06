@@ -40,7 +40,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('discount')
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('item_id', 'integer', (col) => col.notNull())
-        .addColumn('type', 'varchar', (col) => col.notNull())
+        .addColumn('type', 'varchar', (col) => col.notNull().check(sql`type IN ('percentage', 'fixed')`))
         .addColumn('amount', 'decimal', (col) => col.notNull())
         .addColumn('start_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
         .addColumn('end_datetime', 'datetime', (col) => col.defaultTo(null))
@@ -88,7 +88,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .createTable('trade')
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('user_id', 'integer', (col) => col.notNull())
-        .addColumn('status', 'varchar', (col) => col.notNull())
+        .addColumn('status', 'varchar', (col) => col.notNull().check(sql`status IN ('pending', 'completed')`))
         .addForeignKeyConstraint('fk_user_id', ['user_id'], 'user', ['id'], (col) =>
             col.onDelete('cascade').onUpdate('cascade')
         )
@@ -135,7 +135,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('manufacturer_id', 'integer')
         .addColumn('user_id' , 'integer')
         .addColumn('order_datetime', 'datetime')
-        .addColumn('status' , 'varchar')
+        .addColumn('status' , 'varchar', (col) => col.notNull().check(sql`status IN ('pending', 'delivered')`))
         .addForeignKeyConstraint('fk_manufacturer_id', ['manufacturer_id'], 'manufacturer', ['id'], 
             (col) => col.onUpdate('cascade').onDelete('cascade')
         )
