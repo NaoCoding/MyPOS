@@ -11,7 +11,7 @@ async function init() {
     // migrate down the last migration (DANGEROUS, use with caution)
     // await migrateDown();
     // console.log("Database migrations rolled back");
-
+    // await migrateDown();
     // migrate down all migrations (DANGEROUS, use with caution)
     // await migrateDownAll();
     // console.log("All database migrations rolled back");

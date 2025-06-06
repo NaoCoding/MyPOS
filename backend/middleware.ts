@@ -1,6 +1,74 @@
-import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { findUserSession } from './models/user';
+import { Request, Response, NextFunction, RequestHandler } from 'express';
+import { getUserRoleByToken } from './routes/role';
+
+// 擴展 Request 介面以包含用戶資訊
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        role_id: number;
+        token: string;
+      };
+    }
+  }
+}
+
+// 驗證用戶是否已登入
+export const requireAuth: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const token = req.cookies.token;
+    
+    if (!token) {
+      res.status(401).json({ message: '請先登入' });
+      return;
+    }
+
+    const userRole = await getUserRoleByToken(token);
+    
+    if (!userRole) {
+      res.status(401).json({ message: '無效的登入狀態' });
+      return;
+    }
+
+    // 將用戶資訊附加到 request 物件
+    req.user = {
+      role_id: userRole ? userRole.role_id : 1, 
+      token: token
+    };
+
+    next();
+    return;
+
+  } catch (error) {
+    console.error('Auth middleware error:', error);
+    res.status(500).json({ message: '伺服器錯誤' });
+  }
+  
+};
+
+// 驗證用戶是否為管理員
+export const requireManager: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    res.status(401).json({ message: '請先登入' });
+    return;
+  }
+
+  else if (req.user.role_id !== 4) {
+     res.status(403).json({ message: '權限不足，僅限管理員使用' });
+     return;
+  }
+
+  
+
+  next();
+  return;
+  
+};
+
+// 組合中間件：要求登入且為管理員
+export const requireManagerAuth = [requireAuth, requireManager];
 
 export function checkNotLogin(req: Request, res: Response, next: NextFunction) {
     const token = req.cookies.token;
