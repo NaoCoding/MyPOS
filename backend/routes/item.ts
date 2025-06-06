@@ -18,6 +18,12 @@ itemRouter.post('/', async (req: Request, res: Response) => {
         });
         return;
     }
+    else if (quantity <= 0) {
+        res.status(400).json({
+            message: "Quantity must be greater than 0"
+        });
+        return;
+    }
 
     try {
         if (await findProduct({ id: product_id }) === undefined) {
@@ -29,12 +35,6 @@ itemRouter.post('/', async (req: Request, res: Response) => {
         else if (await findItem({ product_id })) {
             res.status(400).json({
                 message: "Item with this Product ID already exists"
-            });
-            return;
-        }
-        else if (quantity <= 0) {
-            res.status(400).json({
-                message: "Quantity must be greater than 0"
             });
             return;
         }

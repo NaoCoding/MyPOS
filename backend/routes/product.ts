@@ -17,7 +17,8 @@ productRouter.post('/', async (req: Request, res: Response) => {
     }
 
     try {
-        if (await findProduct({ name })) {
+        const product = await findProduct({ name });
+        if (product) {
             res.status(400).json({
                 message: "Product with this name already exists"
             });
