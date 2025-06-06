@@ -54,7 +54,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('customization_group')
-        .addColumn('id', 'integer', (col) => col.notNull())
+        .addColumn('id', 'integer', (col) => col.notNull().autoIncrement())
         .addColumn('name', 'text', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.notNull())
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
