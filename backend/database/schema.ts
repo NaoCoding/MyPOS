@@ -122,40 +122,31 @@ export type ItemUpdate = Updateable<ItemTable>;
 export interface CustomizationGroupTable {
     id: Generated<number>;
     name: string;
-    description: string;
-    created_at: createdAtColumn;
-    updated_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
+    description: string | null;
+    is_required: boolean;
+    is_multiple_choice: boolean;
 }
 
 export interface ItemCustomizationGroupTable {
     id: Generated<number>;
     item_id: number;
     customization_group_id: number;
-    created_at: createdAtColumn;
-    updated_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
 }
 
 export interface CustomizationTable {
     id: Generated<number>;
-    name: string;
-    description: string;
-    is_available: boolean;
-    price_delta: string; // decimal 类型映射为 string
     customization_group_id: number;
-    created_at: createdAtColumn;
-    updated_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
+    name: string;
+    description: string | null;
+    is_available: boolean;
+    price_delta: number;
 }
 
 export interface TradeTable {
     id: Generated<number>;
     user_id: number;
-    status: number;
-    created_at: createdAtColumn;
-    updated_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
+    trade_datetime: string | null;
+    status: 'pending' | 'completed';
 }
 
 export interface TradeItemTable {
@@ -163,48 +154,35 @@ export interface TradeItemTable {
     trade_id: number;
     item_id: number;
     quantity: number;
-    created_at: createdAtColumn;
-    updated_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
 }
 
 export interface TradeItemCustomizationTable {
     trade_item_id: number;
     customization_id: number;
-    price_delta_snapshot: string | null; // decimal 类型，可为空
-    created_at: createdAtColumn;
-    updated_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
+    price_delta_snapshot: number;
 }
 
 export interface ManufacturerTable {
     id: Generated<number>;
-    name: string | null;
+    name: string;
     telephone: string | null;
     address: string | null;
-    created_at: createdAtColumn;
-    updated_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
 }
 
 export interface PurchaseOrderTable {
     id: Generated<number>;
-    manufacturer_id: number | null;
-    user_id: number | null;
-    order_datetime: string | null; // datetime 类型映射为 string
-    status: number | null;
-    created_at: createdAtColumn;
-    updated_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
+    manufacturer_id: number;
+    user_id: number;
+    order_datetime: string | null;
+    status: 'pending' | 'completed';
 }
 
 export interface PurchaseOrderItemTable {
     id: Generated<number>;
-    purchase_order_id: number | null;
-    item_id: number | null;
-    quantity: number | null;
+    purchase_order_id: number;
+    item_id: number;
+    quantity: number;
 }
-
 
 export type Role = Selectable<RoleTable>;
 export type RoleInsert = Insertable<RoleTable>;
