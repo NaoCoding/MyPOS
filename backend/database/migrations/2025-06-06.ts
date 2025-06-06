@@ -164,7 +164,7 @@ export async function up(db: Kysely<any>): Promise<void> {
         .addColumn('manufacturer_id', 'integer')
         .addColumn('user_id' , 'integer')
         .addColumn('order_datetime', 'datetime')
-        .addColumn('' , 'varchar')
+        .addColumn('status' , 'varchar')
         .addColumn('created_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('updated_at', 'datetime', (col) => col.notNull().defaultTo(sql`CURRENT_TIMESTAMP`))
         .addColumn('deleted_at', 'datetime')
