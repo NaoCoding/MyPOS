@@ -16,7 +16,17 @@ export interface Database {
     role: RoleTable;
     permission: PermissionTable;
     role_permission: RolePermissionTable;
+    customization_group: CustomizationGroupTable;
+    item_customization: ItemCustomizationTable;
+    customization: CustomizationTable;
+    trade: TradeTable;
+    trade_item: TradeItemTable;
+    trade_item_customization: TradeItemCustomizationTable;
+    manufacturer: ManufacturerTable;
+    purchase_order: PurchaseOrderTable;
+    purchase_order_item: PurchaseOrderItemTable;
 }
+
 
 export interface UserTable {
     id: Generated<number>;
@@ -61,6 +71,93 @@ export interface SessionTable {
     expired_at: string;
 }
 
+export interface CustomizationGroupTable {
+    id: Generated<number>;
+    name: string;
+    description: string;
+    created_at: createdAtColumn;
+    updated_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
+}
+
+export interface ItemCustomizationTable {
+    id: Generated<number>;
+    item_id: number;
+    customization_group_id: number;
+    created_at: createdAtColumn;
+    updated_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
+}
+
+export interface CustomizationTable {
+    id: Generated<number>;
+    name: string;
+    description: string;
+    is_available: boolean;
+    price_delta: string; // decimal 类型映射为 string
+    customization_group_id: number;
+    created_at: createdAtColumn;
+    updated_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
+}
+
+export interface TradeTable {
+    id: Generated<number>;
+    user_id: number;
+    status: number;
+    created_at: createdAtColumn;
+    updated_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
+}
+
+export interface TradeItemTable {
+    id: Generated<number>;
+    trade_id: number;
+    item_id: number;
+    quantity: number;
+    created_at: createdAtColumn;
+    updated_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
+}
+
+export interface TradeItemCustomizationTable {
+    trade_item_id: number;
+    customization_id: number;
+    price_delta_snapshot: string | null; // decimal 类型，可为空
+    created_at: createdAtColumn;
+    updated_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
+}
+
+export interface ManufacturerTable {
+    id: Generated<number>;
+    name: string | null;
+    telephone: string | null;
+    address: string | null;
+    created_at: createdAtColumn;
+    updated_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
+}
+
+export interface PurchaseOrderTable {
+    id: Generated<number>;
+    manufacturer_id: number | null;
+    user_id: number | null;
+    order_datetime: string | null; // datetime 类型映射为 string
+    status: number | null;
+    created_at: createdAtColumn;
+    updated_at: createdAtColumn;
+    deleted_at: deletedAtColumn;
+}
+
+export interface PurchaseOrderItemTable {
+    id: Generated<number>;
+    purchase_order_id: number | null;
+    item_id: number | null;
+    quantity: number | null;
+}
+
+
 export type Role = Selectable<RoleTable>;
 export type RoleInsert = Insertable<RoleTable>;
 export type RoleUpdate = Updateable<RoleTable>;
@@ -80,3 +177,43 @@ export type UserUpdate = Updateable<UserTable>;
 export type Session = Selectable<SessionTable>;
 export type SessionInsert = Insertable<SessionTable>;
 export type SessionUpdate = Updateable<SessionTable>;
+
+// Customization related types
+export type CustomizationGroup = Selectable<CustomizationGroupTable>;
+export type CustomizationGroupInsert = Insertable<CustomizationGroupTable>;
+export type CustomizationGroupUpdate = Updateable<CustomizationGroupTable>;
+
+export type ItemCustomization = Selectable<ItemCustomizationTable>;
+export type ItemCustomizationInsert = Insertable<ItemCustomizationTable>;
+export type ItemCustomizationUpdate = Updateable<ItemCustomizationTable>;
+
+export type Customization = Selectable<CustomizationTable>;
+export type CustomizationInsert = Insertable<CustomizationTable>;
+export type CustomizationUpdate = Updateable<CustomizationTable>;
+
+// Trade related types
+export type Trade = Selectable<TradeTable>;
+export type TradeInsert = Insertable<TradeTable>;
+export type TradeUpdate = Updateable<TradeTable>;
+
+export type TradeItem = Selectable<TradeItemTable>;
+export type TradeItemInsert = Insertable<TradeItemTable>;
+export type TradeItemUpdate = Updateable<TradeItemTable>;
+
+export type TradeItemCustomization = Selectable<TradeItemCustomizationTable>;
+export type TradeItemCustomizationInsert = Insertable<TradeItemCustomizationTable>;
+export type TradeItemCustomizationUpdate = Updateable<TradeItemCustomizationTable>;
+
+// Purchase related types
+export type Manufacturer = Selectable<ManufacturerTable>;
+export type ManufacturerInsert = Insertable<ManufacturerTable>;
+export type ManufacturerUpdate = Updateable<ManufacturerTable>;
+
+export type PurchaseOrder = Selectable<PurchaseOrderTable>;
+export type PurchaseOrderInsert = Insertable<PurchaseOrderTable>;
+export type PurchaseOrderUpdate = Updateable<PurchaseOrderTable>;
+
+export type PurchaseOrderItem = Selectable<PurchaseOrderItemTable>;
+export type PurchaseOrderItemInsert = Insertable<PurchaseOrderItemTable>;
+export type PurchaseOrderItemUpdate = Updateable<PurchaseOrderItemTable>;
+
