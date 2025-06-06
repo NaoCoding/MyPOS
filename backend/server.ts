@@ -4,7 +4,11 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 
+import discountRouter from './routes/discount';
+import itemRouter from './routes/item';
 import loginRouter from './routes/login';
+import priceRouter from './routes/price';
+import productRouter from './routes/product';
 import registerRouter from './routes/register';
 import roleRouter from './routes/role';
 import logoutRouter from './routes/logout';
@@ -22,7 +26,11 @@ app.use(cors(corsOpt));
 app.use(cookieParser());
 app.use(express.json());
 
+app.use('/discount', discountRouter);
+app.use('/item', itemRouter);
 app.use('/login', loginRouter);
+app.use('/price', priceRouter);
+app.use('/product', productRouter);
 app.use('/register', registerRouter);
 app.use('/role', roleRouter);
 app.use('/logout', logoutRouter);
