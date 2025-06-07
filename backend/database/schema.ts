@@ -77,7 +77,8 @@ export interface ProductTable {
     description: string | null;
     created_at: createdAtColumn;
     deleted_at: deletedAtColumn;
-=======
+}
+
 export interface RoleTable {
     id: Generated<number>;
     name: string;
