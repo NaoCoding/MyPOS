@@ -74,8 +74,8 @@ priceRouter.get('/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
 
     try {
-        const price = await findPrices({ id: Number(id) });
-        if (!price) {
+        const price = await findCurrentPrice({ id: Number(id) });
+        if (price === null || price === undefined) {
             res.status(404).json({
                 message: "Price not found"
             });
