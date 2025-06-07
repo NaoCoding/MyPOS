@@ -11,39 +11,33 @@ type createdAtColumn = ColumnType<string, never, never>;
 type deletedAtColumn = ColumnType<string | null, never, string | null>;
 
 export interface Database {
-    discount: DiscountTable;
-    item: ItemTable;
+    // User related tables
     user: UserTable;
-    price: PriceTable;
-    product: ProductTable;
-    session: SessionTable;
     role: RoleTable;
     permission: PermissionTable;
     role_permission: RolePermissionTable;
+    session: SessionTable;
+
+    // Item related tables
+    product: ProductTable;
+    item: ItemTable;
+    price: PriceTable;
+    discount: DiscountTable;
+
+    // Customization related tables
     customization_group: CustomizationGroupTable;
-    item_customization_group: ItemCustomizationGroupTable;
     customization: CustomizationTable;
+    item_customization_group: ItemCustomizationGroupTable;
+
+    // Trade related tables
     trade: TradeTable;
     trade_item: TradeItemTable;
     trade_item_customization: TradeItemCustomizationTable;
+
+    // Purchase related tables
     manufacturer: ManufacturerTable;
     purchase_order: PurchaseOrderTable;
     purchase_order_item: PurchaseOrderItemTable;
-}
-
-export interface DiscountTable {
-    id: Generated<number>;
-    item_id: number;
-    type: string;
-    amount: number;
-    start_datetime: string | null;
-    end_datetime: string | null;
-}
-
-export interface ItemTable {
-    id: Generated<number>;
-    product_id: number;
-    quantity: number;
 }
 
 export interface UserTable {
@@ -57,20 +51,7 @@ export interface UserTable {
     deleted_at: deletedAtColumn;
 }
 
-export interface PriceTable {
-    id: Generated<number>;
-    item_id: number;
-    unit_price: number;
-    start_datetime: string | null;
-    end_datetime: string | null;
-}
-
-export interface ProductTable {
-    id: Generated<number>;
-    name: string;
-    description: string | null;
-}
-
+// User related types
 export interface RoleTable {
     id: Generated<number>;
     name: string;
@@ -103,26 +84,43 @@ export interface SessionTable {
     expired_at: string;
 }
 
-export type Discount = Selectable<DiscountTable>;
-export type DiscountInsert = Insertable<DiscountTable>;
-export type DiscountUpdate = Updateable<DiscountTable>;
+// Item related types
+export interface ProductTable {
+    id: Generated<number>;
+    name: string;
+    description: string | null;
+}
 
-export type Item = Selectable<ItemTable>;
-export type ItemInsert = Insertable<ItemTable>;
-export type ItemUpdate = Updateable<ItemTable>;
+export interface ItemTable {
+    id: Generated<number>;
+    product_id: number;
+    quantity: number;
+}
 
+export interface PriceTable {
+    id: Generated<number>;
+    item_id: number;
+    unit_price: number;
+    start_datetime: string | null;
+    end_datetime: string | null;
+}
+
+export interface DiscountTable {
+    id: Generated<number>;
+    item_id: number;
+    type: string;
+    amount: number;
+    start_datetime: string | null;
+    end_datetime: string | null;
+}
+
+// Customization related types
 export interface CustomizationGroupTable {
     id: Generated<number>;
     name: string;
     description: string | null;
     is_required: boolean;
     is_multiple_choice: boolean;
-}
-
-export interface ItemCustomizationGroupTable {
-    id: Generated<number>;
-    item_id: number;
-    customization_group_id: number;
 }
 
 export interface CustomizationTable {
@@ -134,6 +132,13 @@ export interface CustomizationTable {
     price_delta: number;
 }
 
+export interface ItemCustomizationGroupTable {
+    id: Generated<number>;
+    item_id: number;
+    customization_group_id: number;
+}
+
+// Trade related types
 export interface TradeTable {
     id: Generated<number>;
     user_id: number;
@@ -154,6 +159,7 @@ export interface TradeItemCustomizationTable {
     price_delta_snapshot: number;
 }
 
+// Purchase related types
 export interface ManufacturerTable {
     id: Generated<number>;
     name: string;
@@ -176,6 +182,7 @@ export interface PurchaseOrderItemTable {
     quantity: number;
 }
 
+// User related types
 export type Role = Selectable<RoleTable>;
 export type RoleInsert = Insertable<RoleTable>;
 export type RoleUpdate = Updateable<RoleTable>;
@@ -188,35 +195,43 @@ export type RolePermission = Selectable<RolePermissionTable>;
 export type RolePermissionInsert = Insertable<RolePermissionTable>;
 export type RolePermissionUpdate = Updateable<RolePermissionTable>;
 
-
 export type User = Selectable<UserTable>;
 export type UserInsert = Insertable<UserTable>;
 export type UserUpdate = Updateable<UserTable>;
 
-export type Price = Selectable<PriceTable>;
-export type PriceInsert = Insertable<PriceTable>;
-export type PriceUpdate = Updateable<PriceTable>;
+export type Session = Selectable<SessionTable>;
+export type SessionInsert = Insertable<SessionTable>;
+export type SessionUpdate = Updateable<SessionTable>;
 
+// Item related types
 export type Product = Selectable<ProductTable>;
 export type ProductInsert = Insertable<ProductTable>;
 export type ProductUpdate = Updateable<ProductTable>;
 
-export type Session = Selectable<SessionTable>;
-export type SessionInsert = Insertable<SessionTable>;
-export type SessionUpdate = Updateable<SessionTable>;
+export type Item = Selectable<ItemTable>;
+export type ItemInsert = Insertable<ItemTable>;
+export type ItemUpdate = Updateable<ItemTable>;
+
+export type Discount = Selectable<DiscountTable>;
+export type DiscountInsert = Insertable<DiscountTable>;
+export type DiscountUpdate = Updateable<DiscountTable>;
+
+export type Price = Selectable<PriceTable>;
+export type PriceInsert = Insertable<PriceTable>;
+export type PriceUpdate = Updateable<PriceTable>;
 
 // Customization related types
 export type CustomizationGroup = Selectable<CustomizationGroupTable>;
 export type CustomizationGroupInsert = Insertable<CustomizationGroupTable>;
 export type CustomizationGroupUpdate = Updateable<CustomizationGroupTable>;
 
-export type ItemCustomization = Selectable<ItemCustomizationGroupTable>;
-export type ItemCustomizationInsert = Insertable<ItemCustomizationGroupTable>;
-export type ItemCustomizationUpdate = Updateable<ItemCustomizationGroupTable>;
-
 export type Customization = Selectable<CustomizationTable>;
 export type CustomizationInsert = Insertable<CustomizationTable>;
 export type CustomizationUpdate = Updateable<CustomizationTable>;
+
+export type ItemCustomizationGroup = Selectable<ItemCustomizationGroupTable>;
+export type ItemCustomizationGroupInsert = Insertable<ItemCustomizationGroupTable>;
+export type ItemCustomizationGroupUpdate = Updateable<ItemCustomizationGroupTable>;
 
 // Trade related types
 export type Trade = Selectable<TradeTable>;
@@ -243,4 +258,3 @@ export type PurchaseOrderUpdate = Updateable<PurchaseOrderTable>;
 export type PurchaseOrderItem = Selectable<PurchaseOrderItemTable>;
 export type PurchaseOrderItemInsert = Insertable<PurchaseOrderItemTable>;
 export type PurchaseOrderItemUpdate = Updateable<PurchaseOrderItemTable>;
-
