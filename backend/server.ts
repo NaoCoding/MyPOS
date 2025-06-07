@@ -14,7 +14,7 @@ import roleRouter from './routes/role';
 import logoutRouter from './routes/logout';
 import authRouter from './routes/auth';
 import userManagementRouter from './routes/userManagement';
-import manufactorRouter from './routes/manufacturer';
+import manufacturerRouter from './routes/manufacturer';
 import purchaseOrderRouter from './routes/purchaseOrder';
 import purchaseOrderItemRouter from './routes/purchaseOrderItem';
 import customizationRouter from './routes/customization';
@@ -41,7 +41,7 @@ app.use('/role', roleRouter);
 app.use('/logout', logoutRouter);
 app.use('/auth', authRouter);
 app.use('/api', userManagementRouter); // 用戶管理 API
-app.use('/manufacturer', manufactorRouter);
+app.use('/manufacturer', manufacturerRouter);
 app.use('/purchase_order', purchaseOrderRouter);
 app.use('/purchase_order_item', purchaseOrderItemRouter);
 app.use('/customization', customizationRouter);

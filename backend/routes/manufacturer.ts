@@ -1,11 +1,11 @@
 import { Router, Request, Response } from 'express';
-import { createManufactor, findManufactor, getManufactors, updateManufactor } from '../models/manufacturer';
+import { createManufacturer, findManufacturer, getManufacturers, updateManufacturer } from '../models/manufacturer';
 import { requireClerk } from '../middleware';
 
-const manufactorRouter = Router();
-manufactorRouter.use(requireClerk);
+const manufacturerRouter = Router();
+manufacturerRouter.use(requireClerk);
 
-manufactorRouter.post('/', async (req: Request, res: Response) => {
+manufacturerRouter.post('/', async (req: Request, res: Response) => {
     const { name, address } = req.body;
 
     // Validate request body
@@ -17,64 +17,64 @@ manufactorRouter.post('/', async (req: Request, res: Response) => {
     }
 
     try {
-        const manufactor = await findManufactor({ name });
-        if (manufactor) {
+        const manufacturer = await findManufacturer({ name });
+        if (manufacturer) {
             res.status(400).json({
-                message: "Manufactor with this name already exists"
+                message: "Manufacturer with this name already exists"
             });
             return;
         }
 
-        await createManufactor({
+        await createManufacturer({
             name,
             address,
         });
 
         res.status(201).json({
-            message: "Manufactor created successfully"
+            message: "Manufacturer created successfully"
         });
     }
     catch (error) {
-        console.error("Error creating manufactor:", error);
+        console.error("Error creating manufacturer:", error);
         res.status(500).json({
             message: "Internal server error"
         });
     }
 });
 
-manufactorRouter.get('/', async (req: Request, res: Response) => {
+manufacturerRouter.get('/', async (req: Request, res: Response) => {
     try {
-        const manufactors = await getManufactors();
-        res.status(200).json(manufactors);
+        const manufacturers = await getManufacturers();
+        res.status(200).json(manufacturers);
     }
     catch (error) {
-        console.error("Error fetching manufactors:", error);
+        console.error("Error fetching manufacturers:", error);
         res.status(500).json({
             message: "Internal server error"
         });
     }
 });
 
-manufactorRouter.get('/:id', async (req: Request, res: Response) => {
+manufacturerRouter.get('/:id', async (req: Request, res: Response) => {
     try {
-        const manufactor = await findManufactor({ id: parseInt(req.params.id) });
-        if (!manufactor) {
+        const manufacturer = await findManufacturer({ id: parseInt(req.params.id) });
+        if (!manufacturer) {
             res.status(404).json({
-                message: "Manufactor not found"
+                message: "Manufacturer not found"
             });
             return;
         }
-        res.status(200).json(manufactor);
+        res.status(200).json(manufacturer);
     }
     catch (error) {
-        console.error("Error fetching manufactor:", error);
+        console.error("Error fetching manufacturer:", error);
         res.status(500).json({
             message: "Internal server error"
         });
     }
 });
 
-manufactorRouter.put('/:id', async (req: Request, res: Response) => {
+manufacturerRouter.put('/:id', async (req: Request, res: Response) => {
     const { name, address } = req.body;
 
     // Validate request body
@@ -86,30 +86,30 @@ manufactorRouter.put('/:id', async (req: Request, res: Response) => {
     }
 
     try {
-        const manufactor = await findManufactor({ id: parseInt(req.params.id) });
-        if (!manufactor) {
+        const manufacturer = await findManufacturer({ id: parseInt(req.params.id) });
+        if (!manufacturer) {
             res.status(404).json({
-                message: "Manufactor not found"
+                message: "Manufacturer not found"
             });
             return;
         }
 
-        await updateManufactor({
-            id: manufactor.id,
+        await updateManufacturer({
+            id: manufacturer.id,
             name,
             address,
         });
 
         res.status(200).json({
-            message: "Manufactor updated successfully"
+            message: "Manufacturer updated successfully"
         });
     }
     catch (error) {
-        console.error("Error updating manufactor:", error);
+        console.error("Error updating manufacturer:", error);
         res.status(500).json({
             message: "Internal server error"
         });
     }
 });
 
-export default manufactorRouter;
+export default manufacturerRouter;
