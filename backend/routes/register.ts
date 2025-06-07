@@ -44,6 +44,7 @@ registerRouter.post('/', checkNotLogin, async (req: Request, res: Response) => {
             email,
             telephone,
             password: await bcrypt.hash(password, BCRYPT_SALT_ROUNDS),
+            role_id: 1,
         });
 
         res.status(201).json({

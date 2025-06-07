@@ -64,7 +64,7 @@ loginRouter.post('/', checkNotLogin, async (req: Request, res: Response) => {
         })
         .json({
             message: "登入成功",
-            user: { username: user.username },
+            user: { username: user.username ,  token: newToken,},
         });
     }
     catch (error) {
