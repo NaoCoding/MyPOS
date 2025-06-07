@@ -1,10 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { createDiscount, findDiscount, getDiscounts, updateDiscount } from '../models/discount';
-import { checkLogin } from '../middleware';
+import { requireClerk } from '../middleware';
 import { findItem } from '../models/item';
 
 const discountRouter = Router();
-discountRouter.use(checkLogin);
+discountRouter.use(requireClerk);
 
 discountRouter.post('/', async (req: Request, res: Response) => {
     const { item_id, type, amount } = req.body;

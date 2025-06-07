@@ -1,260 +1,168 @@
-import {
-    ColumnType,
-    Generated,
-    Insertable,
-    JSONColumnType,
-    Selectable,
-    Updateable,
-} from 'kysely';
+import { sql, Kysely } from 'kysely';
 
-type createdAtColumn = ColumnType<string, never, never>;
-type deletedAtColumn = ColumnType<string | null, never, string | null>;
+export async function up(db: Kysely<any>): Promise<void> {
+    await db.schema
+        .createTable('product')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('name', 'varchar', (col) => col.notNull())
+        .addColumn('description', 'text', (col) => col.defaultTo(null))
+        .execute();
 
-export interface Database {
-    // User related tables
-    user: UserTable;
-    role: RoleTable;
-    permission: PermissionTable;
-    role_permission: RolePermissionTable;
-    session: SessionTable;
+    await db.schema
+        .createTable('item')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('product_id', 'integer', (col) => col.notNull())
+        .addColumn('quantity', 'integer', (col) => col.notNull())
+        .addForeignKeyConstraint('fk_product_id', ['product_id'], 'product', ['id'], (col) =>
+            col.onDelete('cascade').onUpdate('cascade')
+        )
+        .execute();
 
-    // Item related tables
-    product: ProductTable;
-    item: ItemTable;
-    price: PriceTable;
-    discount: DiscountTable;
+    await db.schema
+        .createTable('price')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('item_id', 'integer', (col) => col.notNull())
+        .addColumn('unit_price', 'decimal', (col) => col.notNull())
+        .addColumn('start_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
+        .addColumn('end_datetime', 'datetime', (col) => col.defaultTo(null))
+        .addForeignKeyConstraint('fk_item_id', ['item_id'], 'item', ['id'], (col) =>
+            col.onDelete('cascade').onUpdate('cascade')
+        )
+        .execute();
 
-    // Customization related tables
-    customization_group: CustomizationGroupTable;
-    customization: CustomizationTable;
-    item_customization_group: ItemCustomizationGroupTable;
+    await db.schema
+        .createTable('discount')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('item_id', 'integer', (col) => col.notNull())
+        .addColumn('type', 'varchar', (col) => col.notNull().check(sql`type IN ('percentage', 'fixed')`))
+        .addColumn('amount', 'decimal', (col) => col.notNull())
+        .addColumn('start_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
+        .addColumn('end_datetime', 'datetime', (col) => col.defaultTo(null))
+        .addForeignKeyConstraint('fk_item_id', ['item_id'], 'item', ['id'], (col) =>
+            col.onDelete('cascade').onUpdate('cascade')
+        )
+        .execute();
 
-    // Trade related tables
-    trade: TradeTable;
-    trade_item: TradeItemTable;
-    trade_item_customization: TradeItemCustomizationTable;
+    await db.schema
+        .createTable('customization_group')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('name', 'varchar', (col) => col.notNull())
+        .addColumn('description', 'text', (col) => col.defaultTo(null))
+        .addColumn('is_required', 'boolean', (col) => col.notNull().defaultTo(false))
+        .addColumn('is_multiple_choice', 'boolean', (col) => col.notNull().defaultTo(false))
+        .execute();
 
-    // Purchase related tables
-    manufacturer: ManufacturerTable;
-    purchase_order: PurchaseOrderTable;
-    purchase_order_item: PurchaseOrderItemTable;
+    await db.schema
+        .createTable('item_customization_group')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('item_id', 'integer', (col) => col.notNull())
+        .addColumn('customization_group_id', 'integer', (col) => col.notNull())
+        .addForeignKeyConstraint('fk_item_id', ['item_id'], 'item', ['id'], (col) =>
+            col.onDelete('cascade').onUpdate('cascade')
+        )
+        .addForeignKeyConstraint('fk_customization_group_id', ['customization_group_id'], 'customization_group', ['id'], (col) =>
+            col.onDelete('cascade').onUpdate('cascade')
+        )
+        .execute();
+
+    await db.schema
+        .createTable('customization')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('customization_group_id', 'integer', (col) => col.notNull())
+        .addColumn('name', 'varchar', (col) => col.notNull())
+        .addColumn('description', 'text', (col) => col.defaultTo(null))
+        .addColumn('is_available', 'boolean', (col) => col.notNull())
+        .addColumn('price_delta', 'decimal', (col) => col.defaultTo(0))
+        .addForeignKeyConstraint('fk_customization_group_id', ['customization_group_id'], 'customization_group', ['id'], (col) =>
+            col.onDelete('cascade').onUpdate('cascade')
+        )
+        .execute();
+
+    await db.schema
+        .createTable('trade')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('user_id', 'integer', (col) => col.notNull())
+        .addColumn('trade_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
+        .addColumn('status', 'varchar', (col) => col.notNull().check(sql`status IN ('pending', 'completed')`))
+        .addForeignKeyConstraint('fk_user_id', ['user_id'], 'user', ['id'], (col) =>
+            col.onDelete('cascade').onUpdate('cascade')
+        )
+        .execute();
+
+    await db.schema
+        .createTable('trade_item')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('trade_id', 'integer', (col) => col.notNull())
+        .addColumn('item_id', 'integer', (col) => col.notNull())
+        .addColumn('quantity', 'integer', (col) => col.notNull())
+        .addForeignKeyConstraint('fk_trade_id', ['trade_id'], 'trade', ['id'],
+            (col) => col.onDelete('cascade').onUpdate('cascade')
+        )
+        .addForeignKeyConstraint('fk_item_id', ['item_id'], 'item', ['id'],
+            (col) => col.onDelete('cascade').onUpdate('cascade')
+        )
+        .execute();
+
+    await db.schema
+        .createTable('trade_item_customization')
+        .addColumn('trade_item_id', 'integer', (col) => col.notNull())
+        .addColumn('customization_id', 'integer', (col) => col.notNull())
+        .addColumn('price_delta_snapshot' , 'decimal', (col) => col.notNull())
+        .addForeignKeyConstraint('fk_trade_item_id', ['trade_item_id'], 'trade_item', ['id'],
+            (col) => col.onDelete('cascade').onUpdate('cascade')
+        )
+        .addForeignKeyConstraint('fk_customization_id', ['customization_id'], 'customization', ['id'],
+            (col) => col.onDelete('cascade').onUpdate('cascade')
+        )
+        .execute();
+
+    await db.schema
+        .createTable('manufacturer')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('name' , 'varchar', (col) => col.notNull())
+        .addColumn('telephone', 'varchar', (col) => col.defaultTo(null))
+        .addColumn('address', 'varchar', (col) => col.defaultTo(null))
+        .execute();
+
+    await db.schema
+        .createTable('purchase_order')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('manufacturer_id', 'integer', (col) => col.notNull())
+        .addColumn('user_id' , 'integer', (col) => col.notNull())
+        .addColumn('order_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
+        .addColumn('status' , 'varchar', (col) => col.notNull().check(sql`status IN ('pending', 'delivered')`))
+        .addForeignKeyConstraint('fk_manufacturer_id', ['manufacturer_id'], 'manufacturer', ['id'], 
+            (col) => col.onUpdate('cascade').onDelete('cascade')
+        )
+        .addForeignKeyConstraint('fk_user_id', ['user_id'], 'user', ['id'],
+            (col) => col.onUpdate('cascade').onDelete('cascade')
+        )
+        .execute();
+
+    await db.schema
+        .createTable('purchase_order_item')
+        .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
+        .addColumn('purchase_order_id', 'integer', (col) => col.notNull())
+        .addColumn('item_id', 'integer', (col) => col.notNull())
+        .addColumn('quantity', 'integer', (col) => col.notNull())
+        .addForeignKeyConstraint('fk_purchase_order_id', ['purchase_order_id'], 'purchase_order', ['id'],
+            (col) => col.onUpdate('cascade').onDelete('cascade')
+        )
+        .execute();
 }
 
-export interface UserTable {
-    id: Generated<number>;
-    username: string;
-    role_id: number;
-    email: string;
-    telephone: string;
-    password: string;
-    created_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
+export async function down(db: Kysely<any>): Promise<void> {
+    await db.schema.dropTable('purchase_order_item').execute();
+    await db.schema.dropTable('purchase_order').execute();
+    await db.schema.dropTable('manufacturer').execute();
+    await db.schema.dropTable('trade_item_customization').execute();
+    await db.schema.dropTable('trade_item').execute();
+    await db.schema.dropTable('trade').execute();
+    await db.schema.dropTable('customization').execute();
+    await db.schema.dropTable('item_customization_group').execute();
+    await db.schema.dropTable('customization_group').execute();
+    await db.schema.dropTable('discount').execute();
+    await db.schema.dropTable('price').execute();
+    await db.schema.dropTable('item').execute();
+    await db.schema.dropTable('product').execute();
 }
-
-// User related types
-export interface RoleTable {
-    id: Generated<number>;
-    name: string;
-    created_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
-    updated_at: createdAtColumn;
-}
-
-export interface PermissionTable {
-    id: Generated<number>;
-    name: string;
-    description: string;
-    created_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
-    updated_at: createdAtColumn;
-}
-
-export interface RolePermissionTable {
-    role_id: number;
-    permission_id: number;
-    created_at: createdAtColumn;
-    deleted_at: deletedAtColumn;
-    updated_at: createdAtColumn;
-}
-
-export interface SessionTable {
-    id: Generated<number>;
-    user_id: number;
-    token: string;
-    expired_at: string;
-}
-
-// Item related types
-export interface ProductTable {
-    id: Generated<number>;
-    name: string;
-    description: string | null;
-}
-
-export interface ItemTable {
-    id: Generated<number>;
-    product_id: number;
-    quantity: number;
-}
-
-export interface PriceTable {
-    id: Generated<number>;
-    item_id: number;
-    unit_price: number;
-    start_datetime: string | null;
-    end_datetime: string | null;
-}
-
-export interface DiscountTable {
-    id: Generated<number>;
-    item_id: number;
-    type: string;
-    amount: number;
-    start_datetime: string | null;
-    end_datetime: string | null;
-}
-
-// Customization related types
-export interface CustomizationGroupTable {
-    id: Generated<number>;
-    name: string;
-    description: string | null;
-    is_required: boolean;
-    is_multiple_choice: boolean;
-}
-
-export interface CustomizationTable {
-    id: Generated<number>;
-    customization_group_id: number;
-    name: string;
-    description: string | null;
-    is_available: boolean;
-    price_delta: number;
-}
-
-export interface ItemCustomizationGroupTable {
-    id: Generated<number>;
-    item_id: number;
-    customization_group_id: number;
-}
-
-// Trade related types
-export interface TradeTable {
-    id: Generated<number>;
-    user_id: number;
-    trade_datetime: string | null;
-    status: 'pending' | 'completed';
-}
-
-export interface TradeItemTable {
-    id: Generated<number>;
-    trade_id: number;
-    item_id: number;
-    quantity: number;
-}
-
-export interface TradeItemCustomizationTable {
-    trade_item_id: number;
-    customization_id: number;
-    price_delta_snapshot: number;
-}
-
-// Purchase related types
-export interface ManufacturerTable {
-    id: Generated<number>;
-    name: string;
-    telephone: string | null;
-    address: string | null;
-}
-
-export interface PurchaseOrderTable {
-    id: Generated<number>;
-    manufacturer_id: number;
-    user_id: number;
-    order_datetime: string | null;
-    status: 'pending' | 'completed';
-}
-
-export interface PurchaseOrderItemTable {
-    id: Generated<number>;
-    purchase_order_id: number;
-    item_id: number;
-    quantity: number;
-}
-
-// User related types
-export type Role = Selectable<RoleTable>;
-export type RoleInsert = Insertable<RoleTable>;
-export type RoleUpdate = Updateable<RoleTable>;
-
-export type Permission = Selectable<PermissionTable>;
-export type PermissionInsert = Insertable<PermissionTable>;
-export type PermissionUpdate = Updateable<PermissionTable>;
-
-export type RolePermission = Selectable<RolePermissionTable>;
-export type RolePermissionInsert = Insertable<RolePermissionTable>;
-export type RolePermissionUpdate = Updateable<RolePermissionTable>;
-
-export type User = Selectable<UserTable>;
-export type UserInsert = Insertable<UserTable>;
-export type UserUpdate = Updateable<UserTable>;
-
-export type Session = Selectable<SessionTable>;
-export type SessionInsert = Insertable<SessionTable>;
-export type SessionUpdate = Updateable<SessionTable>;
-
-// Item related types
-export type Product = Selectable<ProductTable>;
-export type ProductInsert = Insertable<ProductTable>;
-export type ProductUpdate = Updateable<ProductTable>;
-
-export type Item = Selectable<ItemTable>;
-export type ItemInsert = Insertable<ItemTable>;
-export type ItemUpdate = Updateable<ItemTable>;
-
-export type Discount = Selectable<DiscountTable>;
-export type DiscountInsert = Insertable<DiscountTable>;
-export type DiscountUpdate = Updateable<DiscountTable>;
-
-export type Price = Selectable<PriceTable>;
-export type PriceInsert = Insertable<PriceTable>;
-export type PriceUpdate = Updateable<PriceTable>;
-
-// Customization related types
-export type CustomizationGroup = Selectable<CustomizationGroupTable>;
-export type CustomizationGroupInsert = Insertable<CustomizationGroupTable>;
-export type CustomizationGroupUpdate = Updateable<CustomizationGroupTable>;
-
-export type Customization = Selectable<CustomizationTable>;
-export type CustomizationInsert = Insertable<CustomizationTable>;
-export type CustomizationUpdate = Updateable<CustomizationTable>;
-
-export type ItemCustomizationGroup = Selectable<ItemCustomizationGroupTable>;
-export type ItemCustomizationGroupInsert = Insertable<ItemCustomizationGroupTable>;
-export type ItemCustomizationGroupUpdate = Updateable<ItemCustomizationGroupTable>;
-
-// Trade related types
-export type Trade = Selectable<TradeTable>;
-export type TradeInsert = Insertable<TradeTable>;
-export type TradeUpdate = Updateable<TradeTable>;
-
-export type TradeItem = Selectable<TradeItemTable>;
-export type TradeItemInsert = Insertable<TradeItemTable>;
-export type TradeItemUpdate = Updateable<TradeItemTable>;
-
-export type TradeItemCustomization = Selectable<TradeItemCustomizationTable>;
-export type TradeItemCustomizationInsert = Insertable<TradeItemCustomizationTable>;
-export type TradeItemCustomizationUpdate = Updateable<TradeItemCustomizationTable>;
-
-// Purchase related types
-export type Manufacturer = Selectable<ManufacturerTable>;
-export type ManufacturerInsert = Insertable<ManufacturerTable>;
-export type ManufacturerUpdate = Updateable<ManufacturerTable>;
-
-export type PurchaseOrder = Selectable<PurchaseOrderTable>;
-export type PurchaseOrderInsert = Insertable<PurchaseOrderTable>;
-export type PurchaseOrderUpdate = Updateable<PurchaseOrderTable>;
-
-export type PurchaseOrderItem = Selectable<PurchaseOrderItemTable>;
-export type PurchaseOrderItemInsert = Insertable<PurchaseOrderItemTable>;
-export type PurchaseOrderItemUpdate = Updateable<PurchaseOrderItemTable>;
