@@ -1,9 +1,7 @@
 import { Router, Request, Response } from 'express';
-import { createItem, findItem, getItems, updateItem } from '../models/item';
+import { createItem, findItem, findItemWithPriceAndDiscount, getItemsWithPriceAndDiscount, updateItem } from '../models/item';
 import { checkLogin } from '../middleware';
 import { findProduct } from '../models/product';
-import { findCurrentPrice } from '../models/price';
-import { findCurrentDiscount } from '../models/discount';
 
 const itemRouter = Router();
 itemRouter.use(checkLogin);
@@ -55,7 +53,7 @@ itemRouter.post('/', async (req: Request, res: Response) => {
 
 itemRouter.get('/', async (req: Request, res: Response) => {
     try {
-        const items = await getItems();
+        const items = await getItemsWithPriceAndDiscount();
         res.status(200).json(items);
     }
     catch (error) {
@@ -67,8 +65,11 @@ itemRouter.get('/', async (req: Request, res: Response) => {
 });
 
 itemRouter.get('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+
     try {
-        const item = await findItem({ id: parseInt(req.params.id) });
+        const item = await findItemWithPriceAndDiscount({ id: Number(id) });
+
         if (!item) {
             res.status(404).json({
                 message: "Item not found"
@@ -76,17 +77,7 @@ itemRouter.get('/:id', async (req: Request, res: Response) => {
             return;
         }
 
-        const price = await findCurrentPrice({ item_id: item.id });
-        const discount = await findCurrentDiscount({ item_id: item.id });
-
-        res.status(200).json({
-            id: item.id,
-            product_id: item.product_id,
-            quantity: item.quantity,
-            price: price ? price.unit_price : 0,
-            discount_type: discount ? discount.type : null,
-            discount: discount ? discount.amount : 0
-        });
+        res.status(200).json(item);
     }
     catch (error) {
         console.error("Error fetching item:", error);
