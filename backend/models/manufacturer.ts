@@ -1,21 +1,21 @@
 import { db } from '../database/db';
 import { Manufacturer, ManufacturerInsert, ManufacturerUpdate } from '../database/schema';
 
-export async function createManufactor(manufacturer: ManufacturerInsert) {
+export async function createManufacturer(manufacturer: ManufacturerInsert) {
     return await db
         .insertInto('manufacturer')
         .values(manufacturer)
         .executeTakeFirstOrThrow();
 }
 
-export async function getManufactors() {
+export async function getManufacturers() {
     return await db
         .selectFrom('manufacturer')
         .selectAll()
         .execute();
 }
 
-export async function findManufactor(data: Partial<Manufacturer>) {
+export async function findManufacturer(data: Partial<Manufacturer>) {
     let query = db.selectFrom('manufacturer');
     if (data.id) {
         query = query.where('manufacturer.id', '=', data.id);
@@ -26,7 +26,7 @@ export async function findManufactor(data: Partial<Manufacturer>) {
     return await query.selectAll().executeTakeFirst();
 }
 
-export async function updateManufactor(manufacturer: ManufacturerUpdate) {
+export async function updateManufacturer(manufacturer: ManufacturerUpdate) {
     if (!manufacturer.id) {
         throw new Error('id is required to update manufacturer');
     }
