@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createManufactor, findManufactor, getManufactors, updateManufactor } from '../models/manufactor';
+import { createManufactor, findManufactor, getManufactors, updateManufactor } from '../models/manufacturer';
 import { checkLogin } from '../middleware';
 
 const manufactorRouter = Router();
