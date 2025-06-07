@@ -11,12 +11,13 @@ export async function createDiscount(discount: DiscountInsert) {
 export async function getDiscounts() {
     return await db
         .selectFrom('discount')
+        .where('discount.deleted_at', 'is', null)
         .selectAll()
         .execute();
 }
 
 export async function findDiscount(data: Partial<Discount>) {
-    let query = db.selectFrom('discount');
+    let query = db.selectFrom('discount').where('discount.deleted_at', 'is', null);
 
     if (data.id) {
         query = query.where('discount.id', '=', data.id);
@@ -30,7 +31,9 @@ export async function findDiscount(data: Partial<Discount>) {
 }
 
 export async function findCurrentDiscount(data: Partial<Discount>) {
-    let query = db.selectFrom('discount').where('discount.end_datetime', 'is', null);
+    let query = db.selectFrom('discount')
+        .where('discount.deleted_at', 'is', null)
+        .where('discount.end_datetime', 'is', null);
 
     if (data.id) {
         query = query.where('discount.id', '=', data.id);
@@ -61,7 +64,8 @@ export async function deleteDiscount(discount: DiscountUpdate) {
     }
 
     return await db
-        .deleteFrom('discount')
+        .updateTable('discount')
+        .set({ deleted_at: new Date().toISOString() })
         .where('id', '=', discount.id)
         .executeTakeFirstOrThrow();
 }

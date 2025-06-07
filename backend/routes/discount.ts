@@ -139,10 +139,10 @@ discountRouter.put('/:id', async (req: Request, res: Response) => {
             return;
         }
 
-        const discount = await findDiscount({ id: Number(id) });
-        if (!discount) {
+        const itemDiscount = await findDiscount({ item_id });
+        if (!itemDiscount) {
             res.status(404).json({
-                message: "Discount with ID " + id + " not found"
+                message: "Discount not found"
             });
             return;
         }

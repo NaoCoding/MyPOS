@@ -11,12 +11,13 @@ export async function createProduct(product: ProductInsert) {
 export async function getProducts() {
     return await db
         .selectFrom('product')
+        .where('product.deleted_at', 'is', null)
         .selectAll()
         .execute();
 }
 
 export async function findProduct(data: Partial<Product>) {
-    let query = db.selectFrom('product');
+    let query = db.selectFrom('product').where('product.deleted_at', 'is', null);
 
     if (data.id) {
         query = query.where('product.id', '=', data.id);
@@ -47,7 +48,8 @@ export async function deleteProduct(product: ProductUpdate) {
     }
 
     return await db
-        .deleteFrom('product')
+        .updateTable('product')
+        .set({ deleted_at: new Date().toISOString() })
         .where('id', '=', product.id)
         .executeTakeFirstOrThrow();
 }

@@ -11,12 +11,13 @@ export async function createItem(item: ItemInsert) {
 export async function getItems() {
     return await db
         .selectFrom('item')
+        .where('item.deleted_at', 'is', null)
         .selectAll()
         .execute();
 }
 
 export async function findItem(data: Partial<Item>) {
-    let query = db.selectFrom('item');
+    let query = db.selectFrom('item').where('item.deleted_at', 'is', null);
 
     if (data.id) {
         query = query.where('item.id', '=', data.id);
@@ -47,7 +48,8 @@ export async function deleteItem(item: ItemUpdate) {
     }
 
     return await db
-        .deleteFrom('item')
+        .updateTable('item')
+        .set({ deleted_at: new Date().toISOString() })
         .where('id', '=', item.id)
         .executeTakeFirstOrThrow();
 }

@@ -11,12 +11,13 @@ export async function createPrice(price: PriceInsert) {
 export async function getPrices() {
     return await db
         .selectFrom('price')
+        .where('price.deleted_at', 'is', null)
         .selectAll()
         .execute();
 }
 
 export async function findPrices(data: Partial<Price>) {
-    let query = db.selectFrom('price');
+    let query = db.selectFrom('price').where('price.deleted_at', 'is', null);
 
     if (data.id) {
         query = query.where('price.id', '=', data.id);
@@ -38,7 +39,9 @@ export async function findPrices(data: Partial<Price>) {
 }
 
 export async function findCurrentPrice(data: Partial<Price>) {
-    let query = db.selectFrom('price').where('price.end_datetime', 'is', null);
+    let query = db.selectFrom('price')
+        .where('price.deleted_at', 'is', null)
+        .where('price.end_datetime', 'is', null);
 
     if (data.id) {
         query = query.where('price.id', '=', data.id);
@@ -69,7 +72,8 @@ export async function deletePrice(price: PriceUpdate) {
     }
 
     return await db
-        .deleteFrom('price')
+        .updateTable('price')
+        .set({ deleted_at: new Date().toISOString() })
         .where('id', '=', price.id)
         .executeTakeFirstOrThrow();
 }
