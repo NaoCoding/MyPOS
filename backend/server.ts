@@ -14,7 +14,7 @@ import roleRouter from './routes/role';
 import logoutRouter from './routes/logout';
 import authRouter from './routes/auth';
 import userManagementRouter from './routes/userManagement';
-import manufactorRouter from './routes/manufactor';
+import manufactorRouter from './routes/manufacturer';
 
 
 
