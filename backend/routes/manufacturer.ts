@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { createManufactor, findManufactor, getManufactors, updateManufactor } from '../models/manufacturer';
-import { checkLogin } from '../middleware';
+import { requireClerk } from '../middleware';
 
 const manufactorRouter = Router();
-manufactorRouter.use(checkLogin);
+manufactorRouter.use(requireClerk);
 
 manufactorRouter.post('/', async (req: Request, res: Response) => {
     const { name, address } = req.body;
