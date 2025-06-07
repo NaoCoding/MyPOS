@@ -40,7 +40,7 @@ app.use('/role', roleRouter);
 app.use('/logout', logoutRouter);
 app.use('/auth', authRouter);
 app.use('/api', userManagementRouter); // 用戶管理 API
-app.use('/manufactor', manufactorRouter);
+app.use('/manufacturer', manufactorRouter);
 
 app.listen(BACKEND_PORT, () => {
     console.log(`Server is running on port ${BACKEND_PORT}`);
