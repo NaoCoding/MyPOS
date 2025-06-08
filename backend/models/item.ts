@@ -18,8 +18,8 @@ export async function getItems() {
 export async function getItemsWithPriceAndDiscount() {
     return await db
         .selectFrom('item')
-        .innerJoin('price', 'item.id', 'price.item_id')
-        .innerJoin('discount', 'item.id', 'discount.item_id')
+        .leftJoin('price', 'item.id', 'price.item_id')
+        .leftJoin('discount', 'item.id', 'discount.item_id')
         .where('price.end_datetime', 'is', null)
         .where('discount.end_datetime', 'is', null)
         .select([
@@ -49,8 +49,8 @@ export async function findItem(data: Partial<Item>) {
 
 export async function findItemWithPriceAndDiscount(data: Partial<Item>) {
     let query = db.selectFrom('item')
-        .innerJoin('price', 'item.id', 'price.item_id')
-        .innerJoin('discount', 'item.id', 'discount.item_id')
+        .leftJoin('price', 'item.id', 'price.item_id')
+        .leftJoin('discount', 'item.id', 'discount.item_id')
         .where('price.end_datetime', 'is', null)
         .where('discount.end_datetime', 'is', null);
 
