@@ -26,28 +26,28 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
     }
 
     let itemIds: number[] = [];
-    items.map((item) => {
+    for (const item of items) {
         if (!item.id || !item.quantity) {
             res.status(400).json({
                 message: "Each item must have an ID and quantity"
             });
-            throw new Error("Invalid item format");
+            return;
         }
-        else if (itemIds.includes(item.id)) {
+        if (itemIds.includes(item.id)) {
             res.status(400).json({
                 message: "Duplicate item IDs are not allowed"
             });
             return;
         }
-        else if (item.quantity <= 0) {
+        if (item.quantity <= 0) {
             res.status(400).json({
                 message: "Item quantity must be greater than 0"
             });
-            throw new Error("Invalid item quantity");
+            return;
         }
 
         itemIds.push(item.id);
-    });
+    }
 
     try {
         if (!await findUser({ id: user_id })) {
