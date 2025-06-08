@@ -1,5 +1,6 @@
 import "../styles/login.css"
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 //TODO : connect with backend and backend should return a token
 interface Credentials {
@@ -17,6 +18,7 @@ interface LoginProps {
 export default function Login(props: LoginProps) {
     const [username, setUserName] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -32,11 +34,11 @@ export default function Login(props: LoginProps) {
           });
           
           const data = await response.json();
-          console.log(data)
           
           if (response.ok) {
-            props.setToken(data.user.token);
-            window.location.href = '/';
+            props.setToken(data.user.username);
+            navigate('/');
+            window.location.reload();
           } else {
             alert(data.message);
           }

@@ -15,8 +15,7 @@ export async function migrateToLatest() {
     const { error, results } = await migrator.migrateToLatest();
 
     if (error) {
-        console.error('Error running migrations: ', error);
-        return;
+        throw error;
     }
 
     if (results?.length === 0) {
@@ -37,8 +36,7 @@ export async function migrateDown() {
     const { error, results } = await migrator.migrateDown();
 
     if (error) {
-        console.error('Error rolling back migrations: ', error);
-        return;
+        throw error;
     }
 
     if (results?.length === 0) {

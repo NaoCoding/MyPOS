@@ -1,3 +1,5 @@
+import jwt from 'jsonwebtoken';
+import { findUserSession } from './models/user';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { getUserRoleByToken } from './routes/role';
 
@@ -46,6 +48,25 @@ export const requireAuth: RequestHandler = async (req: Request, res: Response, n
   
 };
 
+// 驗證用戶是否為特定角色（role_id = 2）
+export const requireClerk: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.user) {
+    res.status(401).json({ message: '請先登入' });
+    return;
+  }
+
+  if (req.user.role_id < 2) {
+    res.status(403).json({ message: '權限不足，僅限特定角色使用' });
+    return;
+  }
+
+  next();
+  return;
+};
+
+// 組合中間件：要求登入且為特定角色（role_id = 2）
+export const requireRoleTwoAuth = [requireAuth, requireClerk];
+
 // 驗證用戶是否為管理員
 export const requireManager: RequestHandler = (req: Request, res: Response, next: NextFunction) => {
   if (!req.user) {
@@ -77,6 +98,13 @@ export function checkNotLogin(req: Request, res: Response, next: NextFunction) {
         });
         return;
     }
+
+    next();
+}
+
+export async function checkLogin(req: Request, res: Response, next: NextFunction) {
+    const token = req.cookies.token;
+
 
     next();
 }

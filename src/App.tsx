@@ -6,10 +6,31 @@ import Login from './components/login';
 import Navbar from './components/nav';
 import SignUp from './components/signup';
 import UserManagement from './components/userManagement';
+import Dashboard from './pages/Dashboard';
+import Checkout from './pages/Checkout';
+import ProductItemForm from './pages/ProductItemForm';
+import OrderManagement from './pages/OrderManagement';
+import ShiftReport from './pages/ShiftReport';
+import DailyReport from './pages/DailyReport';
+import MonthlyReport from './pages/MonthlyReport';
+import SystemSetting from './pages/SystemSetting';
+import StaffSetting from './pages/StaffSetting';
+import NoteManagement from './pages/NoteManagement';
+import PermissionSetting from './pages/PermissionSetting';
+import NoteAnalysis from './pages/NoteAnalysis';
+import CustomerAnalysis from './pages/CustomerAnalysis';
+import SalesRanking from './pages/SalesRanking';
+import Inventory from './pages/Inventory';
+import User_Home from './pages/user/Home';
+import User_Order from './pages/user/Order';
+import User_OrderSubmit from './pages/user/OrderSubmit';
+import User_OrderHistory from './pages/user/OrderHistory';
+import User_CustomerInfo from './pages/user/CustomerInfo';
 
 function App() {
   const [token, setToken] = useState<string>('');
   const [roleId, setRoleId] = useState<number>(0);
+  const [cssLoaded, setCssLoaded] = useState<boolean>(false);
 
   // 檢查登入狀態
   useEffect(() => {
@@ -36,12 +57,22 @@ function App() {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    if (token && !cssLoaded) {
+      import('./index.css').then(() => {
+        setCssLoaded(true);
+      }).catch((error) => {
+        console.error('Failed to load CSS:', error);
+      });
+    }
+  }, [token, cssLoaded]);
+
 
 
   // 如果沒有 token，顯示登入頁面
   if (!token) {
     return (
-      <div>
+      <div className="app_container">
         <NextTopLoader color='#565656' showSpinner={false} />
         <Routes>
           <Route path="/" element={<Login setToken={setToken} />} />
@@ -59,26 +90,66 @@ function App() {
         <NextTopLoader color='#565656' showSpinner={false} />
         <Navbar role_id={roleId} setToken={setToken} />
         <Routes>
-          <Route path="/" element={<div>Home Page</div>} />
-          <Route path="/history" element={<div>Order History Page</div>} />
-          <Route path="/setting" element={<div>Setting Page</div>} />
+          <Route path="/user/Home" element={<User_Home />} />
+          <Route path="/user/Order" element={<User_Order />} />
+          <Route path="/user/Submit" element={<User_OrderSubmit />} />
+          <Route path="/user/History" element={<User_OrderHistory />} />
+          <Route path="/user/CustomerInfo" element={<User_CustomerInfo />} />
         </Routes>
       </div>
     );
   }
 
-  else if(roleId === 4) {
+  else if(roleId >= 2){
     return (
       <div className="app_container">
-        <NextTopLoader color='#565656' showSpinner={false} />
         <Navbar role_id={roleId} setToken={setToken} />
+        <NextTopLoader color='#565656' showSpinner={false} />
         <Routes>
-          <Route path="/" element={<div>Manager Home Page</div>} />
+          {/* 基本頁面 */}
+          <Route path="/" element={<Dashboard/>} />
+          <Route path="/Dashboard" element={<Dashboard/>} />
+
+          {/*門市作業*/}
+          <Route path="/Checkout" element={<Checkout/>} />
+          <Route path="/Inventory" element={<Inventory/>} />
+
+          {/* 報表作業*/}
+          <Route path="/ShiftReport" element={<ShiftReport/>} />
+          <Route path="/DailyReport" element={<DailyReport/>} />
+          <Route path="/MonthlyReport" element={<MonthlyReport/>} />
+          
+          {/* 經營分析*/}
+          <Route path="/NoteAnalysis" element={<NoteAnalysis/>} />
+          <Route path="/CustomerAnalysis" element={<CustomerAnalysis/>} />
+          <Route path="/SalesRanking" element={<SalesRanking/>} />
+
+          {/* 資料管理*/}
+          <Route path="/ProductItemForm" element={<ProductItemForm/>} />
+          <Route path="/OrderManagement" element={<OrderManagement/>} />
+          <Route path="/SystemSetting" element={<SystemSetting/>} />
           <Route path="/manage/user" element={<UserManagement/>} />
+          <Route path="/NoteManagement" element={<NoteManagement/>} />
+          <Route path="/PermissionSetting" element={<PermissionSetting/>} />
+
+          if(role_id == 4){
+            <Route path="/manage/user" element={<UserManagement/>} />
+          }
+
+          <Route path="/user/Home" element={<User_Home />} />
+          <Route path="/user/Order" element={<User_Order />} />
+          <Route path="/user/Submit" element={<User_OrderSubmit />} />
+          <Route path="/user/History" element={<User_OrderHistory />} />
+          <Route path="/user/CustomerInfo" element={<User_CustomerInfo />} />
+
         </Routes>
+
       </div>
-    );
+    )
+
   }
+
+  
 
   else{
     return (<div></div>)
