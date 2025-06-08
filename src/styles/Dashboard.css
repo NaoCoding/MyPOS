@@ -1,0 +1,66 @@
+/* 根容器滿版 */
+.main-container {
+  padding: 2rem;
+  min-height: 100vh;
+  background-color: #222;
+  color: white;
+  box-sizing: border-box;
+}
+
+/* 使用 2 欄排版，螢幕夠大時拉滿 */
+.grid-layout {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 固定 2 欄 */
+  gap: 32px;
+  max-width: 1400px; /* 控制寬度，避免過寬 */
+  margin: 2rem auto; /* 自動水平置中 */
+}
+
+
+/* 區塊卡片加大 + 陰影 + 色塊感 */
+.section-block {
+  background-color: #b4ecff;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  color: #111;
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* 標題更大，底線更粗 */
+.section-block h2 {
+  margin-bottom: 1.5rem;
+  font-size: 36px;
+  font-weight: bold;
+  border-bottom: 3px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+/* 按鈕區塊寬鬆排法 */
+.button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* 按鈕更大，圓角、投影、hover 動態 */
+.menu-button {
+  background-color: #fff3c4;
+  border: none;
+  padding: 16px 24px;
+  font-size: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  min-width: 120px;
+}
+
+.menu-button:hover {
+  background-color: #ffe58f;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

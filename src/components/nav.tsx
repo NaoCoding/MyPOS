@@ -51,6 +51,26 @@ export default function Navbar({ role_id, setToken }: NavbarProps) {
     );
   }
 
+  else if (role_id === 2) {
+    return (
+      <nav className="nav">
+        <Link to="/" className="site-title">
+          MyPos
+        </Link>
+        <ul>
+          <CustomLink to="/">Home</CustomLink>
+          <CustomLink to="/history">Order History</CustomLink>
+          <CustomLink to="/setting">Setting</CustomLink>
+          <li>
+            <button onClick={logout} className="logout-button">Logout</button> {/* 修改為按鈕 */}
+          </li>
+        </ul>
+      </nav>
+    );
+
+
+  }
+
   else if (role_id === 4) {
     return (
       <nav className="nav">
@@ -66,7 +86,6 @@ export default function Navbar({ role_id, setToken }: NavbarProps) {
         </ul>
       </nav>
     );
-
   }
 
   return null;
