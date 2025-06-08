@@ -39,7 +39,7 @@ customizationRouter.post('/group', async (req: Request, res: Response) => {
         await createCustomizationGroup({
             name,
             description: description || null,
-            is_required: is_required ? 1 : 0,
+            is_required: is_required ? true : false,
             is_multiple_choice: is_multiple_choice ? 1 : 0
         });
 
@@ -118,7 +118,7 @@ customizationRouter.put('/group/:id', async (req: Request, res: Response) => {
             id: Number(id),
             name,
             description: description || null,
-            is_required: is_required ? 1 : 0,
+            is_required: is_required ? true : false,
             is_multiple_choice: is_multiple_choice ? 1 : 0
         });
 
