@@ -5,12 +5,13 @@ import { findProduct } from '../models/product';
 import { createPrice, updatePrice } from '../models/price';
 import { findCustomizationGroup } from '../models/customization_group';
 import { createItemCustomizationGroup, deleteItemCustomizationGroup, findItemCustomizationGroup } from '../models/item_customization_group';
+import { createDiscount, updateDiscount } from '../models/discount';
 
 const itemRouter = Router();
 itemRouter.use(checkLogin);
 
 itemRouter.post('/', async (req: Request, res: Response) => {
-    const { product_id, quantity, unit_price, customization_group } = req.body;
+    const { product_id, quantity, unit_price, discount_type, discount_amount, customization_group } = req.body;
 
     // Validate request body
     if (!product_id || !quantity) {
@@ -22,6 +23,24 @@ itemRouter.post('/', async (req: Request, res: Response) => {
     else if (quantity <= 0) {
         res.status(400).json({
             message: "Quantity must be greater than 0"
+        });
+        return;
+    }
+    else if (discount_type && discount_amount && (discount_type !== 'percentage' && discount_type !== 'fixed')) {
+        res.status(400).json({
+            message: "Discount type must be 'percentage' or 'fixed'"
+        });
+        return;
+    }
+    else if (discount_type && !discount_amount) {
+        res.status(400).json({
+            message: "Discount amount is required when discount type is provided"
+        });
+        return;
+    }
+    else if (discount_amount && discount_amount <= 0) {
+        res.status(400).json({
+            message: "Discount amount must be greater than 0"
         });
         return;
     }
@@ -59,6 +78,14 @@ itemRouter.post('/', async (req: Request, res: Response) => {
             await createPrice({
                 item_id,
                 unit_price
+            });
+        }
+
+        if (discount_type && discount_amount) {
+            await createDiscount({
+                item_id,
+                type: discount_type,
+                amount: discount_amount
             });
         }
 
@@ -144,7 +171,7 @@ itemRouter.get('/:id', async (req: Request, res: Response) => {
 
 itemRouter.put('/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { product_id, quantity, unit_price, customization_group } = req.body;
+    const { product_id, quantity, unit_price, discount_type, discount_amount, customization_group } = req.body;
 
     // Validate request body
     if (!id || !product_id || !quantity || !customization_group) {
@@ -162,6 +189,24 @@ itemRouter.put('/:id', async (req: Request, res: Response) => {
     else if (unit_price && unit_price <= 0) {
         res.status(400).json({
             message: "Price must be greater than 0"
+        });
+        return;
+    }
+    else if (discount_type && discount_amount && (discount_type !== 'percentage' && discount_type !== 'fixed')) {
+        res.status(400).json({
+            message: "Discount type must be 'percentage' or 'fixed'"
+        });
+        return;
+    }
+    else if ((discount_type && !discount_amount) || (!discount_type && discount_amount)) {
+        res.status(400).json({
+            message: "Discount type and amount must be provided together"
+        });
+        return;
+    }
+    else if (discount_amount && discount_amount <= 0) {
+        res.status(400).json({
+            message: "Discount amount must be greater than 0"
         });
         return;
     }
@@ -183,7 +228,39 @@ itemRouter.put('/:id', async (req: Request, res: Response) => {
         });
 
         if (unit_price) {
-            // await updatePrice({ item_id: Number(id), unit_price });
+            const existingPrice = await findItem({ id: Number(id) });
+
+            if (!existingPrice) {
+                await createPrice({
+                    item_id: Number(id),
+                    unit_price
+                });
+            }
+            else {
+                await updatePrice({
+                    item_id: Number(id),
+                    unit_price
+                });
+            }
+        }
+
+        if (discount_type && discount_amount) {
+            const existingDiscount = await findItem({ id: Number(id) });
+
+            if (!existingDiscount) {
+                await createDiscount({
+                    item_id: Number(id),
+                    type: discount_type,
+                    amount: discount_amount
+                });
+            }
+            else {
+                await updateDiscount({
+                    item_id: Number(id),
+                    type: discount_type,
+                    amount: discount_amount
+                });
+            }
         }
 
         const existingGroups = await findCustomizationGroupOfItem(Number(id));
