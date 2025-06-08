@@ -54,7 +54,7 @@ function App() {
 
   useEffect(() => {
     if (token && !cssLoaded) {
-      import('./styles/index.css').then(() => {
+      import('./index.css').then(() => {
         setCssLoaded(true);
       }).catch((error) => {
         console.error('Failed to load CSS:', error);
@@ -93,7 +93,7 @@ function App() {
     );
   }
 
-  else if(roleId === 2){
+  else if(roleId >= 2){
     return (
       <div className="app_container">
         <Navbar role_id={roleId} setToken={setToken} />
@@ -121,9 +121,13 @@ function App() {
           <Route path="/ProductItemForm" element={<ProductItemForm/>} />
           <Route path="/OrderManagement" element={<OrderManagement/>} />
           <Route path="/SystemSetting" element={<SystemSetting/>} />
-          <Route path="/StaffSetting" element={<StaffSetting/>} />
+          <Route path="/manage/user" element={<UserManagement/>} />
           <Route path="/NoteManagement" element={<NoteManagement/>} />
           <Route path="/PermissionSetting" element={<PermissionSetting/>} />
+
+          if(role_id == 4){
+            <Route path="/manage/user" element={<UserManagement/>} />
+          }
 
         </Routes>
 
@@ -132,18 +136,7 @@ function App() {
 
   }
 
-  else if(roleId === 4) {
-    return (
-      <div className="app_container">
-        <NextTopLoader color='#565656' showSpinner={false} />
-        <Navbar role_id={roleId} setToken={setToken} />
-        <Routes>
-          <Route path="/" element={<div>Manager Home Page</div>} />
-          <Route path="/manage/user" element={<UserManagement/>} />
-        </Routes>
-      </div>
-    );
-  }
+  
 
   else{
     return (<div></div>)
