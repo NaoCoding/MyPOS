@@ -7,7 +7,7 @@ interface Order {
 }
 
 
-export default function MobileOrderHistory() {
+export default function UserOrderHistory() {
   const [phone, setPhone] = useState('');
   const [orders, setOrders] = useState<Order[]>([]);
   const navigate = useNavigate();
@@ -25,9 +25,9 @@ export default function MobileOrderHistory() {
     <div className="flex flex-col items-center justify-center h-screen bg-orange-50 px-6">
       <h1 className="text-2xl font-bold mb-4">查詢歷史訂單</h1>
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 text-sm z-50">
-        <button onClick={() => navigate('/Mobile/Home')} className="text-center">🏠<div>首頁</div></button>
-        <button onClick={() => navigate('/Mobile/Order')} className="text-center">🧾<div>點餐</div></button>
-        <button onClick={() => navigate('/Mobile/History')} className="text-center">📜<div>紀錄</div></button>
+        <button onClick={() => navigate('/user/Home')} className="text-center">🏠<div>首頁</div></button>
+        <button onClick={() => navigate('/user/Order')} className="text-center">🧾<div>點餐</div></button>
+        <button onClick={() => navigate('/user/History')} className="text-center">📜<div>紀錄</div></button>
       </nav>
       <div className="w-full max-w-sm flex flex-col items-center">
         <input

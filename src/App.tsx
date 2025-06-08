@@ -21,6 +21,11 @@ import NoteAnalysis from './pages/NoteAnalysis';
 import CustomerAnalysis from './pages/CustomerAnalysis';
 import SalesRanking from './pages/SalesRanking';
 import Inventory from './pages/Inventory';
+import User_Home from './pages/user/Home';
+import User_Order from './pages/user/Order';
+import User_OrderSubmit from './pages/user/OrderSubmit';
+import User_OrderHistory from './pages/user/OrderHistory';
+import User_CustomerInfo from './pages/user/CustomerInfo';
 
 function App() {
   const [token, setToken] = useState<string>('');
@@ -85,11 +90,11 @@ function App() {
         <NextTopLoader color='#565656' showSpinner={false} />
         <Navbar role_id={roleId} setToken={setToken} />
         <Routes>
-          <Route path="/Mobile/Home" element={<Mobile_Home />} />
-          <Route path="/Mobile/Order" element={<Mobile_Order />} />
-          <Route path="/Mobile/Submit" element={<Mobile_OrderSubmit />} />
-          <Route path="/Mobile/History" element={<Mobile_OrderHistory />} />
-          <Route path="/Mobile/CustomerInfo" element={<Mobile_CustomerInfo />} />
+          <Route path="/user/Home" element={<User_Home />} />
+          <Route path="/user/Order" element={<User_Order />} />
+          <Route path="/user/Submit" element={<User_OrderSubmit />} />
+          <Route path="/user/History" element={<User_OrderHistory />} />
+          <Route path="/user/CustomerInfo" element={<User_CustomerInfo />} />
         </Routes>
       </div>
     );
@@ -130,6 +135,12 @@ function App() {
           if(role_id == 4){
             <Route path="/manage/user" element={<UserManagement/>} />
           }
+
+          <Route path="/user/Home" element={<User_Home />} />
+          <Route path="/user/Order" element={<User_Order />} />
+          <Route path="/user/Submit" element={<User_OrderSubmit />} />
+          <Route path="/user/History" element={<User_OrderHistory />} />
+          <Route path="/user/CustomerInfo" element={<User_CustomerInfo />} />
 
         </Routes>
 

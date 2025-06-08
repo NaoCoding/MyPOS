@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Mobile_OrderSubmit() {
+export default function User_OrderSubmit() {
   const navigate = useNavigate();
 
   return (
@@ -11,21 +11,21 @@ export default function Mobile_OrderSubmit() {
 
       <button
         className="w-full max-w-xs bg-blue-500 hover:bg-blue-600 text-white text-xl py-3 rounded-lg mb-4"
-        onClick={() => navigate('/Mobile/Home')}
+        onClick={() => navigate('/user/Home')}
       >
         返回首頁
       </button>
 
       <button
         className="w-full max-w-xs bg-gray-400 hover:bg-gray-500 text-white text-xl py-3 rounded-lg"
-        onClick={() => navigate('/Mobile/History')}
+        onClick={() => navigate('/user/History')}
       >
         查詢歷史訂單
       </button>
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 text-sm z-50">
-        <button onClick={() => navigate('/Mobile/Home')} className="text-center">🏠<div>首頁</div></button>
-        <button onClick={() => navigate('/Mobile/Order')} className="text-center">🧾<div>點餐</div></button>
-        <button onClick={() => navigate('/Mobile/History')} className="text-center">📜<div>紀錄</div></button>
+        <button onClick={() => navigate('/user/Home')} className="text-center">🏠<div>首頁</div></button>
+        <button onClick={() => navigate('/user/Order')} className="text-center">🧾<div>點餐</div></button>
+        <button onClick={() => navigate('/user/History')} className="text-center">📜<div>紀錄</div></button>
       </nav>
     </div>
     

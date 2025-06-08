@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Mobile_CustomerInfo() {
+export default function User_CustomerInfo() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ export default function Mobile_CustomerInfo() {
       return;
     }
     // 將顧客資訊傳到下一頁（可擴充為 context 或後端儲存）
-    navigate('/Mobile/Order', { state: { name, phone } });
+    navigate('/user/Order', { state: { name, phone } });
   };
 
   return (
