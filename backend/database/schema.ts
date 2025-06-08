@@ -89,6 +89,7 @@ export interface ProductTable {
     id: Generated<number>;
     name: string;
     description: string | null;
+    category: string | null;
 }
 
 export interface ItemTable {
