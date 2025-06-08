@@ -6,7 +6,7 @@ import { createTradeItem, deleteTradeItem, updateTradeItem } from '../models/tra
 import { findItem, findItemsByTradeID } from '../models/item';
 import { findCustomizationGroupByItemID } from '../models/customization_group';
 import { findCustomization, findCustomizationsByGroupID } from '../models/customization';
-import { createTradeItemCustomization } from '../models/trade_item_customization';
+import { createTradeItemCustomization, findTradeItemCustomizationsByTradeItemId } from '../models/trade_item_customization';
 
 const tradeRouter = Router();
 tradeRouter.use(checkLogin);
@@ -111,7 +111,17 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
 
 tradeRouter.get('/', async (req: Request, res: Response) => {
     try {
-        const trades = await getTrades();
+        const rawTrades = await getTrades();
+        let trades = [];
+
+        for (const rawTrade of rawTrades) {
+            const tradeItems = await getTradeItemsWithCustomizations(rawTrade.id);
+            trades.push({
+                ...rawTrade,
+                trade_items: tradeItems
+            });
+        }
+
         res.status(200).json(trades);
     } catch (error) {
         res.status(500).json({
@@ -132,11 +142,11 @@ tradeRouter.get('/:id', async (req: Request, res: Response) => {
             return;
         }
 
-        const tradeItems = await findItemsByTradeID(Number(id));
+        const tradeItems = await getTradeItemsWithCustomizations(Number(id));
 
         res.status(200).json({
             ...trade,
-            items: tradeItems
+            trade_items: tradeItems
         });
     } catch (error) {
         res.status(500).json({
@@ -223,6 +233,46 @@ async function checkCustomizations(itemId: number, itemCustomizationIds: any[]):
     }
 
     return true;
+}
+
+async function getTradeItemsWithCustomizations(tradeId: number) {
+    const tradeItems = await findItemsByTradeID(tradeId);
+    const itemsWithCustomizations = [];
+
+    for (const tradeItem of tradeItems) {
+        if (!tradeItem.id) {
+            continue;
+        }
+
+        const item = await findItem({ id: tradeItem.item_id });
+        const tradeItemCustomizations = await findTradeItemCustomizationsByTradeItemId(tradeItem.id);
+        let customizations = [];
+
+        if (tradeItemCustomizations && tradeItemCustomizations.length > 0) {
+            for (const tradeItemCustomization of tradeItemCustomizations) {
+                const customization = await findCustomization({ id: tradeItemCustomization.customization_id });
+
+                if (customization) {
+                    customizations.push({
+                        id: customization.id,
+                        name: customization.name,
+                        price_delta_snapshot: tradeItemCustomization.price_delta_snapshot
+                    });
+                }
+            }
+        }
+
+        if (item?.quantity && tradeItem.quantity) {
+            item.quantity = tradeItem.quantity;
+        }
+
+        itemsWithCustomizations.push({
+            ...item,
+            customizations
+        });
+    }
+
+    return itemsWithCustomizations;
 }
 
 export default tradeRouter;

@@ -15,6 +15,14 @@ export async function getTradeItemCustomizations() {
         .execute();
 }
 
+export async function findTradeItemCustomizationsByTradeItemId(tradeItemId: number) {
+    return await db
+        .selectFrom('trade_item_customization')
+        .where('trade_item_customization.trade_item_id', '=', tradeItemId)
+        .selectAll()
+        .execute();
+}
+
 export async function findTradeItemCustomization(data: Partial<TradeItemCustomization>) {
     let query = db.selectFrom('trade_item_customization');
 
