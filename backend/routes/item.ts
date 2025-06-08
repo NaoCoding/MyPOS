@@ -30,6 +30,12 @@ itemRouter.post('/', async (req: Request, res: Response) => {
             });
             return;
         }
+        else if (await findItem({ product_id }) !== undefined) {
+            res.status(400).json({
+                message: "Item with this product ID already exists"
+            });
+            return;
+        }
 
         await createItem({ product_id, quantity });
 
