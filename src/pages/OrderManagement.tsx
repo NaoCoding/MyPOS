@@ -61,7 +61,7 @@ export default function OrderManagement() {
           <h1 className="text-2xl font-bold">歷史訂單列表</h1>
           <button
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            onClick={() => navigate('/結帳')}
+            onClick={() => navigate('/Checkout')}
           >
             返回點餐
           </button>

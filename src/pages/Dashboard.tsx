@@ -42,6 +42,15 @@ const Dashboard: React.FC = () => {
             { label: '系統設定', path: '/SystemSetting' },
           ]}
         />
+        <SectionBlock
+          title="使用者模擬"
+          buttons={[
+            { label: '首頁', path: '/Mobile/Home' },
+            { label: '下單頁', path: '/Mobile/Order' },
+            { label: '送出結果', path: '/Mobile/Submit' },
+            { label: '歷史訂單', path: '/Mobile/History' },
+          ]}
+        />
 
       </div>
     </div>

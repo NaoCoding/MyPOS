@@ -85,9 +85,11 @@ function App() {
         <NextTopLoader color='#565656' showSpinner={false} />
         <Navbar role_id={roleId} setToken={setToken} />
         <Routes>
-          <Route path="/" element={<div>Home Page</div>} />
-          <Route path="/history" element={<div>Order History Page</div>} />
-          <Route path="/setting" element={<div>Setting Page</div>} />
+          <Route path="/Mobile/Home" element={<Mobile_Home />} />
+          <Route path="/Mobile/Order" element={<Mobile_Order />} />
+          <Route path="/Mobile/Submit" element={<Mobile_OrderSubmit />} />
+          <Route path="/Mobile/History" element={<Mobile_OrderHistory />} />
+          <Route path="/Mobile/CustomerInfo" element={<Mobile_CustomerInfo />} />
         </Routes>
       </div>
     );
