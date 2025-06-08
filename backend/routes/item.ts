@@ -149,7 +149,7 @@ itemRouter.put('/:id', async (req: Request, res: Response) => {
     // Validate request body
     if (!id || !product_id || !quantity || !customization_group) {
         res.status(400).json({
-            message: "ID, Product ID, Quantity, and Customization Group are required"
+            message: "ID, product ID, quantity are required"
         });
         return;
     }
@@ -176,41 +176,43 @@ itemRouter.put('/:id', async (req: Request, res: Response) => {
             return;
         }
 
-        await updateItem({ id: Number(id), quantity });
+        await updateItem({
+            id: Number(id),
+            product_id,
+            quantity
+        });
 
         if (unit_price) {
             // await updatePrice({ item_id: Number(id), unit_price });
         }
 
-        if (customization_group) {
-            const existingGroups = await findCustomizationGroupOfItem(Number(id));
-            const existingGroupIds = existingGroups.map(group => group.id);
+        const existingGroups = await findCustomizationGroupOfItem(Number(id));
+        const existingGroupIds = existingGroups.map(group => group.id);
 
-            // Remove groups that are no longer associated
-            for (const group of existingGroups) {
-                if (!customization_group.includes(group.id)) {
-                    await deleteItemCustomizationGroup({
-                        item_id: Number(id),
-                        customization_group_id: group.id
-                    });
-                }
+        // Remove groups that are no longer associated
+        for (const group of existingGroups) {
+            if (!customization_group.includes(group.id)) {
+                await deleteItemCustomizationGroup({
+                    item_id: Number(id),
+                    customization_group_id: group.id
+                });
             }
+        }
 
-            // Add new groups
-            for (const customization_group_id of customization_group) {
-                if (!existingGroupIds.includes(Number(customization_group_id))) {
-                    if (!await findCustomizationGroup({ id: Number(customization_group_id) })) {
-                        res.status(404).json({
-                            message: `Customization group with ID ${customization_group_id} not found`
-                        });
-                        return;
-                    }
-
-                    await createItemCustomizationGroup({
-                        item_id: Number(id),
-                        customization_group_id: Number(customization_group_id)
+        // Add new groups
+        for (const customization_group_id of customization_group) {
+            if (!existingGroupIds.includes(Number(customization_group_id))) {
+                if (!await findCustomizationGroup({ id: Number(customization_group_id) })) {
+                    res.status(404).json({
+                        message: `Customization group with ID ${customization_group_id} not found`
                     });
+                    return;
                 }
+
+                await createItemCustomizationGroup({
+                    item_id: Number(id),
+                    customization_group_id: Number(customization_group_id)
+                });
             }
         }
 
