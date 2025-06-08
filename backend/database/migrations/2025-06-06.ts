@@ -3,6 +3,7 @@ import { sql, Kysely } from 'kysely';
 export async function up(db: Kysely<any>): Promise<void> {
     await db.schema
         .createTable('product')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'varchar', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.defaultTo(null))
@@ -10,6 +11,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('item')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('product_id', 'integer', (col) => col.notNull())
         .addColumn('quantity', 'integer', (col) => col.notNull())
@@ -20,6 +22,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('price')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('item_id', 'integer', (col) => col.notNull())
         .addColumn('unit_price', 'decimal', (col) => col.notNull())
@@ -32,6 +35,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('discount')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('item_id', 'integer', (col) => col.notNull())
         .addColumn('type', 'varchar', (col) => col.notNull().check(sql`type IN ('percentage', 'fixed')`))
@@ -45,6 +49,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('customization_group')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('name', 'varchar', (col) => col.notNull())
         .addColumn('description', 'text', (col) => col.defaultTo(null))
@@ -54,6 +59,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('item_customization_group')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('item_id', 'integer', (col) => col.notNull())
         .addColumn('customization_group_id', 'integer', (col) => col.notNull())
@@ -67,6 +73,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('customization')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('customization_group_id', 'integer', (col) => col.notNull())
         .addColumn('name', 'varchar', (col) => col.notNull())
@@ -80,6 +87,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('trade')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('user_id', 'integer', (col) => col.notNull())
         .addColumn('trade_datetime', 'datetime', (col) => col.notNull().defaultTo(new Date().toISOString()))
@@ -91,6 +99,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('trade_item')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('trade_id', 'integer', (col) => col.notNull())
         .addColumn('item_id', 'integer', (col) => col.notNull())
@@ -105,6 +114,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('trade_item_customization')
+        .ifNotExists()
         .addColumn('trade_item_id', 'integer', (col) => col.notNull())
         .addColumn('customization_id', 'integer', (col) => col.notNull())
         .addColumn('price_delta_snapshot' , 'decimal', (col) => col.notNull())
@@ -118,6 +128,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('manufacturer')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('name' , 'varchar', (col) => col.notNull())
         .addColumn('telephone', 'varchar', (col) => col.defaultTo(null))
@@ -126,6 +137,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('purchase_order')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('manufacturer_id', 'integer', (col) => col.notNull())
         .addColumn('user_id' , 'integer', (col) => col.notNull())
@@ -141,6 +153,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
     await db.schema
         .createTable('purchase_order_item')
+        .ifNotExists()
         .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
         .addColumn('purchase_order_id', 'integer', (col) => col.notNull())
         .addColumn('item_id', 'integer', (col) => col.notNull())
