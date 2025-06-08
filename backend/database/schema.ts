@@ -119,8 +119,8 @@ export interface CustomizationGroupTable {
     id: Generated<number>;
     name: string;
     description: string | null;
-    is_required: boolean;
-    is_multiple_choice: boolean;
+    is_required: 0 | 1;
+    is_multiple_choice: 0 | 1;
 }
 
 export interface CustomizationTable {
@@ -128,7 +128,7 @@ export interface CustomizationTable {
     customization_group_id: number;
     name: string;
     description: string | null;
-    is_available: boolean;
+    is_available: 0 | 1;
     price_delta: number;
 }
 
@@ -180,6 +180,7 @@ export interface PurchaseOrderItemTable {
     purchase_order_id: number;
     item_id: number;
     quantity: number;
+    price: number;
 }
 
 // User related types

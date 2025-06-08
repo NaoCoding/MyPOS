@@ -12,14 +12,13 @@ export async function createPurchaseOrder(purchaseOrder: PurchaseOrderInsert){
 export async function getPurchaseOrders(): Promise<PurchaseOrder[]> {
     return await db
         .selectFrom('purchase_order')
-        .where('purchase_order.deleted_at', 'is', null)  
         .selectAll()
         .execute();
 }
 
 export async function findPurchaseOrder(data: Partial<PurchaseOrder>): Promise<PurchaseOrder | undefined> {
-    let query = db.selectFrom('purchase_order').where('purchase_order.deleted_at', 'is', null);
-    
+    let query = db.selectFrom('purchase_order');
+
     if (data.id) {
         query = query.where('purchase_order.id', '=', data.id);
     }
@@ -51,10 +50,9 @@ export async function deletePurchaseOrder(purchaseOrder: PurchaseOrderUpdate) {
     if (!purchaseOrder.id) {
         throw new Error('id is required to delete purchase order');
     }
-    
+
     return await db
         .updateTable('purchase_order')
-        .set({ deleted_at: new Date().toISOString() })
         .where('id', '=', purchaseOrder.id)
         .executeTakeFirstOrThrow();
 }

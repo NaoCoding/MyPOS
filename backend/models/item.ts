@@ -15,6 +15,24 @@ export async function getItems() {
         .execute();
 }
 
+export async function getItemsWithPriceAndDiscount() {
+    return await db
+        .selectFrom('item')
+        .leftJoin('price', 'item.id', 'price.item_id')
+        .leftJoin('discount', 'item.id', 'discount.item_id')
+        .where('price.end_datetime', 'is', null)
+        .where('discount.end_datetime', 'is', null)
+        .select([
+            'item.id',
+            'item.product_id',
+            'item.quantity',
+            'price.unit_price',
+            'discount.type as discount_type',
+            'discount.amount as discount_amount'
+        ])
+        .execute();
+}
+
 export async function findItem(data: Partial<Item>) {
     let query = db.selectFrom('item');
 
@@ -27,6 +45,42 @@ export async function findItem(data: Partial<Item>) {
     }
 
     return await query.selectAll().executeTakeFirst();
+}
+
+export async function findItemWithPriceAndDiscount(data: Partial<Item>) {
+    let query = db.selectFrom('item')
+        .leftJoin('price', 'item.id', 'price.item_id')
+        .leftJoin('discount', 'item.id', 'discount.item_id')
+        .where('price.end_datetime', 'is', null)
+        .where('discount.end_datetime', 'is', null);
+
+    if (data.id) {
+        query = query.where('item.id', '=', data.id);
+    }
+
+    if (data.product_id) {
+        query = query.where('item.product_id', '=', data.product_id);
+    }
+
+    return await query
+        .select([
+            'item.id',
+            'item.product_id',
+            'item.quantity',
+            'price.unit_price',
+            'discount.type as discount_type',
+            'discount.amount as discount_amount'
+        ])
+        .executeTakeFirst();
+}
+
+export async function findCustomizationGroupOfItem(itemId: number) {
+    return await db
+        .selectFrom('customization_group')
+        .leftJoin('item_customization_group', 'customization_group.id', 'item_customization_group.customization_group_id')
+        .where('item_customization_group.item_id', '=', itemId)
+        .selectAll('customization_group')
+        .execute();
 }
 
 export async function updateItem(item: ItemUpdate) {

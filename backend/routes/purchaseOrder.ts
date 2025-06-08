@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { createPurchaseOrder, getPurchaseOrders, findPurchaseOrder, updatePurchaseOrder } from '../models/purchaseOrder';
-import { requireClerk } from '../middleware';
+import { checkLogin, requireClerk } from '../middleware';
 
 const purchaseOrderRouter = Router();
-purchaseOrderRouter.use(requireClerk);
+// purchaseOrderRouter.use(requireClerk);
+purchaseOrderRouter.use(checkLogin);
 
 purchaseOrderRouter.post('/', async (req: Request, res: Response) => {
     try {
