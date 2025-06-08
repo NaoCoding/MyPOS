@@ -25,6 +25,7 @@ import Inventory from './pages/Inventory';
 function App() {
   const [token, setToken] = useState<string>('');
   const [roleId, setRoleId] = useState<number>(0);
+  const [cssLoaded, setCssLoaded] = useState<boolean>(false);
 
   // 檢查登入狀態
   useEffect(() => {
@@ -51,12 +52,22 @@ function App() {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    if (token && !cssLoaded) {
+      import('./styles/index.css').then(() => {
+        setCssLoaded(true);
+      }).catch((error) => {
+        console.error('Failed to load CSS:', error);
+      });
+    }
+  }, [token, cssLoaded]);
+
 
 
   // 如果沒有 token，顯示登入頁面
   if (!token) {
     return (
-      <div>
+      <div className="app_container">
         <NextTopLoader color='#565656' showSpinner={false} />
         <Routes>
           <Route path="/" element={<Login setToken={setToken} />} />
@@ -92,13 +103,9 @@ function App() {
           <Route path="/" element={<Dashboard/>} />
           <Route path="/Dashboard" element={<Dashboard/>} />
 
-          {/*下面兩行到時候拿掉*/}
-          <Route path="/login" element={<Login setToken={() => {}} />} />
-          <Route path="/signup" element={<SignUp/>} />
-
           {/*門市作業*/}
           <Route path="/Checkout" element={<Checkout/>} />
-          <Route path="/inventory" element={<Inventory/>} />
+          <Route path="/Inventory" element={<Inventory/>} />
 
           {/* 報表作業*/}
           <Route path="/ShiftReport" element={<ShiftReport/>} />
