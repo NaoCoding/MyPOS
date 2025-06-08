@@ -169,6 +169,24 @@ export default function InventoryPage() {
     i.name.includes(search)
   );
 
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('確定要刪除此商品嗎？')) return;
+    try {
+      const response = await fetch(`http://localhost:5000/item/${id}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        console.error("HTTP error:", response.status, await response.json());
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      console.log(`Item ${id} deleted successfully`);
+      setItems(prev => prev.filter(i => i.id !== id));
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      alert('刪除商品失敗，請稍後再試');
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-8 mt-10 bg-white rounded shadow text-gray-800">
       <h1 className="text-2xl font-bold mb-6">📦 庫存管理</h1>
@@ -203,7 +221,7 @@ export default function InventoryPage() {
               <td className="border px-4 py-2 text-right">{item.discount}</td>
               <td className="border px-4 py-2 text-right">
                 <button onClick={() => console.log()} className="text-blue-600 hover:underline mr-2">修改</button>
-                <button onClick={() => console.log()} className="text-red-600 hover:underline">清空</button>
+                <button onClick={() => handleDelete(item.id)} className="text-red-600 hover:underline">刪除</button>
               </td>
             </tr>
           ))}

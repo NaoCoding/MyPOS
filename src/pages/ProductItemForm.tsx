@@ -103,7 +103,7 @@ export default function ProductItemList() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/item/${itemId}`, {
+      const response = await fetch(`http://localhost:5000/product/${itemId}`, {
         method: 'DELETE',
       });
 
