@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createPurchaseOrder, getPurchaseOrders, findPurchaseOrder, updatePurchaseOrder } from '../models/purchaseOrder';
+import { createPurchaseOrder, getPurchaseOrders, findPurchaseOrder, updatePurchaseOrder } from '../models/purchase_order';
 import { checkLogin, requireClerk } from '../middleware';
 
 const purchaseOrderRouter = Router();
