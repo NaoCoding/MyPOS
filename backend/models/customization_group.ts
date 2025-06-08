@@ -34,7 +34,7 @@ export async function findCustomizationGroupByItemID(itemId: number) {
         .selectFrom('customization_group')
         .leftJoin('item_customization_group', 'customization_group.id', 'item_customization_group.customization_group_id')
         .where('item_customization_group.item_id', '=', itemId)
-        .selectAll()
+        .selectAll('customization_group')
         .execute();
 }
 

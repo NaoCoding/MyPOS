@@ -195,11 +195,11 @@ async function checkCustomizations(itemId: number, itemCustomizationIds: any[]):
     let validCustomizationCount = 0;
 
     for (const customizationGroup of customizationGroups) {
-        if (!customizationGroup.customization_group_id) {
+        if (!customizationGroup.id) {
             continue;
         }
 
-        const customizations = await findCustomizationsByGroupID(customizationGroup.customization_group_id);
+        const customizations = await findCustomizationsByGroupID(customizationGroup.id);
         const customizationIds = customizations.map(c => c.id);
 
         console.log(`Checking customizations for group ${customizationGroup.name}:`, customizationIds);

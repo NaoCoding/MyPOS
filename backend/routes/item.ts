@@ -153,26 +153,19 @@ itemRouter.get('/:id', async (req: Request, res: Response) => {
         let groups = [];
 
         for (const group of customizationGroups) {
-            const currGroup = {
-                "id": group.id,
-                "name": group.name,
-                "description": group.description,
-                "is_required": group.is_required,
-                "is_multiple_choice": group.is_multiple_choice
-            };
 
-            if (!group.customization_group_id) {
+            if (!group.id) {
                 groups.push({
-                    ...currGroup,
+                    ...group,
                     customizations: []
                 });
                 continue;
             }
 
-            const customizations = await findCustomizationsByGroupID(group.customization_group_id);
+            const customizations = await findCustomizationsByGroupID(group.id);
 
             groups.push({
-                ...currGroup,
+                ...group,
                 customizations: customizations.map(customization => ({
                     id: customization.id,
                     name: customization.name,
