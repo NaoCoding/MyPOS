@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createTrade, findTrade, getTrades, updateTrade } from '../models/trade';
+import { createTrade, deleteTrade, findTrade, getTrades, updateTrade } from '../models/trade';
 import { checkLogin } from '../middleware';
 import { findUser } from '../models/user';
 import { createTradeItem, deleteTradeItem, updateTradeItem } from '../models/trade_item';
@@ -207,6 +207,30 @@ tradeRouter.put('/:id', async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({
             message: "Error updating trade"
+        });
+    }
+});
+
+tradeRouter.delete('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const trade = await findTrade({ id: Number(id) });
+        if (!trade) {
+            res.status(404).json({
+                message: "Trade not found"
+            });
+            return;
+        }
+
+        await deleteTrade({ id: Number(id) });
+        res.status(200).json({
+            message: "Trade deleted successfully"
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: "Error deleting trade"
         });
     }
 });
