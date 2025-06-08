@@ -2,12 +2,13 @@ import { Router, Request, Response } from 'express';
 import { createItem, findItem, findItemWithPriceAndDiscount, getItemsWithPriceAndDiscount, updateItem } from '../models/item';
 import { checkLogin } from '../middleware';
 import { findProduct } from '../models/product';
+import { createPrice } from '../models/price';
 
 const itemRouter = Router();
 itemRouter.use(checkLogin);
 
 itemRouter.post('/', async (req: Request, res: Response) => {
-    const { product_id, quantity } = req.body;
+    const { product_id, quantity, unit_price } = req.body;
 
     // Validate request body
     if (!product_id || !quantity) {
@@ -19,6 +20,12 @@ itemRouter.post('/', async (req: Request, res: Response) => {
     else if (quantity <= 0) {
         res.status(400).json({
             message: "Quantity must be greater than 0"
+        });
+        return;
+    }
+    else if (unit_price && unit_price <= 0) {
+        res.status(400).json({
+            message: "Price must be greater than 0"
         });
         return;
     }
@@ -37,7 +44,14 @@ itemRouter.post('/', async (req: Request, res: Response) => {
             return;
         }
 
-        await createItem({ product_id, quantity });
+        const item = await createItem({ product_id, quantity });
+
+        if (unit_price) {
+            await createPrice({
+                item_id: Number(item.insertId),
+                unit_price
+            });
+        }
 
         res.status(201).json({
             message: "Item created successfully"
