@@ -62,7 +62,7 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
             status: 'pending',
         });
 
-        await Promise.all(items.map(async (data) => {
+        for (const data of items) {
             const item = await findItem({ id: data.id });
             if (!item) {
                 res.status(400).json({
@@ -76,7 +76,7 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
                 item_id: data.id,
                 quantity: data.quantity
             });
-        }));
+        }
 
         res.status(201).json({
             message: "Trade created successfully"
