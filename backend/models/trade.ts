@@ -29,6 +29,27 @@ export async function findTrade(trade: Partial<Trade>) {
     return await query.selectAll().executeTakeFirst();
 }
 
+export async function findItemOfTrade(tradeId: number) {
+    if (!tradeId) {
+        throw new Error('Trade ID is required to find trade with items');
+    }
+
+    return await db
+        .selectFrom('item')
+        .leftJoin('trade_item', 'item.id', 'trade_item.item_id')
+        .innerJoin('product', 'item.product_id', 'product.id')
+        .where('trade_item.trade_id', '=', tradeId)
+        .select([
+            'trade_item.id as trade_item_id',
+            'item.id as item_id',
+            'item.product_id',
+            'product.name',
+            'product.description',
+            'trade_item.quantity'
+        ])
+        .execute();
+}
+
 export async function findUserTrades(userId: number) {
     return await db
         .selectFrom('trade')
