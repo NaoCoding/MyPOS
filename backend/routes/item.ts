@@ -132,7 +132,17 @@ itemRouter.post('/', async (req: Request, res: Response) => {
 
 itemRouter.get('/', async (req: Request, res: Response) => {
     try {
-        const items = await getItemsWithPriceAndDiscount();
+        const rawItems = await getItemsWithPriceAndDiscount();
+        let items = [];
+
+        for (const item of rawItems) {
+            const groups = await getItemCustomizationGroups(item.id);
+            items.push({
+                ...item,
+                customization_groups: groups
+            });
+        }
+
         res.status(200).json(items);
     }
     catch (error) {
@@ -148,31 +158,6 @@ itemRouter.get('/:id', async (req: Request, res: Response) => {
 
     try {
         const item = await findItemWithPriceAndDiscount({ id: Number(id) });
-        const customizationGroups = await findCustomizationGroupByItemID(Number(id));
-
-        let groups = [];
-
-        for (const group of customizationGroups) {
-
-            if (!group.id) {
-                groups.push({
-                    ...group,
-                    customizations: []
-                });
-                continue;
-            }
-
-            const customizations = await findCustomizationsByGroupID(group.id);
-
-            groups.push({
-                ...group,
-                customizations: customizations.map(customization => ({
-                    id: customization.id,
-                    name: customization.name,
-                    description: customization.description
-                }))
-            });
-        }
 
         if (!item) {
             res.status(404).json({
@@ -180,6 +165,8 @@ itemRouter.get('/:id', async (req: Request, res: Response) => {
             });
             return;
         }
+
+        const groups = await getItemCustomizationGroups(Number(id));
 
         res.status(200).json({
             ...item,
@@ -355,5 +342,34 @@ itemRouter.delete('/:id', async (req: Request, res: Response) => {
         });
     }
 });
+
+async function getItemCustomizationGroups(itemId: number) {
+    const customizationGroups = await findCustomizationGroupByItemID(itemId);
+
+    let groups = [];
+
+    for (const group of customizationGroups) {
+        if (!group.id) {
+            groups.push({
+                ...group,
+                customizations: []
+            });
+            continue;
+        }
+
+        const customizations = await findCustomizationsByGroupID(group.id);
+
+        groups.push({
+            ...group,
+            customizations: customizations.map(customization => ({
+                id: customization.id,
+                name: customization.name,
+                description: customization.description
+            }))
+        });
+    }
+
+    return groups;
+}
 
 export default itemRouter;
