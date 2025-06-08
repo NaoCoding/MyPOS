@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
-import { createTrade, findItemOfTrade, findTrade, findUserTrades, getTrades, updateTrade } from '../models/trade';
+import { createTrade, deleteTrade, findTrade, getTrades, updateTrade } from '../models/trade';
 import { checkLogin } from '../middleware';
 import { findUser } from '../models/user';
 import { createTradeItem, deleteTradeItem, updateTradeItem } from '../models/trade_item';
-import { findCustomizationGroupOfItem, findItem } from '../models/item';
+import { findCustomizationGroupOfItem, findItem, findItemsByTradeID } from '../models/item';
 
 const tradeRouter = Router();
 tradeRouter.use(checkLogin);
@@ -111,7 +111,7 @@ tradeRouter.get('/:id', async (req: Request, res: Response) => {
             return;
         }
 
-        const tradeItems = await findItemOfTrade(Number(id));
+        const tradeItems = await findItemsByTradeID(Number(id));
 
         res.status(200).json({
             ...trade,
@@ -170,25 +170,21 @@ tradeRouter.put('/:id', async (req: Request, res: Response) => {
         });
 
         // Update trade items
-        const existingTradeItems = await findItemOfTrade(Number(id));
-        const existingItemIds = existingTradeItems.map(item => item.item_id);
+        const existingTradeItems = await findItemsByTradeID(Number(id));
+        const existingItemIds = existingTradeItems.map(item => item.id);
 
-        console.log("Existing Trade Items:", existingTradeItems);
-
-        for (const item of existingTradeItems) {
+        for (const tradeItem of existingTradeItems) {
             // Remove items that are no longer associated
-            const existingItem = items.find(i => i.id === item.item_id);
+            const existingItem = items.find(i => i.id === tradeItem.item_id);
             if (!existingItem) {
-                await deleteTradeItem({ id: Number(item.trade_item_id) });
+                await deleteTradeItem({ id: Number(tradeItem.id) });
                 continue;
             }
 
             // Update existing items
-            if (existingItem.quantity !== item.quantity) {
+            if (existingItem.quantity !== tradeItem.quantity) {
                 await updateTradeItem({
-                    id: Number(item.trade_item_id),
-                    trade_id: Number(id),
-                    item_id: item.item_id,
+                    id: Number(tradeItem.id),
                     quantity: existingItem.quantity
                 });
             }
@@ -211,6 +207,30 @@ tradeRouter.put('/:id', async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({
             message: "Error updating trade"
+        });
+    }
+});
+
+tradeRouter.delete('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const trade = await findTrade({ id: Number(id) });
+        if (!trade) {
+            res.status(404).json({
+                message: "Trade not found"
+            });
+            return;
+        }
+
+        await deleteTrade({ id: Number(id) });
+        res.status(200).json({
+            message: "Trade deleted successfully"
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            message: "Error deleting trade"
         });
     }
 });

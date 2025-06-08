@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createItem, findCustomizationGroupOfItem, findItem, findItemWithPriceAndDiscount, getItemsWithPriceAndDiscount, updateItem } from '../models/item';
+import { createItem, deleteItem, findCustomizationGroupOfItem, findItem, findItemWithPriceAndDiscount, getItemsWithPriceAndDiscount, updateItem } from '../models/item';
 import { checkLogin } from '../middleware';
 import { findProduct } from '../models/product';
 import { createPrice, updatePrice } from '../models/price';
@@ -299,6 +299,32 @@ itemRouter.put('/:id', async (req: Request, res: Response) => {
     }
     catch (error) {
         console.error("Error updating item:", error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+});
+
+itemRouter.delete('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const item = await findItem({ id: Number(id) });
+        if (!item) {
+            res.status(404).json({
+                message: "Item not found"
+            });
+            return;
+        }
+
+        await deleteItem({ id: Number(id) });
+
+        res.status(200).json({
+            message: "Item deleted successfully"
+        });
+    }
+    catch (error) {
+        console.error("Error deleting item:", error);
         res.status(500).json({
             message: "Internal server error"
         });

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createProduct, findProduct, getProducts, updateProduct } from '../models/product';
+import { createProduct, deleteProduct, findProduct, getProducts, updateProduct } from '../models/product';
 import { checkLogin } from '../middleware';
 
 const productRouter = Router();
@@ -108,6 +108,32 @@ productRouter.put('/:id', async (req: Request, res: Response) => {
     }
     catch (error) {
         console.error("Error updating product:", error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+});
+
+productRouter.delete('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    try {
+        const product = await findProduct({ id: Number(id) });
+        if (!product) {
+            res.status(404).json({
+                message: "Product not found"
+            });
+            return;
+        }
+
+        await deleteProduct({ id: Number(id) });
+
+        res.status(200).json({
+            message: "Product deleted successfully"
+        });
+    }
+    catch (error) {
+        console.error("Error deleting product:", error);
         res.status(500).json({
             message: "Internal server error"
         });
