@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
 import { createManufacturer, findManufacturer, getManufacturers, updateManufacturer } from '../models/manufacturer';
-import { requireClerk } from '../middleware';
+import { checkLogin, requireClerk } from '../middleware';
 
 const manufacturerRouter = Router();
-manufacturerRouter.use(requireClerk);
+// manufacturerRouter.use(requireClerk);
+manufacturerRouter.use(checkLogin);
 
 manufacturerRouter.post('/', async (req: Request, res: Response) => {
     const { name, address } = req.body;
