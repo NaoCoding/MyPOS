@@ -71,7 +71,7 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
                 return;
             }
 
-            return createTradeItem({
+            await createTradeItem({
                 trade_id: Number(trade.insertId),
                 item_id: data.id,
                 quantity: data.quantity
