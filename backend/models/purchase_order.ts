@@ -4,7 +4,7 @@ import { PurchaseOrder, PurchaseOrderInsert, PurchaseOrderUpdate } from '../data
 
 export async function createPurchaseOrder(purchaseOrder: PurchaseOrderInsert){
     return await db
-        .insertInto('purchase_order')  
+        .insertInto('purchase_order')
         .values(purchaseOrder)
         .executeTakeFirstOrThrow();
 }

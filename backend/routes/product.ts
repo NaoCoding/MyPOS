@@ -6,7 +6,7 @@ const productRouter = Router();
 productRouter.use(checkLogin);
 
 productRouter.post('/', async (req: Request, res: Response) => {
-    const { name, description } = req.body;
+    const { name, description, category } = req.body;
 
     // Validate request body
     if (!name) {
@@ -28,6 +28,7 @@ productRouter.post('/', async (req: Request, res: Response) => {
         await createProduct({
             name,
             description,
+            category
         });
 
         res.status(201).json({
@@ -75,7 +76,7 @@ productRouter.get('/:id', async (req: Request, res: Response) => {
 });
 
 productRouter.put('/:id', async (req: Request, res: Response) => {
-    const { name, description } = req.body;
+    const { name, description, category } = req.body;
 
     // Validate request body
     if (!name) {
@@ -98,6 +99,7 @@ productRouter.put('/:id', async (req: Request, res: Response) => {
             id: product.id,
             name,
             description,
+            category
         });
 
         res.status(200).json({
