@@ -7,7 +7,7 @@ import FooterActionBar from '../components/FooterActionBar';
 import CartSidebar from '../components/CartSidebar';
 import { CartItem, MenuItem } from '../types';
 
-const categories = ['套餐', '主餐', '副餐', '點心', '甜品'] as const;
+const categories = ['套餐', '主餐', '副餐', '點心', '甜品' , '飲料'] as const;
 type Category = typeof categories[number];
 
 const DUMMY_ITEMS: Record<Category, MenuItem[]> = {
@@ -70,7 +70,8 @@ const DUMMY_ITEMS: Record<Category, MenuItem[]> = {
     { id: 48, name: '冰淇淋球' },
     { id: 49, name: '綠豆湯' },
     { id: 50, name: '抹茶奶酪' },
-  ]
+  ],
+  飲料: []
 };
 
 

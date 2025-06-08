@@ -1,25 +1,33 @@
 import React, { useState, useEffect } from 'react';
+import Select from 'react-select'
 
 interface InventoryItem {
   id: number;
+  product_id: number;
   name: string;
   quantity: number;
   unit_price: number;
   discount: string;
   discount_type: string;
   discount_amount: number;
+  discount_amount_string?: string; // 可選，若需要顯示折扣金額
   category: string;
 }
 
 
 export default function InventoryPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
+  const [productList , setProductList] = useState<{ id: number; name: string }[]>([]);
   const [newItem, setNewItem] = useState({
     name: '',
-    quantity: '',
+    quantity: NaN,
     unit_price: '',
     discount: '',
     discount_type: 'percentage',
+    discount_amount: NaN,
+    discount_amount_string: '',
+    product_id: NaN,
+    optionObject: { label: '', value: NaN }
   });
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('全部');
@@ -50,9 +58,9 @@ export default function InventoryPage() {
         try {
           element.category = element.category || '未分類'; // 如果沒有類別，設為 '未分類'
           element.discount = element.discount_type === 'percentage'
-            ? `${element.discount_amount*100}%` 
-            : `$${element.discount_amount}`;
-          const nameFetch = await fetch(`http://localhost:5000/product/${element.id}`, {
+            ? ((element.discount_amount && element.discount_amount !== 1) ? `${element.discount_amount*100}%` : '無折扣') 
+            : (element.discount_amount ? `${element.discount_amount} 元` : '無折扣');
+          const nameFetch = await fetch(`http://localhost:5000/product/${element.product_id}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -68,12 +76,24 @@ export default function InventoryPage() {
           console.error(`Failed to fetch name for item ${element.id}:`, error);
           element.name = `Unknown Item #${element.id}`;  
         }
-      }));
-
-      
-
+      }))
 
       setItems(data);
+
+      const productResponse = await fetch('http://localhost:5000/product', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!productResponse.ok) {
+        console.log("HTTP error:", productResponse.status, await productResponse.json());
+        throw new Error(`HTTP error! status: ${productResponse.status}`);
+      }
+      const productData = await productResponse.json();
+      setProductList(productData);
+      console.log("Fetched product list:", productData);
+      
     } catch (e) {
       if (e instanceof Error) {
         setError(e.message);
@@ -93,6 +113,50 @@ export default function InventoryPage() {
     fetchItems();
   }, []);
 
+  const AddItem = async () => {
+    newItem.name = newItem.optionObject.label;
+    newItem.product_id = newItem.optionObject.value;
+    //newItem.quantity = parseInt(newItem.quantity);
+
+    if (!newItem.name || !newItem.quantity || !newItem.unit_price || !newItem.discount_amount_string) {
+      alert('請填寫商品名稱、初始庫存、價格與折扣');
+      return;
+    }
+    try {
+      console.log("Adding new item:", newItem);
+      const response = await fetch('http://localhost:5000/item', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product_id: newItem.product_id,
+          name: newItem.name,
+          quantity: newItem.quantity,
+          unit_price: parseFloat(newItem.unit_price),
+          discount: newItem.discount,
+          discount_type: newItem.discount_type,
+          discount_amount: parseFloat(newItem.discount_amount_string),
+        }),
+      });
+
+      if (!response.ok) {
+        console.error("HTTP error:", response.status, await response.json());
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      //const data = await response.json();
+      //console.log("New item added:", data);
+
+      
+
+      fetchItems()
+
+    }
+    catch (error) {
+      console.error('Error adding item:', error);
+    }
+  } 
   
 
   const handleStockChange = (id: number, newStock: number) => {
@@ -137,7 +201,7 @@ export default function InventoryPage() {
               <td className="border px-4 py-2 text-right">{item.unit_price}</td>
               <td className="border px-4 py-2 text-right">{item.discount}</td>
               <td className="border px-4 py-2 text-right">
-                <button onClick={() => console.log()} className="text-blue-600 hover:underline mr-2">補貨</button>
+                <button onClick={() => console.log()} className="text-blue-600 hover:underline mr-2">修改</button>
                 <button onClick={() => console.log()} className="text-red-600 hover:underline">清空</button>
               </td>
             </tr>
@@ -148,16 +212,27 @@ export default function InventoryPage() {
       <div className="bg-gray-50 border rounded p-4">
         <h2 className="text-lg font-semibold mb-2">➕ 新增商品至庫存</h2>
         <div className="grid grid-cols-5 gap-4">
-          <input type="text" placeholder="商品名稱" className="border p-2 rounded" value={newItem.name} onChange={(e) => setNewItem({ ...newItem, name: e.target.value })} />
-          <input type="number" placeholder="初始庫存" className="border p-2 rounded" value={newItem.quantity} onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })} />
+          <Select className='border p-2 rounded'
+                    options={productList.map(p => ({ label: p.name, value: p.id }))}
+                    onChange={(value) => {
+                      if(!value) return;
+                      setNewItem({ ...newItem, name: value.label });
+                      setNewItem({ ...newItem, product_id: value.value });
+                      setNewItem({ ...newItem, optionObject: value });
+                    }}
+                    value={newItem.optionObject}
+                    placeholder="請選擇商品"
+                    isMulti={false}
+          />
+          <input type="number" placeholder="初始庫存" className="border p-2 rounded" value={Number.isNaN(newItem.quantity) ? '' : newItem.quantity} onChange={(e) => setNewItem({ ...newItem, quantity: parseInt(e.target.value) })} />
           <input type="number" placeholder="價格" className="border p-2 rounded" value={newItem.unit_price} onChange={(e) => setNewItem({ ...newItem, unit_price: e.target.value })} />
-          <input type="number" placeholder="折扣" className="border p-2 rounded" value={newItem.discount} onChange={(e) => setNewItem({ ...newItem, discount: e.target.value })} />
+          <input type="string" placeholder="折扣" className="border p-2 rounded" value={newItem.discount_amount_string} onChange={(e) => setNewItem({ ...newItem, discount_amount_string:  e.target.value})} />
           <select className="border p-2 rounded" value={newItem.discount_type} onChange={(e) => setNewItem({ ...newItem, discount_type: e.target.value })}>
             {discount_type.map((c, idx) => <option key={idx} value={c}>{c}</option>)}
           </select>
         </div>
         <div className="text-right mt-4">
-          <button  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded">新增商品</button>
+          <button onClick={AddItem} className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded">新增商品</button>
         </div>
       </div>
     </div>
