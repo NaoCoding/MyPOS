@@ -28,7 +28,7 @@ productRouter.post('/', async (req: Request, res: Response) => {
         await createProduct({
             name,
             description,
-            category: category || 'uncategorized'
+            category
         });
 
         res.status(201).json({
@@ -98,8 +98,8 @@ productRouter.put('/:id', async (req: Request, res: Response) => {
         await updateProduct({
             id: product.id,
             name,
-            description: description || product.description,
-            category: category || product.category
+            description,
+            category
         });
 
         res.status(200).json({

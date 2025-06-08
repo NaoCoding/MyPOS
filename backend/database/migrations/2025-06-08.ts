@@ -4,7 +4,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     await db.schema
         .alterTable('product')
         .addColumn('category', 'varchar', (col) =>
-            col.notNull().defaultTo('uncategorized')
+            col.defaultTo(null)
         )
         .execute();
 }
