@@ -37,7 +37,8 @@ export default function Login(props: LoginProps) {
           
           if (response.ok) {
             props.setToken(data.user.username);
-            navigate('/dashboard');
+            navigate('/');
+            window.location.reload();
           } else {
             alert(data.message);
           }

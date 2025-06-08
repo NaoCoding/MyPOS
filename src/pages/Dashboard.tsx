@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
             { label: '商品管理', path: '/ProductItemForm' },
             { label: '訂單管理', path: '/OrderManagement' },
             { label: '備註管理', path: '/NoteManagement' },
-            { label: '人員設定', path: '/StaffSetting' },
+            { label: '人員設定', path: '/manage/user' },
             { label: '權限設定', path: '/PermissionSetting' },
             { label: '系統設定', path: '/SystemSetting' },
           ]}

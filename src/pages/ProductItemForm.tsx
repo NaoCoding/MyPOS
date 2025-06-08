@@ -1,46 +1,57 @@
 // src/pages/ProductItemForm.tsx
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 
 interface ItemRow {
   id: number;
   name: string;
-  store: string;
-  price: number;
-  quantity: number;
-  discount: string;
-  customizations: string[];
+  description: string;
+  category: string;
 }
 
 export default function ProductItemList() {
-  const [items, setItems] = useState<ItemRow[]>([
-    {
-      id: 1,
-      name: '雞腿便當',
-      store: '台北店',
-      price: 120,
-      quantity: 50,
-      discount: '9折',
-      customizations: ['加飯', '不加蔥'],
-    },
-    {
-      id: 2,
-      name: '排骨便當',
-      store: '台中店',
-      price: 110,
-      quantity: 30,
-      discount: '無',
-      customizations: ['加辣'],
-    },
-  ]);
+  const [items, setItems] = useState<ItemRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchItems = async () => {
+    try {
+      setLoading(true); // 開始載入前設置 loading
+      const response = await fetch('http://localhost:5000/product', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        console.log("HTTP error:", response.status, await response.json());
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json() as ItemRow[];
+      setItems(data);
+    } catch (e) {
+      if (e instanceof Error) {
+        setError(e.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+      console.error("Failed to fetch items:", e);
+      // 保留範例資料作為備案，或根據需求移除
+      setItems([
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchItems();
+  }, []);
 
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
-    store: '',
-    price: '',
-    quantity: '',
-    discount: '',
-    customizations: '',
+    category: '',
+    description: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -48,28 +59,75 @@ export default function ProductItemList() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = () => {
-    // 簡單驗證
-    if (!formData.name || !formData.store || !formData.price || !formData.quantity) {
+  const handleSubmit = async () => {
+    if (!formData.name) {
       alert('請填寫商品名稱、店鋪、價格與數量');
       return;
     }
 
-    const newItem: ItemRow = {
-      id: items.length + 1,
-      name: formData.name,
-      store: formData.store,
-      price: parseInt(formData.price),
-      quantity: parseInt(formData.quantity),
-      discount: formData.discount || '無',
-      customizations: formData.customizations
-        ? formData.customizations.split('/').map(s => s.trim())
-        : [],
-    };
+    const newItemPayload = formData
+    //console.log(newItemPayload)
 
-    setItems(prev => [...prev, newItem]);
-    setFormData({ name: '', store: '', price: '', quantity: '', discount: '', customizations: '' });
-    setShowModal(false);
+    try {
+      const response = await fetch('http://localhost:5000/product', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newItemPayload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+
+      setShowModal(false);
+      fetchItems(); // 重新獲取商品列表
+      alert('商品新增成功！');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        alert(`新增商品失敗: ${err.message}`);
+      } else {
+        setError('新增商品時發生未知錯誤');
+        alert('新增商品時發生未知錯誤');
+      }
+      console.error("Failed to submit item:", err);
+    }
+  };
+
+  const handleDelete = async (itemId: number) => {
+    if (!window.confirm('確定要刪除此商品嗎？')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/item/${itemId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+      
+      // 有些 DELETE API 可能回傳 204 No Content，沒有 JSON body
+      // const data = await response.json(); 
+      // console.log('Delete success:', data);
+
+      alert('商品刪除成功！');
+      fetchItems(); // 重新獲取商品列表
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+        alert(`刪除商品失敗: ${err.message}`);
+      } else {
+        setError('刪除商品時發生未知錯誤');
+        alert('刪除商品時發生未知錯誤');
+      }
+      console.error(`Failed to delete item ${itemId}:`, err);
+    }
   };
 
   return (
@@ -90,12 +148,8 @@ export default function ProductItemList() {
             <tr>
               <th className="border border-gray-300 px-4 py-2">商品編號</th>
               <th className="border border-gray-300 px-4 py-2">商品名稱</th>
-              <th className="border border-gray-300 px-4 py-2">店鋪</th>
-              <th className="border border-gray-300 px-4 py-2">價格</th>
-              <th className="border border-gray-300 px-4 py-2">數量</th>
-              <th className="border border-gray-300 px-4 py-2">折扣</th>
-              <th className="border border-gray-300 px-4 py-2">加價選項</th>
-              <th className="border border-gray-300 px-4 py-2">操作</th>
+              <th className="border border-gray-300 px-4 py-2">商品簡介</th>
+              <th className="border border-gray-300 px-4 py-2">商品類別</th>
             </tr>
           </thead>
           <tbody>
@@ -103,14 +157,18 @@ export default function ProductItemList() {
               <tr key={item.id} className="text-center hover:bg-gray-50 transition">
                 <td className="border border-gray-300 px-4 py-2">{item.id}</td>
                 <td className="border border-gray-300 px-4 py-2">{item.name}</td>
-                <td className="border border-gray-300 px-4 py-2">{item.store}</td>
-                <td className="border border-gray-300 px-4 py-2">${item.price}</td>
-                <td className="border border-gray-300 px-4 py-2">{item.quantity}</td>
-                <td className="border border-gray-300 px-4 py-2">{item.discount}</td>
-                <td className="border border-gray-300 px-4 py-2">{item.customizations.join(' / ')}</td>
+                <td className="border border-gray-300 px-4 py-2">{item.description}</td>
+                <td className="border border-gray-300 px-4 py-2">{item.category}</td>
+                { // <td className="border border-gray-300 px-4 py-2">{item.customizations.join(' / ')}</td> 
+                }
                 <td className="border border-gray-300 px-4 py-2">
                   <button className="text-blue-600 hover:underline mr-2">編輯</button>
-                  <button className="text-red-600 hover:underline">刪除</button>
+                  <button 
+                    onClick={() => handleDelete(item.id)} 
+                    className="text-red-600 hover:underline"
+                  >
+                    刪除
+                  </button>
                 </td>
               </tr>
             ))}
@@ -124,11 +182,8 @@ export default function ProductItemList() {
             <h2 className="text-xl font-bold mb-4">新增商品品項</h2>
             <div className="grid grid-cols-2 gap-4">
               <input name="name" placeholder="商品名稱" className="border p-2 rounded" value={formData.name} onChange={handleChange} />
-              <input name="store" placeholder="店鋪" className="border p-2 rounded" value={formData.store} onChange={handleChange} />
-              <input type="number" name="price" placeholder="價格" className="border p-2 rounded" value={formData.price} onChange={handleChange} />
-              <input type="number" name="quantity" placeholder="數量" className="border p-2 rounded" value={formData.quantity} onChange={handleChange} />
-              <input name="discount" placeholder="折扣" className="border p-2 rounded col-span-2" value={formData.discount} onChange={handleChange} />
-              <input name="customizations" placeholder="加價選項（以 / 分隔）" className="border p-2 rounded col-span-2" value={formData.customizations} onChange={handleChange} />
+              <input type="text" name="category" placeholder="商品類別" className="border p-2 rounded" value={formData.category} onChange={handleChange} />
+              <input type="text" name="description" placeholder="商品介紹" className="border p-2 rounded col-span-2" value={formData.description} onChange={handleChange} />
             </div>
             <div className="flex justify-end mt-6 gap-2">
               <button className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded" onClick={() => setShowModal(false)}>取消</button>
