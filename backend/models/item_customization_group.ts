@@ -42,7 +42,7 @@ export async function updateItemCustomizationGroup(data: ItemCustomizationGroupU
         .updateTable('item_customization_group')
         .set(data)
         .where('item_customization_group.id', '=', data.id)
-        .execute();
+        .executeTakeFirstOrThrow();
 }
 
 export async function deleteItemCustomizationGroup(data: Partial<ItemCustomizationGroup>) {
