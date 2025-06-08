@@ -56,7 +56,7 @@ export default function InventoryPage() {
       console.log("Fetched items:", data);
       await Promise.all(data.map(async (element) => {
         try {
-          element.category = element.category || '未分類'; // 如果沒有類別，設為 '未分類'
+          
           element.discount = element.discount_type === 'percentage'
             ? ((element.discount_amount && element.discount_amount !== 1) ? `${element.discount_amount*100}%` : '無折扣') 
             : (element.discount_amount ? `${element.discount_amount} 元` : '無折扣');
@@ -72,6 +72,7 @@ export default function InventoryPage() {
           }
           const nameData = await nameFetch.json();
           element.name = nameData.name;
+          element.category = nameData.category || '未分類'; // 如果沒有類別，設為 '未分類'
         } catch (error) {
           console.error(`Failed to fetch name for item ${element.id}:`, error);
           element.name = `Unknown Item #${element.id}`;  

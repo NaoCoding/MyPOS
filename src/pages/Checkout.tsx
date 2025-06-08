@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // useEffect 新增
 import OrderTypeSelector from '../components/OrderTypeSelector';
 import CategoryColumn from '../components/CategoryColumn';
 import MenuGrid from '../components/MenuGrid';
@@ -7,73 +7,8 @@ import FooterActionBar from '../components/FooterActionBar';
 import CartSidebar from '../components/CartSidebar';
 import { CartItem, MenuItem } from '../types';
 
-const categories = ['套餐', '主餐', '副餐', '點心', '甜品' , '飲料'] as const;
+const categories = ['套餐', '主餐', '副餐', '點心', '甜品' , '飲料' , '其他'] as const;
 type Category = typeof categories[number];
-
-const DUMMY_ITEMS: Record<Category, MenuItem[]> = {
-  套餐: [
-    { id: 1, name: '雞腿便當' },
-    { id: 2, name: '排骨便當' },
-    { id: 3, name: '牛腩便當' },
-    { id: 4, name: '鯖魚便當' },
-    { id: 5, name: '咖哩雞便當' },
-    { id: 6, name: '雞排便當' },
-    { id: 7, name: '炸蝦便當' },
-    { id: 8, name: '素食便當' },
-    { id: 9, name: '滷肉便當' },
-    { id: 10, name: '三杯雞便當' },
-  ],
-  主餐: [
-    { id: 11, name: '燒肉飯' },
-    { id: 12, name: '魚排飯' },
-    { id: 13, name: '雞排飯' },
-    { id: 14, name: '牛肉燴飯' },
-    { id: 15, name: '打拋豬飯' },
-    { id: 16, name: '糖醋雞丁飯' },
-    { id: 17, name: '蔥爆牛飯' },
-    { id: 18, name: '日式炸豬排飯' },
-    { id: 19, name: '咖哩豬飯' },
-    { id: 20, name: '宮保雞丁飯' },
-  ],
-  副餐: [
-    { id: 21, name: '滷蛋' },
-    { id: 22, name: '豆干' },
-    { id: 23, name: '小熱狗' },
-    { id: 24, name: '炸豆腐' },
-    { id: 25, name: '百頁豆腐' },
-    { id: 26, name: '海帶絲' },
-    { id: 27, name: '炒青菜' },
-    { id: 28, name: '高麗菜' },
-    { id: 29, name: '玉米粒' },
-    { id: 30, name: '滷花生' },
-  ],
-  點心: [
-    { id: 31, name: '春捲' },
-    { id: 32, name: '炸雞塊' },
-    { id: 33, name: '炸水餃' },
-    { id: 34, name: '脆薯' },
-    { id: 35, name: '洋蔥圈' },
-    { id: 36, name: '甜不辣' },
-    { id: 37, name: '黑輪片' },
-    { id: 38, name: '糯米腸' },
-    { id: 39, name: '花枝丸' },
-    { id: 40, name: '香腸' },
-  ],
-  甜品: [
-    { id: 41, name: '布丁' },
-    { id: 42, name: '豆花' },
-    { id: 43, name: '仙草凍' },
-    { id: 44, name: '紅豆湯' },
-    { id: 45, name: '芋圓冰' },
-    { id: 46, name: '黑糖粉粿' },
-    { id: 47, name: '愛玉' },
-    { id: 48, name: '冰淇淋球' },
-    { id: 49, name: '綠豆湯' },
-    { id: 50, name: '抹茶奶酪' },
-  ],
-  飲料: []
-};
-
 
 const DUMMY_NOTE_OPTIONS = [
   '無糖','少糖','半糖','七分糖','全糖','去冰','微冰','少冰','多冰', '不加蔥', '不加蒜'
@@ -85,8 +20,85 @@ export default function OrderPage() {
   const [orderType, setOrderType] = useState<string>('內用');
   const [category, setCategory] = useState<Category>('套餐');
   const [sharedNotes, setSharedNotes] = useState<string[]>(['', '']);
-  const [cartItems, setCartItems] = useState<(CartItem & { notes: string[]; addons?: string[] })[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]); // CartItem 應已包含 notes 和 addons
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+
+  // 新增狀態來儲存從後端獲取的菜單項目
+  const [menuData, setMenuData] = useState<Record<Category, MenuItem[]>>({} as Record<Category, MenuItem[]>);
+  const [isLoadingMenu, setIsLoadingMenu] = useState(true);
+  const [menuError, setMenuError] = useState<string | null>(null);
+
+  // 從後端獲取菜單項目
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        setIsLoadingMenu(true);
+        setMenuError(null);
+        // 假設您的後端 API 端點是 /api/menu-items
+        const response = await fetch('http://localhost:5000/item');
+        if (!response.ok) {
+          throw new Error(`無法獲取菜單項目: ${response.statusText}`);
+        }
+        const itemsFromBackend: MenuItem[] = await response.json();
+        const productResponse = await fetch('http://localhost:5000/product');
+        if (!productResponse.ok) {
+          throw new Error(`無法獲取產品列表: ${productResponse.statusText}`);
+        }
+        const products: { id: number; name: string; category: string}[] = await productResponse.json();
+        // 將菜單項目與產品列表進行關聯
+        const itemsWithProductNames = await itemsFromBackend.map(item => {
+          const product = products.find(p => p.id === item.product_id);
+          return {
+            ...item,
+            name: product ? `${product.name}` : item.name, // 如果有產品名稱，則添加到菜單項目名稱中
+            category: product ? product.category as Category : "未分類", // 確保 category 是 Category 類型
+          };
+        });
+
+        console.log("獲取的菜單項目:", itemsWithProductNames);
+
+        // 將獲取的項目按分類分組
+        const groupedItems = itemsWithProductNames.reduce((acc, item) => {
+          const itemCategory = item.category as Category;
+          console.log(`處理項目: ${item.name}, 分類: ${itemCategory}`);
+          if (categories.includes(itemCategory)) {
+            if (!acc[itemCategory]) {
+              acc[itemCategory] = [];
+            }
+            acc[itemCategory].push(item);
+          }
+          else{
+            if(!acc['其他']) {
+              acc['其他'] = [];
+            }
+            acc['其他'].push(item); // 將未分類的項目放入 '其他' 分類
+          }
+          return acc;
+        }, {} as Record<Category, MenuItem[]>);
+
+        // 確保所有定義的分類都存在於 menuData 中，即使是空陣列
+        categories.forEach(cat => {
+          if (!groupedItems[cat]) {
+            groupedItems[cat] = [];
+          }
+        });
+        setMenuData(groupedItems);
+      } catch (error) {
+        console.error("獲取菜單項目失敗:", error);
+        setMenuError(error instanceof Error ? error.message : "發生未知錯誤");
+        // 可選擇設定一個預設的空菜單或顯示錯誤訊息
+        const emptyMenu = categories.reduce((acc, cat) => {
+          acc[cat] = [];
+          return acc;
+        }, {} as Record<Category, MenuItem[]>);
+        setMenuData(emptyMenu);
+      } finally {
+        setIsLoadingMenu(false);
+      }
+    };
+
+    fetchMenuItems();
+  }, []);
 
   const handleAddItem = (item: MenuItem) => {
     setCartItems(prev => {
@@ -94,6 +106,7 @@ export default function OrderPage() {
       if (found) {
         return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
       }
+      // 確保新加入購物車的項目包含 price, notes 和 addons
       return [...prev, { ...item, quantity: 1, notes: [], addons: [] }];
     });
   };
@@ -135,13 +148,74 @@ export default function OrderPage() {
 
   const selectedItem = cartItems.find(i => i.id === selectedItemId);
 
+  // 新增：處理訂單提交的函數
+  const handlePlaceOrder = async () => {
+    if (cartItems.length === 0) {
+      alert("購物車是空的！");
+      return;
+    }
+
+    const totalAmount = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+    const orderPayload = {
+      orderType,
+      items: cartItems.map(item => ({
+        menuItemId: item.id, // 後端可能需要的是 menuItemId
+        quantity: item.quantity,
+        priceAtOrder: item.price, // 記錄下單時的價格
+        notes: item.notes,
+        addons: item.addons || [],
+      })),
+      sharedNotes,
+      totalAmount,
+      // 您可能還需要其他資訊，如顧客ID、桌號等
+    };
+
+    try {
+      // 假設您的後端 API 端點是 /api/orders
+      const response = await fetch('http://localhost:5000/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // 如果您的API需要身份驗證，請在此處加入 token
+          // 'Authorization': `Bearer ${yourAuthToken}`,
+        },
+        body: JSON.stringify(orderPayload),
+        credentials: 'include', // 如果使用 httpOnly cookies 進行身份驗證
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `訂單提交失敗: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      alert(`訂單已成功送出！訂單編號: ${result.orderId}`); // 假設後端返回 orderId
+      setCartItems([]); // 清空購物車
+      setSharedNotes(['', '']);
+      // 可選擇導向到訂單成功頁面或重置其他狀態
+    } catch (error) {
+      console.error("提交訂單失敗:", error);
+      alert(error instanceof Error ? error.message : "發生未知錯誤");
+    }
+  };
+  
+  if (isLoadingMenu) {
+    return <div className="flex justify-center items-center h-screen">載入菜單中...</div>;
+  }
+
+  if (menuError) {
+    return <div className="flex justify-center items-center h-screen text-red-500">錯誤: {menuError}</div>;
+  }
+
   return (
     <div className="flex flex-col h-screen">
       <OrderTypeSelector value={orderType} onChange={setOrderType} />
       <div className="flex flex-1">
         <CategoryColumn categories={categories} onSelect={handleSelectCategory} />
         <div className="flex-1 bg-gray-100 p-2">
-          <MenuGrid items={DUMMY_ITEMS[category]} onAdd={handleAddItem} />
+          {/* 使用 menuData 而不是 DUMMY_ITEMS */}
+          <MenuGrid items={menuData[category]} onAdd={handleAddItem} />
 
           <div className="grid grid-cols-5 gap-2 mb-2">
             {DUMMY_NOTE_OPTIONS.map((note, index) => {
@@ -193,7 +267,10 @@ export default function OrderPage() {
           sharedNotes={sharedNotes}
         />
       </div>
+      {/* 將 handlePlaceOrder 函數傳遞給 FooterActionBar */}
       <FooterActionBar />
     </div>
   );
 }
+
+
