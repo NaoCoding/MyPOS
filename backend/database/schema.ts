@@ -120,7 +120,7 @@ export interface CustomizationGroupTable {
     id: Generated<number>;
     name: string;
     description: string | null;
-    is_required: 0 | 1;
+is_required: boolean;
     is_multiple_choice: 0 | 1;
 }
 
