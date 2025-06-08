@@ -42,7 +42,7 @@ export async function updateTradeItem(data: TradeItemUpdate) {
         .updateTable('trade_item')
         .set(data)
         .where('trade_item.id', '=', data.id)
-        .execute();
+        .executeTakeFirstOrThrow();
 }
 
 export async function deleteTradeItem(data: Partial<TradeItem>) {
@@ -53,5 +53,5 @@ export async function deleteTradeItem(data: Partial<TradeItem>) {
     return await db
         .deleteFrom('trade_item')
         .where('trade_item.id', '=', data.id)
-        .execute();
+        .executeTakeFirstOrThrow(); 
 }
