@@ -7,7 +7,7 @@ const manufacturerRouter = Router();
 manufacturerRouter.use(checkLogin);
 
 manufacturerRouter.post('/', async (req: Request, res: Response) => {
-    const { name, address } = req.body;
+    const { name, telephone, address } = req.body;
 
     // Validate request body
     if (!name) {
@@ -28,6 +28,7 @@ manufacturerRouter.post('/', async (req: Request, res: Response) => {
 
         await createManufacturer({
             name,
+            telephone,
             address,
         });
 
@@ -76,7 +77,7 @@ manufacturerRouter.get('/:id', async (req: Request, res: Response) => {
 });
 
 manufacturerRouter.put('/:id', async (req: Request, res: Response) => {
-    const { name, address } = req.body;
+    const { name, telephone, address } = req.body;
 
     // Validate request body
     if (!name) {
@@ -98,6 +99,7 @@ manufacturerRouter.put('/:id', async (req: Request, res: Response) => {
         await updateManufacturer({
             id: manufacturer.id,
             name,
+            telephone,
             address,
         });
 
