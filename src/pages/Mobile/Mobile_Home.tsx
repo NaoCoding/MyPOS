@@ -45,7 +45,7 @@ export default function Mobile_Home() {
 
       <button
         className="w-full max-w-xs bg-green-500 hover:bg-green-600 text-white text-xl py-4 rounded-lg mb-4"
-        onClick={() => navigate('/Mobile/CustomerInfo')}
+        onClick={() => navigate('/Mobile/Login')}
       >
         我要點餐
       </button>
@@ -55,6 +55,13 @@ export default function Mobile_Home() {
         onClick={() => navigate('/Mobile/History')}
       >
         查詢歷史訂單
+      </button>
+
+      <button
+        className="w-full max-w-xs bg-yellow-500 hover:bg-yellow-600 text-white text-xl py-4 rounded-lg mb-4"
+        onClick={() => navigate('/Mobile/Register')}
+      >
+        使用者註冊
       </button>
 
       <button

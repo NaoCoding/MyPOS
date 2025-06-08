@@ -24,7 +24,9 @@ import Mobile_Home from './pages/Mobile/Mobile_Home';
 import Mobile_Order from './pages/Mobile/Mobile_Order';
 import Mobile_OrderSubmit from './pages/Mobile/Mobile_OrderSubmit';
 import Mobile_OrderHistory from './pages/Mobile/Mobile_OrderHistory';
-import Mobile_CustomerInfo from './pages/Mobile/Mobile_CustomerInfo';
+import Mobile_Login from './pages/Mobile/Mobile_Login';
+import Mobile_Register from './pages/Mobile/Mobile_Register';
+
 function App() {
 
   //ToDo token connection with backend api
@@ -49,7 +51,8 @@ function App() {
   '/Mobile/Order',
   '/Mobile/Submit',
   '/Mobile/History',
-  '/Mobile/CustomerInfo'
+  '/Mobile/Login',
+  '/Mobile/Register'
 ];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
@@ -94,7 +97,8 @@ function App() {
         <Route path="/Mobile/Order" element={<Mobile_Order />} />
         <Route path="/Mobile/Submit" element={<Mobile_OrderSubmit />} />
         <Route path="/Mobile/History" element={<Mobile_OrderHistory />} />
-        <Route path="/Mobile/CustomerInfo" element={<Mobile_CustomerInfo />} />
+        <Route path="/Mobile/Login" element={<Mobile_Login />} />
+        <Route path="/Mobile/Register" element={<Mobile_Register />} />
       </Routes>
 
     </div>
