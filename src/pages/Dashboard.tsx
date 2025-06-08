@@ -7,10 +7,42 @@ const Dashboard: React.FC = () => {
     <div className="main-container">
 
       <div className="grid-layout">
-        <SectionBlock title="門市作業" buttons={['結帳', '庫存管理']} />
-        <SectionBlock title="報表作業" buttons={['交班表', '日報表', '月報表', '交易紀錄']} />
-        <SectionBlock title="經營分析" buttons={['銷售排行', '客群分析', '備註分析']} />
-        <SectionBlock title="資料管理" buttons={['商品管理','訂單管理', '備註管理', '人員設定', '權限設定', '系統設定']} />
+        <SectionBlock
+          title="門市作業"
+          buttons={[
+            { label: '結帳', path: '/Checkout' },
+            { label: '庫存管理', path: '/Inventory' },
+          ]}
+        />
+        <SectionBlock
+          title="報表作業"
+          buttons={[
+            { label: '交班表', path: '/ShiftReport' },
+            { label: '日報表', path: '/DailyReport' },
+            { label: '月報表', path: '/MonthlyReport' },
+            
+          ]}
+        />
+        <SectionBlock
+          title="經營分析"
+          buttons={[
+            { label: '銷售排行', path: '/SalesRanking' },
+            { label: '客群分析', path: '/CustomerAnalysis' },
+            { label: '備註分析', path: '/NoteAnalysis' },
+          ]}
+        />
+        <SectionBlock
+          title="資料管理"
+          buttons={[
+            { label: '商品管理', path: '/ProductItemForm' },
+            { label: '訂單管理', path: '/OrderManagement' },
+            { label: '備註管理', path: '/NoteManagement' },
+            { label: '人員設定', path: '/StaffSetting' },
+            { label: '權限設定', path: '/PermissionSetting' },
+            { label: '系統設定', path: '/SystemSetting' },
+          ]}
+        />
+
       </div>
     </div>
   );

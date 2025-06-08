@@ -1,4 +1,4 @@
-// src/pages/ProductItemList.tsx
+// src/pages/ProductItemForm.tsx
 import React, { useState } from 'react';
 
 interface ItemRow {
@@ -11,28 +11,28 @@ interface ItemRow {
   customizations: string[];
 }
 
-const DUMMY_ITEMS: ItemRow[] = [
-  {
-    id: 1,
-    name: '雞腿便當',
-    store: '台北店',
-    price: 120,
-    quantity: 50,
-    discount: '9折',
-    customizations: ['加飯', '不加蔥'],
-  },
-  {
-    id: 2,
-    name: '排骨便當',
-    store: '台中店',
-    price: 110,
-    quantity: 30,
-    discount: '無',
-    customizations: ['加辣'],
-  },
-];
-
 export default function ProductItemList() {
+  const [items, setItems] = useState<ItemRow[]>([
+    {
+      id: 1,
+      name: '雞腿便當',
+      store: '台北店',
+      price: 120,
+      quantity: 50,
+      discount: '9折',
+      customizations: ['加飯', '不加蔥'],
+    },
+    {
+      id: 2,
+      name: '排骨便當',
+      store: '台中店',
+      price: 110,
+      quantity: 30,
+      discount: '無',
+      customizations: ['加辣'],
+    },
+  ]);
+
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -40,7 +40,7 @@ export default function ProductItemList() {
     price: '',
     quantity: '',
     discount: '',
-    customizations: ''
+    customizations: '',
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -48,11 +48,40 @@ export default function ProductItemList() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleSubmit = () => {
+    // 簡單驗證
+    if (!formData.name || !formData.store || !formData.price || !formData.quantity) {
+      alert('請填寫商品名稱、店鋪、價格與數量');
+      return;
+    }
+
+    const newItem: ItemRow = {
+      id: items.length + 1,
+      name: formData.name,
+      store: formData.store,
+      price: parseInt(formData.price),
+      quantity: parseInt(formData.quantity),
+      discount: formData.discount || '無',
+      customizations: formData.customizations
+        ? formData.customizations.split('/').map(s => s.trim())
+        : [],
+    };
+
+    setItems(prev => [...prev, newItem]);
+    setFormData({ name: '', store: '', price: '', quantity: '', discount: '', customizations: '' });
+    setShowModal(false);
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-8 bg-white min-h-screen text-gray-800">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">商品品項總表</h1>
-        <button onClick={() => setShowModal(true)} className="bg-blue-500 hover:bg-blue-600 transition text-white px-4 py-2 rounded shadow">+ 新增品項</button>
+        <button
+          onClick={() => setShowModal(true)}
+          className="bg-blue-500 hover:bg-blue-600 transition text-white px-4 py-2 rounded shadow"
+        >
+          + 新增品項
+        </button>
       </div>
 
       <div className="overflow-x-auto">
@@ -70,7 +99,7 @@ export default function ProductItemList() {
             </tr>
           </thead>
           <tbody>
-            {DUMMY_ITEMS.map((item) => (
+            {items.map((item) => (
               <tr key={item.id} className="text-center hover:bg-gray-50 transition">
                 <td className="border border-gray-300 px-4 py-2">{item.id}</td>
                 <td className="border border-gray-300 px-4 py-2">{item.name}</td>
@@ -94,16 +123,16 @@ export default function ProductItemList() {
           <div className="bg-white text-black p-6 rounded shadow-lg w-[90%] max-w-xl">
             <h2 className="text-xl font-bold mb-4">新增商品品項</h2>
             <div className="grid grid-cols-2 gap-4">
-              <input name="name" placeholder="商品名稱" className="border p-2 rounded" onChange={handleChange} />
-              <input name="store" placeholder="店鋪" className="border p-2 rounded" onChange={handleChange} />
-              <input type="number" name="price" placeholder="價格" className="border p-2 rounded" onChange={handleChange} />
-              <input type="number" name="quantity" placeholder="數量" className="border p-2 rounded" onChange={handleChange} />
-              <input name="discount" placeholder="折扣" className="border p-2 rounded col-span-2" onChange={handleChange} />
-              <input name="customizations" placeholder="加價選項（以 / 分隔）" className="border p-2 rounded col-span-2" onChange={handleChange} />
+              <input name="name" placeholder="商品名稱" className="border p-2 rounded" value={formData.name} onChange={handleChange} />
+              <input name="store" placeholder="店鋪" className="border p-2 rounded" value={formData.store} onChange={handleChange} />
+              <input type="number" name="price" placeholder="價格" className="border p-2 rounded" value={formData.price} onChange={handleChange} />
+              <input type="number" name="quantity" placeholder="數量" className="border p-2 rounded" value={formData.quantity} onChange={handleChange} />
+              <input name="discount" placeholder="折扣" className="border p-2 rounded col-span-2" value={formData.discount} onChange={handleChange} />
+              <input name="customizations" placeholder="加價選項（以 / 分隔）" className="border p-2 rounded col-span-2" value={formData.customizations} onChange={handleChange} />
             </div>
             <div className="flex justify-end mt-6 gap-2">
               <button className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded" onClick={() => setShowModal(false)}>取消</button>
-              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">送出</button>
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded" onClick={handleSubmit}>送出</button>
             </div>
           </div>
         </div>

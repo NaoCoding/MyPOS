@@ -1,4 +1,3 @@
-// src/pages/Order.tsx
 import React, { useState } from 'react';
 import OrderTypeSelector from '../components/OrderTypeSelector';
 import CategoryColumn from '../components/CategoryColumn';
@@ -79,11 +78,13 @@ const DUMMY_NOTE_OPTIONS = [
   '無糖','少糖','半糖','七分糖','全糖','去冰','微冰','少冰','多冰', '不加蔥', '不加蒜'
 ];
 
+const ADDON_OPTIONS = ['加蛋', '加飯', '加醬', '加辣', '加肉'];
+
 export default function OrderPage() {
   const [orderType, setOrderType] = useState<string>('內用');
   const [category, setCategory] = useState<Category>('套餐');
   const [sharedNotes, setSharedNotes] = useState<string[]>(['', '']);
-  const [cartItems, setCartItems] = useState<(CartItem & { notes: string[] })[]>([]);
+  const [cartItems, setCartItems] = useState<(CartItem & { notes: string[]; addons?: string[] })[]>([]);
   const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
 
   const handleAddItem = (item: MenuItem) => {
@@ -92,7 +93,7 @@ export default function OrderPage() {
       if (found) {
         return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
       }
-      return [...prev, { ...item, quantity: 1, notes: [] }];
+      return [...prev, { ...item, quantity: 1, notes: [], addons: [] }];
     });
   };
 
@@ -120,6 +121,17 @@ export default function OrderPage() {
     }));
   };
 
+  const handleToggleAddon = (addon: string) => {
+    if (selectedItemId === null) return;
+    setCartItems(prev => prev.map(item => {
+      if (item.id !== selectedItemId) return item;
+      const currentAddons = item.addons || [];
+      const hasAddon = currentAddons.includes(addon);
+      const newAddons = hasAddon ? currentAddons.filter(a => a !== addon) : [...currentAddons, addon];
+      return { ...item, addons: newAddons };
+    }));
+  };
+
   const selectedItem = cartItems.find(i => i.id === selectedItemId);
 
   return (
@@ -130,20 +142,44 @@ export default function OrderPage() {
         <div className="flex-1 bg-gray-100 p-2">
           <MenuGrid items={DUMMY_ITEMS[category]} onAdd={handleAddItem} />
 
-          {/* 選擇項目的備註按鈕區（複選模式） */}
-          {selectedItem && (
-            <div className="grid grid-cols-5 gap-2 mb-2">
-              {DUMMY_NOTE_OPTIONS.map((note, index) => (
+          <div className="grid grid-cols-5 gap-2 mb-2">
+            {DUMMY_NOTE_OPTIONS.map((note, index) => {
+              const isSelected = selectedItem?.notes.includes(note);
+              return (
                 <button
                   key={index}
-                  className={`bg-green-100 border border-green-300 p-2 rounded hover:bg-green-200 ${selectedItem.notes.includes(note) ? 'ring-2 ring-green-500' : ''}`}
+                  disabled={!selectedItem}
                   onClick={() => handleToggleNote(note)}
+                  className={`
+                    p-2 rounded border 
+                    ${isSelected ? 'bg-green-200 ring-2 ring-green-500' : 'bg-green-100 hover:bg-green-200'} 
+                    ${!selectedItem ? 'opacity-50 cursor-not-allowed' : ''}
+                  `}
                 >
                   {note}
                 </button>
-              ))}
+              );
+            })}
+          </div>
+
+          <div className="mt-4">
+            <div className="font-semibold text-sm mb-1">加料：</div>
+            <div className="grid grid-cols-5 gap-2">
+              {ADDON_OPTIONS.map((addon, index) => {
+                const isSelected = selectedItem?.addons?.includes(addon);
+                return (
+                  <button
+                    key={index}
+                    disabled={!selectedItem}
+                    onClick={() => handleToggleAddon(addon)}
+                    className={`p-2 rounded border text-sm ${isSelected ? 'bg-yellow-300 ring-2 ring-yellow-500' : 'bg-yellow-100 hover:bg-yellow-200'} ${!selectedItem ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {addon}
+                  </button>
+                );
+              })}
             </div>
-          )}
+          </div>
 
           <SharedNotes notes={sharedNotes} setNotes={setSharedNotes} />
         </div>

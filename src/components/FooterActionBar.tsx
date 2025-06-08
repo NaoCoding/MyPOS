@@ -10,7 +10,7 @@ export default function FooterActionBar() {
       <button className="px-4 py-2 bg-white rounded">訂單備註</button>
       <button
         className="px-4 py-2 bg-white rounded"
-        onClick={() => navigate('/訂單管理')}
+        onClick={() => navigate('/OrderManagement')}
       >
         訂單查詢
       </button>
