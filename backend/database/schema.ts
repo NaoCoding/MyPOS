@@ -180,6 +180,7 @@ export interface PurchaseOrderItemTable {
     purchase_order_id: number;
     item_id: number;
     quantity: number;
+    price: number;
 }
 
 // User related types
