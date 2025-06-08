@@ -1,11 +1,12 @@
 import { Router, Request, Response } from 'express';
-import { createItem, deleteItem, findCustomizationGroupOfItem, findItem, findItemWithPriceAndDiscount, getItemsWithPriceAndDiscount, updateItem } from '../models/item';
+import { createItem, deleteItem, findItem, findItemWithPriceAndDiscount, getItemsWithPriceAndDiscount, updateItem } from '../models/item';
 import { checkLogin } from '../middleware';
 import { findProduct } from '../models/product';
 import { createPrice, updatePrice } from '../models/price';
-import { findCustomizationGroup } from '../models/customization_group';
+import { findCustomizationGroup, findCustomizationGroupByItemID } from '../models/customization_group';
 import { createItemCustomizationGroup, deleteItemCustomizationGroup, findItemCustomizationGroup } from '../models/item_customization_group';
 import { createDiscount, updateDiscount } from '../models/discount';
+import { findCustomizationsByGroupID } from '../models/customization';
 
 const itemRouter = Router();
 itemRouter.use(checkLogin);
@@ -147,7 +148,38 @@ itemRouter.get('/:id', async (req: Request, res: Response) => {
 
     try {
         const item = await findItemWithPriceAndDiscount({ id: Number(id) });
-        const customizationGroups = await findCustomizationGroupOfItem(Number(id));
+        const customizationGroups = await findCustomizationGroupByItemID(Number(id));
+
+        let groups = [];
+
+        for (const group of customizationGroups) {
+            const currGroup = {
+                "id": group.id,
+                "name": group.name,
+                "description": group.description,
+                "is_required": group.is_required,
+                "is_multiple_choice": group.is_multiple_choice
+            };
+
+            if (!group.customization_group_id) {
+                groups.push({
+                    ...currGroup,
+                    customizations: []
+                });
+                continue;
+            }
+
+            const customizations = await findCustomizationsByGroupID(group.customization_group_id);
+
+            groups.push({
+                ...currGroup,
+                customizations: customizations.map(customization => ({
+                    id: customization.id,
+                    name: customization.name,
+                    description: customization.description
+                }))
+            });
+        }
 
         if (!item) {
             res.status(404).json({
@@ -158,7 +190,7 @@ itemRouter.get('/:id', async (req: Request, res: Response) => {
 
         res.status(200).json({
             ...item,
-            customization_groups: customizationGroups
+            customization_groups: groups
         });
     }
     catch (error) {
@@ -263,12 +295,12 @@ itemRouter.put('/:id', async (req: Request, res: Response) => {
             }
         }
 
-        const existingGroups = await findCustomizationGroupOfItem(Number(id));
+        const existingGroups = await findCustomizationGroupByItemID(Number(id));
         const existingGroupIds = existingGroups.map(group => group.id);
 
         // Remove groups that are no longer associated
         for (const group of existingGroups) {
-            if (!customization_group.includes(group.id)) {
+            if (group.id && !customization_group.includes(group.id)) {
                 await deleteItemCustomizationGroup({
                     item_id: Number(id),
                     customization_group_id: group.id

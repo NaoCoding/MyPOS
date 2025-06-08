@@ -3,7 +3,7 @@ import { createTrade, deleteTrade, findTrade, getTrades, updateTrade } from '../
 import { checkLogin } from '../middleware';
 import { findUser } from '../models/user';
 import { createTradeItem, deleteTradeItem, updateTradeItem } from '../models/trade_item';
-import { findCustomizationGroupOfItem, findItem, findItemsByTradeID } from '../models/item';
+import { findItem, findItemsByTradeID } from '../models/item';
 
 const tradeRouter = Router();
 tradeRouter.use(checkLogin);

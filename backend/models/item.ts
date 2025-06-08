@@ -98,15 +98,6 @@ export async function findItemsByTradeID(tradeId: number) {
         .execute();
 }
 
-export async function findCustomizationGroupOfItem(itemId: number) {
-    return await db
-        .selectFrom('customization_group')
-        .leftJoin('item_customization_group', 'customization_group.id', 'item_customization_group.customization_group_id')
-        .where('item_customization_group.item_id', '=', itemId)
-        .selectAll('customization_group')
-        .execute();
-}
-
 export async function updateItem(item: ItemUpdate) {
     if (!item.id) {
         throw new Error('id is required to update item');
