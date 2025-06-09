@@ -254,7 +254,7 @@ export default function UserOrderPage() {
           <div className="font-medium">點餐</div>
         </button>
         <button 
-          onClick={() => navigate('/Mobile/History')} 
+          onClick={() => navigate('/user/History')} 
           className="text-center py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
         >
           <div className="text-2xl mb-1">📜</div>
