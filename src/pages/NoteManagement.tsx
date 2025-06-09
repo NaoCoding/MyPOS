@@ -154,7 +154,7 @@ export default function NoteSettings() {
     fetchItemCustomizationGroups();
   }, []);
 
-  const handleAdd = async () => {
+  const handleAddCustomization = async () => {
     if (!newCustomization.name.trim()) {
       alert('請輸入備註內容');
       return;
@@ -398,7 +398,7 @@ export default function NoteSettings() {
           </select>
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            onClick={handleAdd}
+            onClick={handleAddCustomization}
           >
             新增
           </button>
