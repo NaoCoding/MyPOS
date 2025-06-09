@@ -54,7 +54,9 @@ export default function UserOrderPage() {
               description: item.description || ''
             },
           },
-          base_price: item.unit_price,
+          base_price: (item.discount_type === 'percentage' && item.discount_amount)
+            ? item.unit_price * (item.discount_amount) : (item.discount_type === 'fixed' && item.discount_amount)
+            ? item.discount_amount : item.unit_price,
           images: ['/images/default.png'], 
           customization_groups: item.customization_groups || []
         }))
@@ -75,7 +77,10 @@ export default function UserOrderPage() {
           throw new Error(`无法获取菜单: ${itemResponse.statusText}`);
         }
         const items = await itemResponse.json();
+        
         console.log('获取到的商品数据:', items);
+
+        
         
         // 处理数据，按分类分组
         const processedCategories = processMenu(items);
