@@ -161,10 +161,58 @@ export default function UserOrderPage() {
       return `${item.item_name} x${item.quantity}${customizations ? ` (${customizations})` : ''}`;
     }).join('\n');
 
-    alert(`訂單送出成功！\n\n${orderSummary}\n\n總金額：$${cartTotal}`);
-    setCart([]);
-    navigate('/user/Submit');
-  };
+    console.log(cart)
+
+
+    if (window.confirm(`確認送出訂單？\n\n${orderSummary}\n\n總價：${cartTotal}`)) {
+      
+      const tradeFetch = async () => {
+        try {
+          const response = await fetch(`${backendAPI}/trade`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              trade_items: cart.map(item => ({
+                id: item.item_id,
+                quantity: item.quantity,
+                customizations: item.selected_customizations.map(s => s.customization.id),
+              }))
+            }),
+          });
+
+          console.log(JSON.stringify({
+            trade_items: cart.map(item => ({
+              id: item.item_id,
+              quantity: item.quantity,
+              customizations: item.selected_customizations.map(s => s.customization.id),
+            }))
+          }))
+      
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log(data);
+          if( data.success) {
+            setCart([]); // 清空購物車
+            navigate('/user/History'); // 跳轉到歷史紀錄頁面
+          }
+        } catch (error) {
+          console.error('There was a problem with the fetch operation:', error);
+          // 在這裡處理錯誤
+        }
+      }
+      tradeFetch()
+    }
+  }
+    
+  
+
 
   // 獲取當前分類的商品
   const currentCategoryItems = categories.find(cat => cat.id === selectedCategory)?.items || [];
