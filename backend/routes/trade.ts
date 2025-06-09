@@ -12,6 +12,11 @@ import jwt from 'jsonwebtoken';
 const tradeRouter = Router();
 tradeRouter.use(checkLogin);
 
+const JWT_TOKEN = process.env.JWT_TOKEN;
+if (!JWT_TOKEN) {
+    throw new Error("JWT_TOKEN is not defined in .env file");
+}
+
 tradeRouter.post('/', async (req: Request, res: Response) => {
     const { trade_items } = req.body;
 
@@ -46,7 +51,7 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
 
     try {
         const token = req.cookies.token;
-        const decoded = jwt.verify(token, process.env.JWT_TOKEN || '');
+        const decoded = jwt.verify(token, JWT_TOKEN);
 
         if (typeof decoded === 'string' || !decoded.username) {
             res.status(401).json({
