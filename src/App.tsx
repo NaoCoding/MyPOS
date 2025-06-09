@@ -122,9 +122,9 @@ function App() {
           <Route path="/Inventory" element={<Inventory/>} />
 
           {/* 報表作業*/}
-          <Route path="/ShiftReport" element={<ShiftReport/>} />
-          <Route path="/DailyReport" element={<DailyReport/>} />
-          <Route path="/MonthlyReport" element={<MonthlyReport/>} />
+          <Route path="/Report/Shift" element={<ShiftReport/>} />
+          <Route path="/Report/Daily" element={<DailyReport/>} />
+          <Route path="/Report/Monthly" element={<MonthlyReport/>} />
           
           {/* 經營分析*/}
           <Route path="/NoteAnalysis" element={<NoteAnalysis/>} />
