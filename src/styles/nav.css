@@ -63,3 +63,13 @@
 .nav li:hover::after {
   width: 100%;
 }
+
+.nav li button {
+  all: unset; /* 重置預設按鈕樣式 */
+  color: inherit;
+  font: inherit;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}

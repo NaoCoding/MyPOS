@@ -288,28 +288,43 @@ export default function NoteSettings() {
       {/* ➕ 新增備註類型 */}
       <div className="bg-gray-50 border rounded p-4 mb-6">
         <h2 className="text-lg font-semibold mb-2">新增備註類型</h2>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <input
             type="text"
             placeholder="備註類型名稱"
-            className="border p-2 rounded flex-1"
+            className="border p-2 rounded flex-1 min-w-[200px]"
             value={newCustomizationGroup.name}
             onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, name: e.target.value })}
           />
-          <p>是否必填</p>
-          <input
-            type="checkbox"
-            className="mt-2"
-            checked={newCustomizationGroup.is_required}
-            onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, is_required: e.target.checked })}
-          />
-          <p>是否多選</p>
-          <input
-            type="checkbox"
-            className="mt-2"
-            checked={newCustomizationGroup.is_multiple_choice}
-            onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, is_multiple_choice: e.target.checked })}
-          />
+
+          <button
+            className={`px-4 py-2 rounded text-white transition ${
+              newCustomizationGroup.is_required ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 hover:bg-gray-500'
+            }`}
+            onClick={() =>
+              setNewCustomizationGroup({
+                ...newCustomizationGroup,
+                is_required: !newCustomizationGroup.is_required,
+              })
+            }
+          >
+            {newCustomizationGroup.is_required ? '✅ 必填' : '❌ 非必填'}
+          </button>
+
+          <button
+            className={`px-4 py-2 rounded text-white transition ${
+              newCustomizationGroup.is_multiple_choice ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 hover:bg-gray-500'
+            }`}
+            onClick={() =>
+              setNewCustomizationGroup({
+                ...newCustomizationGroup,
+                is_multiple_choice: !newCustomizationGroup.is_multiple_choice,
+              })
+            }
+          >
+            {newCustomizationGroup.is_multiple_choice ? '✅ 可多選' : '❌ 單選'}
+          </button>
+
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             onClick={handleAddGroup}
@@ -317,43 +332,66 @@ export default function NoteSettings() {
             新增
           </button>
         </div>
+
       </div>
 
       {/* ➕ 新增備註 */}
       <div className="bg-gray-50 border rounded p-4">
         <h2 className="text-lg font-semibold mb-2">新增備註</h2>
-        <div className="flex gap-4">
-          <input
-            type="text"
-            placeholder="備註內容（如：加飯）"
-            className="border p-2 rounded flex-1"
-            value={newCustomization.name}
-            onChange={(e) => setNewCustomization({ ...newCustomization, name: e.target.value })}
-          />
-          <input
-            type="text"
-            placeholder="價格（如：10，留空則表示 0）"
-            className="border p-2 rounded flex-1"
-            value={newCustomization.price_delta}
-            onChange={(e) => setNewCustomization({ ...newCustomization, price_delta: Number(e.target.value) })}
-          />
-          <select
-            className="border p-2 rounded"
-            value={newCustomization.customization_group_name}
-            onChange={(e) => {
-              setNewCustomization({
-                ...newCustomization,
-                customization_group_id: Number(e.target.selectedOptions[0].id),
-                customization_group_name: e.target.value as Customization['customization_group_name']
-              });
-            }}
-          >
-            {customizationGroups.map(group => (
-              <option key={group.id} id={group.id.toString()} value={group.name}>
-                {group.name}
-              </option>
-            ))}
-          </select>
+        <div className="flex gap-4 flex-wrap items-end">
+          {/* 備註內容 */}
+          <div className="flex flex-col">
+            <label className="text-base text-gray-600 mb-1">備註內容</label>
+            <input
+              type="text"
+              placeholder="如：加飯"
+              
+              className="border p-2 rounded flex-1 min-w-[330px]"
+              value={newCustomization.name}
+              onChange={(e) => setNewCustomization({ ...newCustomization, name: e.target.value })}
+            />
+          </div>
+
+          {/* 價格 */}
+          <div className="flex flex-col">
+            <label className="text-base text-gray-600 mb-1">價格</label>
+            <input
+              type="number"
+              placeholder="0"
+              className="border p-2 rounded w-32"
+              value={newCustomization.price_delta}
+              onChange={(e) =>
+                setNewCustomization({
+                  ...newCustomization,
+                  price_delta: Number(e.target.value),
+                })
+              }
+            />
+          </div>
+
+          {/* 備註類型 */}
+          <div className="flex flex-col">
+            <label className="text-base text-gray-600 mb-1">備註類型</label>
+            <select
+              className="border p-2 rounded w-40"
+              value={newCustomization.customization_group_name}
+              onChange={(e) => {
+                setNewCustomization({
+                  ...newCustomization,
+                  customization_group_id: Number(e.target.selectedOptions[0].id),
+                  customization_group_name: e.target.value as Customization['customization_group_name'],
+                });
+              }}
+            >
+              {customizationGroups.map(group => (
+                <option key={group.id} id={group.id.toString()} value={group.name}>
+                  {group.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* 新增按鈕 */}
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             onClick={handleAdd}
@@ -362,6 +400,7 @@ export default function NoteSettings() {
           </button>
         </div>
       </div>
+
     </div>
   );
 }
