@@ -431,7 +431,7 @@ export default function NoteSettings() {
             onChange={(e) => setNewCustomization({ ...newCustomization, name: e.target.value })}
           />
           <input
-            type="number"
+            type="text"
             placeholder="價格（如：10，留空則表示 0）"
             className="border p-2 rounded flex-1"
             value={newCustomization.price_delta}
