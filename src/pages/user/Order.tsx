@@ -61,13 +61,13 @@ export default function UserOrderPage() {
         setError(null);
         const itemResponse = await fetch(backendAPI+'/item');
         if (!itemResponse.ok) {
-          throw new Error(`无法获取菜单项目: ${itemResponse.statusText}`);
+          throw new Error(`無法獲取菜單: ${itemResponse.statusText}`);
         }
         const items: ApiItem[] = await itemResponse.json();
 
         const productResponse = await fetch(backendAPI+'/product');
         if (!productResponse.ok) {
-          throw new Error(`无法获取产品列表: ${productResponse.statusText}`);
+          throw new Error(`無法獲取產品列表: ${productResponse.statusText}`);
         }
         const products: ApiProduct[] = await productResponse.json();
 
@@ -102,8 +102,8 @@ export default function UserOrderPage() {
         
         setMenuData(groupedItems);
       } catch (err) {
-        console.error('获取菜单失败:', err);
-        setError(err instanceof Error ? err.message : '发生未知错误');
+        console.error('Fetch menu failed:', err);
+        setError(err instanceof Error ? err.message : 'Unknow error occurred');
         // 使用空数据作为备用
         setMenuData({} as Record<Category, MenuItem[]>);
       } finally {

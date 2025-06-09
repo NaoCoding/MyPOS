@@ -21,11 +21,14 @@ import NoteAnalysis from './pages/NoteAnalysis';
 import CustomerAnalysis from './pages/CustomerAnalysis';
 import SalesRanking from './pages/SalesRanking';
 import Inventory from './pages/Inventory';
-import UserHome from './pages/user/Home';
-import UserOrder from './pages/user/Order';
+import UserHome from './pages/user/UserHome';
+import UserOrder from './pages/user/UserOrder';
 import UserOrderSubmit from './pages/user/OrderSubmit';
-import UserOrderHistory from './pages/user/OrderHistory';
+import UserOrderHistory from './pages/user/UserOrderHistory';
 import UserCustomerInfo from './pages/user/CustomerInfo';
+import UserLogin from './pages/user/UserLogin';
+import UserRegister from './pages/user/UserRegister';
+import NotFound from './pages/NotFound';
 const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 function App() {
@@ -79,6 +82,8 @@ function App() {
           <Route path="/" element={<Login setToken={setToken} />} />
           <Route path="/login" element={<Login setToken={setToken} />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/user/Login" element={<UserLogin/>} />
+          <Route path="/user/Register" element={<UserRegister/>} />
         </Routes>
       </div>
     );
@@ -143,6 +148,9 @@ function App() {
           <Route path="/user/Submit" element={<UserOrderSubmit />} />
           <Route path="/user/History" element={<UserOrderHistory />} />
           <Route path="/user/CustomerInfo" element={<UserCustomerInfo />} />
+          <Route path="/user/Login" element={<UserLogin/>} />
+          <Route path="/user/Register" element={<UserRegister/>} />
+          <Route path="*" element={<NotFound />} />
 
         </Routes>
 

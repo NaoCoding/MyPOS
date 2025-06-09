@@ -17,9 +17,9 @@ const Dashboard: React.FC = () => {
         <SectionBlock
           title="報表作業"
           buttons={[
-            { label: '交班表', path: '/ShiftReport' },
-            { label: '日報表', path: '/DailyReport' },
-            { label: '月報表', path: '/MonthlyReport' },
+            { label: '交班表', path: '/Report/Shift' },
+            { label: '日報表', path: '/Report/Daily' },
+            { label: '月報表', path: '/Report/Monthly' },
             
           ]}
         />
@@ -49,6 +49,8 @@ const Dashboard: React.FC = () => {
             { label: '下單頁', path: '/user/Order' },
             { label: '送出結果', path: '/user/Submit' },
             { label: '歷史訂單', path: '/user/History' },
+            { label: '使用者註冊', path: '/user/Register' },
+            { label: '404', path: '/NotFound' },
           ]}
         />
 
