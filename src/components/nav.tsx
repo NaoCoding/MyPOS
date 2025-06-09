@@ -60,15 +60,12 @@ export default function Navbar({ role_id, setToken }: NavbarProps) {
         </Link>
         <ul>
           <CustomLink to="/">Home</CustomLink>
-          <CustomLink to="/history">Order History</CustomLink>
-          <CustomLink to="/setting">Setting</CustomLink>
-          <li>
+          <li>    
             <button onClick={logout} className="logout-button">Logout</button> {/* 修改為按鈕 */}
           </li>
         </ul>
       </nav>
     );
-
 
   }
 
