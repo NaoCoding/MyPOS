@@ -169,7 +169,7 @@ export default function User_Home() {
           className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-sm px-4 py-2 rounded-full font-semibold shadow-lg transition-all duration-300"
           style={{
             position: 'absolute',
-            right: '50px',  // 初始位置
+            left: 'calc(100% - 160px)', // 初始靠右 (假設按鈕寬度約100px~150px)
             top: '550px',
             animation: 'pulseScale 2s ease-in-out infinite',
           }}
