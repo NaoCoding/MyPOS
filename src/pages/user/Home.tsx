@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function UserHome() {
+export default function User_Home() {
   const navigate = useNavigate();
   const naughtyBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -45,7 +45,7 @@ export default function UserHome() {
 
       <button
         className="w-full max-w-xs bg-green-500 hover:bg-green-600 text-white text-xl py-4 rounded-lg mb-4"
-        onClick={() => navigate('/user/order')}
+        onClick={() => navigate('/user/CustomerInfo')}
       >
         我要點餐
       </button>

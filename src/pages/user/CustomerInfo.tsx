@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function UserCustomerInfo() {
+export default function User_CustomerInfo() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const navigate = useNavigate();

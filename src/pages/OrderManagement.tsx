@@ -1,74 +1,43 @@
 // src/pages/OrderManagement.tsx
-import React, { useState , useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 interface OrderItem {
   name: string;
   quantity: number;
   notes?: string;
-  unit_price: number; 
-  discount_amount?: number;
-  discount_type?: 'percentage' | 'fixed';
 }
 
 interface Order {
   id: number;
-  trade_datetime: string;
-  trade_items: OrderItem[];
+  date: string;
+  items: OrderItem[];
   total: number;
 }
 
-
+const DUMMY_ORDERS: Order[] = [
+  {
+    id: 101,
+    date: '2025-05-31',
+    items: [
+      { name: '雞腿便當', quantity: 2, notes: '不加蔥' },
+      { name: '排骨便當', quantity: 1 },
+    ],
+    total: 350,
+  },
+  {
+    id: 102,
+    date: '2025-05-30',
+    items: [
+      { name: '燒肉飯', quantity: 3 },
+    ],
+    total: 300,
+  },
+];
 
 export default function OrderManagement() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
-  const [orderData , setOrderData] = useState<Order[]>();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    
-    const fetchOrders = async () => {
-      const response = await fetch(backendAPI+'/trade');
-      if (!response.ok) {
-        console.error('Failed to fetch orders');
-        return;
-      }
-      const orders: Order[] = await response.json();
-      console.log('Fetched orders:', orders);
-      setOrderData(orders);
-
-      const countTotalPrice = (items: OrderItem[]) => {
-        return items.reduce((total, item) => {
-          // 确保 unit_price 有默认值
-          const unitPrice = item.unit_price || 0;
-          
-          if (item.discount_type === 'percentage' && item.discount_amount) {
-            return total + unitPrice * (item.discount_amount) * item.quantity;
-          }
-          else if (item.discount_type === 'fixed' && item.discount_amount) {
-            return total + item.discount_amount * item.quantity;
-          }
-          else {
-            // 默认情况：无折扣
-            return total + unitPrice * item.quantity;
-          }
-        }, 0);
-      };
-      
-
-      const ordersWithTotal = orders.map(order => ({
-        ...order,
-        total: countTotalPrice(order.trade_items)
-      }));
-      
-      setOrderData(ordersWithTotal);
-
-    }
-
-    setSelectedOrder(null);
-    fetchOrders();
-  }, []);
 
   return (
     <div className="flex h-screen">
@@ -77,7 +46,7 @@ export default function OrderManagement() {
         <h2 className="text-lg font-bold mb-4">
           {selectedOrder ? `訂單編號：${selectedOrder.id}` : '請選擇訂單'}
         </h2>
-        {selectedOrder && selectedOrder.trade_items.map((item, idx) => (
+        {selectedOrder && selectedOrder.items.map((item, idx) => (
           <div key={idx} className="bg-yellow-100 p-2 mb-2 rounded shadow-sm">
             <div>{item.name}</div>
             <div className="text-sm text-gray-600">數量：{item.quantity}</div>
@@ -107,15 +76,15 @@ export default function OrderManagement() {
             </tr>
           </thead>
           <tbody>
-            {orderData?.map(order => (
+            {DUMMY_ORDERS.map(order => (
               <tr
                 key={order.id}
                 className="hover:bg-blue-50 cursor-pointer"
                 onClick={() => setSelectedOrder(order)}
               >
                 <td className="border border-gray-300 px-4 py-2 text-center">{order.id}</td>
-                <td className="border border-gray-300 px-4 py-2 text-center">{new Date(order.trade_datetime).toLocaleDateString()}</td>
-                <td className="border border-gray-300 px-4 py-2 text-center">{order.trade_items.length}</td>
+                <td className="border border-gray-300 px-4 py-2 text-center">{order.date}</td>
+                <td className="border border-gray-300 px-4 py-2 text-center">{order.items.length}</td>
                 <td className="border border-gray-300 px-4 py-2 text-center">${order.total}</td>
               </tr>
             ))}

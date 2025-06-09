@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select'
-const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 interface InventoryItem {
   id: number;
@@ -43,7 +42,7 @@ export default function InventoryPage() {
   const fetchItems = async () => {
     try {
       setLoading(true); // 開始載入前設置 loading
-      const response = await fetch(backendAPI+`/item`, {
+      const response = await fetch('http://localhost:5000/item', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +60,7 @@ export default function InventoryPage() {
           element.discount = element.discount_type === 'percentage'
             ? ((element.discount_amount && element.discount_amount !== 1) ? `${element.discount_amount*100}%` : '無折扣') 
             : (element.discount_amount ? `${element.discount_amount} 元` : '無折扣');
-          const nameFetch = await fetch(backendAPI+`/product/${element.product_id}`, {
+          const nameFetch = await fetch(`http://localhost:5000/product/${element.product_id}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -82,7 +81,7 @@ export default function InventoryPage() {
 
       setItems(data);
 
-      const productResponse = await fetch(backendAPI+'/product', {
+      const productResponse = await fetch('http://localhost:5000/product', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -126,7 +125,7 @@ export default function InventoryPage() {
     }
     try {
       console.log("Adding new item:", newItem);
-      const response = await fetch(backendAPI+'/item', {
+      const response = await fetch('http://localhost:5000/item', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -173,7 +172,7 @@ export default function InventoryPage() {
   const handleDelete = async (id: number) => {
     if (!window.confirm('確定要刪除此商品嗎？')) return;
     try {
-      const response = await fetch(backendAPI+`/item/${id}`, {
+      const response = await fetch(`http://localhost:5000/item/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) {

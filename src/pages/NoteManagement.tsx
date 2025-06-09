@@ -6,7 +6,6 @@ interface Customization {
   description: string;
   customization_group_id: number;
   customization_group_name: string;
-  groupName: '加價選項' | '備註標記';
   is_available: boolean;
   price_delta: number;
 }
@@ -245,6 +244,7 @@ export default function NoteSettings() {
     <div className="max-w-4xl mx-auto p-8 mt-10 bg-white rounded shadow text-gray-800">
       <h1 className="text-2xl font-bold mb-6">備註管理</h1>
 
+      {/* 📋 備註清單 */}
       <table className="w-full table-auto border border-gray-300 text-sm mb-6">
         <thead className="bg-gray-100">
           <tr>
@@ -269,7 +269,7 @@ export default function NoteSettings() {
               <td className="border px-4 py-2 text-center space-x-2">
                 <button
                   className="text-blue-600 hover:underline"
-                  onClick={() => toggleAvailable(note.id)}
+                  onClick={() => toggleEnable(note.id)}
                 >
                   {note.is_available ? '停用' : '啟用'}
                 </button>
@@ -327,8 +327,8 @@ export default function NoteSettings() {
             type="text"
             placeholder="備註內容（如：加飯）"
             className="border p-2 rounded flex-1"
-            value={newNote.name}
-            onChange={(e) => setNewNote({ ...newNote, name: e.target.value })}
+            value={newCustomization.name}
+            onChange={(e) => setNewCustomization({ ...newCustomization, name: e.target.value })}
           />
           <input
             type="number"
@@ -354,15 +354,6 @@ export default function NoteSettings() {
               </option>
             ))}
           </select>
-          {newNote.groupName === '加價選項' && (
-            <input
-              type="number"
-              className="border p-2 rounded w-28"
-              placeholder="加價"
-              value={newNote.price_delta}
-              onChange={(e) => setNewNote({ ...newNote, price_delta: parseFloat(e.target.value) || 0 })}
-            />
-          )}
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             onClick={handleAdd}
