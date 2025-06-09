@@ -50,8 +50,8 @@ export default function UserOrderPage() {
             quantity: item.quantity,
             product: {
               id: item.product_id,
-              name: item.product?.name || '未知商品',
-              description: item.product?.description || ''
+              name: item.name || '未知商品',
+              description: item.description || ''
             },
           },
           base_price: item.unit_price,
@@ -83,19 +83,14 @@ export default function UserOrderPage() {
         setMenuData(items); 
         setCategories(processedCategories);
         
+        
         console.log('处理后的菜单数据:', processedCategories);
         
         if (processedCategories.length > 0) {
           setSelectedCategory(processedCategories[0].id);
         }
 
-        const customizationResponse = await fetch(`${backendAPI}/customization/group`);
-        if (!customizationResponse.ok) {
-          throw new Error(`无法获取加料选项: ${customizationResponse.statusText}`);
-        }
-        const customizationGroupsData = await customizationResponse.json();
-        setCustomizationGroups(customizationGroupsData);
-        console.log('获取到的加料选项:', customizationGroupsData);
+        
         
       } catch (err) {
         console.error('获取菜单失败:', err);

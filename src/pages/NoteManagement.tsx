@@ -26,6 +26,7 @@ interface NewCustomization {
 
 interface NewCustomizationGroup {
   name: string;
+  description: string;
   is_required: boolean;
   is_multiple_choice: boolean;
 }
@@ -58,6 +59,7 @@ export default function NoteSettings() {
   });
   const [newCustomizationGroup, setNewCustomizationGroup] = useState<NewCustomizationGroup>({
     name: '',
+    description: '',
     is_required: false,
     is_multiple_choice: false,
   });
@@ -406,6 +408,15 @@ export default function NoteSettings() {
             新增
           </button>
         </div>
+        <div className="flex gap-4 mt-2">
+          <input
+              type="text"
+              placeholder="備註介紹描述"
+              className="border p-2 rounded flex-1"
+              value={newCustomizationGroup.name}
+              onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, description: e.target.value })}
+            />
+        </div>
       </div>
 
       {/* ➕ 新增備註 */}
@@ -449,6 +460,15 @@ export default function NoteSettings() {
           >
             新增
           </button>
+        </div>
+        <div className="flex gap-4 mt-2">
+          <input
+              type="text"
+              placeholder="備註介紹描述"
+              className="border p-2 rounded flex-1"
+              value={newCustomizationGroup.name}
+              onChange={(e) => setNewCustomization({ ...newCustomization, description: e.target.value })}
+            />
         </div>
       </div>
 
