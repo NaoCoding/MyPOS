@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
 import "../styles/nav.css";
+const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 interface NavbarProps {
   role_id: number;
@@ -16,7 +17,7 @@ export default function Navbar({ role_id, setToken }: NavbarProps) {
 
   const logout = async () => {
     try {
-      const response = await fetch('http://localhost:5000/logout', {
+      const response = await fetch(backendAPI+'/logout', {
         method: 'POST',
         credentials: 'include', // 重要：包含 httpOnly cookies
       });
