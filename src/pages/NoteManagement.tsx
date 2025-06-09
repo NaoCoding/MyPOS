@@ -139,9 +139,34 @@ export default function NoteSettings() {
     );
   };
 
-  const handleDelete = (id: number) => {
-    if (window.confirm('確定要刪除這筆備註嗎？')) {
-      setCustomizations(prev => prev.filter(n => n.id !== id));
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('確定要刪除這筆備註嗎？')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${backendURL}/customization/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        console.log("HTTP error:", response.status, await response.json());
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      fetchCustomizations();
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('新增備註時發生未知錯誤');
+      }
+      console.error("Failed to add customization:", error);
+      return;
     }
   };
 
