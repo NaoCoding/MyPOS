@@ -1,48 +1,75 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-interface Note {
+interface Customization {
   id: number;
-  label: string;
-  type: '加價選項' | '備註標記';
-  enabled: boolean;
+  name: string;
+  customization_group_name: string;
+  is_available: boolean;
 }
 
 export default function NoteSettings() {
-  const [notes, setNotes] = useState<Note[]>([
-    { id: 1, label: '加飯', type: '加價選項', enabled: true },
-    { id: 2, label: '不加辣', type: '備註標記', enabled: true },
-    { id: 3, label: '蛋奶素', type: '備註標記', enabled: false },
-  ]);
-
-  const [newNote, setNewNote] = useState({
-    label: '',
-    type: '加價選項' as Note['type'],
+  const [customizations, setCustomizations] = useState<Customization[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [newCustomization, setNewCustomization] = useState({
+    name: '',
+    customization_group_name: '加價選項' as Customization['customization_group_name'],
   });
 
+  const fetchCustomizations = async () => {
+    try {
+      setLoading(true);
+      const backendURL = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
+      const customizations = await fetch(`${backendURL}/customization`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!customizations.ok) {
+        console.log("HTTP error:", customizations.status, await customizations.json());
+        throw new Error(`HTTP error! status: ${customizations.status}`);
+      }
+
+      const data = await customizations.json();
+      setCustomizations(data);
+    }
+    catch (error) {
+      console.error('取得自訂選項時發生錯誤:', error);
+    }
+    finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomizations();
+  }, []);
+
   const handleAdd = () => {
-    if (!newNote.label.trim()) {
+    if (!newCustomization.name.trim()) {
       alert('請輸入備註內容');
       return;
     }
-    const next: Note = {
-      id: notes.length + 1,
-      label: newNote.label.trim(),
-      type: newNote.type,
-      enabled: true,
+    const next: Customization = {
+      id: customizations.length + 1,
+      name: newCustomization.name.trim(),
+      customization_group_name: newCustomization.customization_group_name,
+      is_available: true,
     };
-    setNotes(prev => [...prev, next]);
-    setNewNote({ label: '', type: '加價選項' });
+    setCustomizations(prev => [...prev, next]);
+    setNewCustomization({ name: '', customization_group_name: '加價選項' });
   };
 
   const toggleEnable = (id: number) => {
-    setNotes(prev =>
-      prev.map(n => n.id === id ? { ...n, enabled: !n.enabled } : n)
+    setCustomizations(prev =>
+      prev.map(n => n.id === id ? { ...n, is_available: !n.is_available } : n)
     );
   };
 
   const handleDelete = (id: number) => {
     if (window.confirm('確定要刪除這筆備註嗎？')) {
-      setNotes(prev => prev.filter(n => n.id !== id));
+      setCustomizations(prev => prev.filter(n => n.id !== id));
     }
   };
 
@@ -61,13 +88,13 @@ export default function NoteSettings() {
           </tr>
         </thead>
         <tbody>
-          {notes.map(note => (
+          {customizations.map(note => (
             <tr key={note.id} className="hover:bg-gray-50">
-              <td className="border px-4 py-2">{note.label}</td>
-              <td className="border px-4 py-2">{note.type}</td>
+              <td className="border px-4 py-2">{note.name}</td>
+              <td className="border px-4 py-2">{note.customization_group_name}</td>
               <td className="border px-4 py-2 text-center">
-                <span className={note.enabled ? 'text-green-600' : 'text-gray-500'}>
-                  {note.enabled ? '啟用中' : '停用'}
+                <span className={note.is_available ? 'text-green-600' : 'text-gray-500'}>
+                  {note.is_available ? '啟用中' : '停用'}
                 </span>
               </td>
               <td className="border px-4 py-2 text-center space-x-2">
@@ -75,7 +102,7 @@ export default function NoteSettings() {
                   className="text-blue-600 hover:underline"
                   onClick={() => toggleEnable(note.id)}
                 >
-                  {note.enabled ? '停用' : '啟用'}
+                  {note.is_available ? '停用' : '啟用'}
                 </button>
                 <button
                   className="text-red-600 hover:underline"
@@ -97,13 +124,13 @@ export default function NoteSettings() {
             type="text"
             placeholder="備註內容（如：加飯）"
             className="border p-2 rounded flex-1"
-            value={newNote.label}
-            onChange={(e) => setNewNote({ ...newNote, label: e.target.value })}
+            value={newCustomization.name}
+            onChange={(e) => setNewCustomization({ ...newCustomization, name: e.target.value })}
           />
           <select
             className="border p-2 rounded"
-            value={newNote.type}
-            onChange={(e) => setNewNote({ ...newNote, type: e.target.value as Note['type'] })}
+            value={newCustomization.customization_group_name}
+            onChange={(e) => setNewCustomization({ ...newCustomization, customization_group_name: e.target.value as Customization['customization_group_name'] })}
           >
             <option value="加價選項">加價選項</option>
             <option value="備註標記">備註標記</option>
