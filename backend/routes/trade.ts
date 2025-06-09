@@ -347,7 +347,9 @@ async function getTradeItemsWithCustomizations(tradeId: number) {
         let price = 0.0;
 
         if (item && item.unit_price && tradeItem.quantity) {
-            price = item.unit_price * tradeItem.quantity;
+            price = (item.discount_amount ? ((item.discount_type === "percentage" ? item.unit_price * item.discount_amount :
+                (item.discount_type === "fixed" ? item.discount_amount : item.unit_price)
+            )) : item.unit_price) * tradeItem.quantity;
         }
 
         if (tradeItemCustomizations && tradeItemCustomizations.length > 0) {
