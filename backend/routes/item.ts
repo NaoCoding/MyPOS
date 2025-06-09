@@ -419,11 +419,7 @@ async function getItemCustomizationGroups(itemId: number) {
 
         groups.push({
             ...group,
-            customizations: customizations.map(customization => ({
-                id: customization.id,
-                name: customization.name,
-                description: customization.description
-            }))
+            customizations
         });
     }
 
