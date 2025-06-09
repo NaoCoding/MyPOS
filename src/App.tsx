@@ -94,7 +94,6 @@ function App() {
     return (
       <div className="app_container">
         <NextTopLoader color='#565656' showSpinner={false} />
-        <Navbar role_id={roleId} setToken={setToken} />
         <Routes>
           <Route path="/" element={<UserHome />} />
           <Route path="/user/Home" element={<UserHome />} />
