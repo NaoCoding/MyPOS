@@ -23,7 +23,7 @@ import SalesRanking from './pages/SalesRanking';
 import Inventory from './pages/Inventory';
 import UserHome from './pages/user/UserHome';
 import UserOrder from './pages/user/UserOrder';
-import UserOrderSubmit from './pages/user/OrderSubmit';
+import UserOrderSubmit from './pages/user/UserOrderSubmit';
 import UserOrderHistory from './pages/user/UserOrderHistory';
 import UserCustomerInfo from './pages/user/CustomerInfo';
 import UserLogin from './pages/user/UserLogin';
