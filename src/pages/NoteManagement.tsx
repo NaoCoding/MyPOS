@@ -387,20 +387,33 @@ export default function NoteSettings() {
             value={newCustomizationGroup.name}
             onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, name: e.target.value })}
           />
-          <p>是否必填</p>
-          <input
-            type="checkbox"
-            className="mt-2"
-            checked={newCustomizationGroup.is_required}
-            onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, is_required: e.target.checked })}
-          />
-          <p>是否多選</p>
-          <input
-            type="checkbox"
-            className="mt-2"
-            checked={newCustomizationGroup.is_multiple_choice}
-            onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, is_multiple_choice: e.target.checked })}
-          />
+          <button
+            className={`px-4 py-2 rounded text-white transition ${
+              newCustomizationGroup.is_required ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 hover:bg-gray-500'
+            }`}
+            onClick={() =>
+              setNewCustomizationGroup({
+                ...newCustomizationGroup,
+                is_required: !newCustomizationGroup.is_required,
+              })
+            }
+          >
+            {newCustomizationGroup.is_required ? '✅ 必填' : '❌ 非必填'}
+          </button>
+
+          <button
+            className={`px-4 py-2 rounded text-white transition ${
+              newCustomizationGroup.is_multiple_choice ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-400 hover:bg-gray-500'
+            }`}
+            onClick={() =>
+              setNewCustomizationGroup({
+                ...newCustomizationGroup,
+                is_multiple_choice: !newCustomizationGroup.is_multiple_choice,
+              })
+            }
+          >
+            {newCustomizationGroup.is_multiple_choice ? '✅ 可多選' : '❌ 單選'}
+          </button>
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             onClick={handleAddGroup}
