@@ -1,5 +1,6 @@
 import "../styles/login.css"
 import React, { useState } from 'react';
+const backendAPI = process.env.REACT_APP_BACKEND_API;
 
 export default function SignUp() {
     const [username, setUserName] = useState<string>('');
@@ -17,7 +18,8 @@ export default function SignUp() {
         }
         
         try {
-          const response = await fetch('http://localhost:5000/register', {
+          console.log(backendAPI)
+          const response = await fetch(backendAPI+'/register', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

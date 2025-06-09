@@ -1,6 +1,7 @@
 import "../styles/login.css"
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+const backendAPI = process.env.REACT_APP_BACKEND_API;
 
 //TODO : connect with backend and backend should return a token
 interface Credentials {
@@ -24,7 +25,7 @@ export default function Login(props: LoginProps) {
         e.preventDefault();
         
         try {
-          const response = await fetch('http://localhost:5000/login', {
+          const response = await fetch(backendAPI + '/login', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
