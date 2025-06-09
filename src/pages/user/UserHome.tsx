@@ -82,22 +82,18 @@ export default function UserHome() {
               <span className="text-3xl font-bold text-white">🍽️</span>
             </div>
           </div>
-          
+
           <h1
             className="text-4xl font-bold mb-3 bg-gradient-to-r from-blue-600 via-purple-600 to-orange-500 bg-clip-text text-transparent"
-            style={{
-              animation: 'pulseScale 2.5s ease-in-out infinite',
-            }}
+            style={{ animation: 'pulseScale 2.5s ease-in-out infinite' }}
           >
             MyPOS!!!! 點餐系統
           </h1>
-          
-          <p className="text-gray-600 text-lg">
-            美味餐點，輕鬆點選 ✨
-          </p>
+
+          <p className="text-gray-600 text-lg">美味餐點，輕鬆點選 ✨</p>
         </div>
 
-        {/* 主要功能按鈕 */}
+        {/* 主要功能按鈕（含聯絡我們） */}
         <div className="w-full max-w-sm space-y-4 mb-8">
           <button
             className="slide-in-up w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-xl py-5 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
@@ -107,7 +103,7 @@ export default function UserHome() {
             <span className="text-2xl">🛒</span>
             我要點餐
           </button>
-          
+
           <button
             className="slide-in-up w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-xl py-5 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
             onClick={() => navigate('/user/History')}
@@ -116,37 +112,32 @@ export default function UserHome() {
             <span className="text-2xl">📜</span>
             查詢歷史訂單
           </button>
-          
-          <button
-            className="slide-in-up w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-xl py-5 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-            onClick={() => navigate('/user/Register')}
-            style={{ animationDelay: '0.3s' }}
-          >
-            <span className="text-2xl">👤</span>
-            使用者註冊
-          </button>
-        </div>
 
-        {/* 次要功能 */}
-        <div className="w-full max-w-sm space-y-3">
           <button
             className="slide-in-up w-full bg-white hover:bg-gray-50 text-gray-700 text-lg py-4 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3 border border-gray-200"
             onClick={() => alert('請洽服務人員')}
-            style={{ animationDelay: '0.4s' }}
+            style={{ animationDelay: '0.3s' }}
           >
             <span className="text-xl">📞</span>
             聯絡我們
           </button>
-          
-          {/* 快速體驗按鈕 
+
           <button
-            className="slide-in-up w-full bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white text-lg py-4 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-            onClick={() => navigate('/user/Order')}
-            style={{ animationDelay: '0.5s' }}
+            className="slide-in-up w-full bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-white text-lg py-4 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
+            onClick={() => {
+              // 登出後導回登入頁
+              fetch('http://localhost:5000/logout', {
+                method: 'POST',
+                credentials: 'include',
+              }).then(() => {
+                window.location.href = '/login';
+              });
+            }}
+            style={{ animationDelay: '0.4s' }}
           >
-            <span className="text-xl">⚡</span>
-            快速體驗點餐
-          </button>*/}
+            <span className="text-xl">🚪</span>
+            登出
+          </button>
         </div>
 
         {/* 特色標籤 */}
@@ -161,7 +152,8 @@ export default function UserHome() {
             📱 手機優化
           </span>
         </div>
-        {/* 調皮按鈕 - 位置調整到更好的地方 */}
+
+        {/* 調皮按鈕 */}
         <button
           ref={naughtyBtnRef}
           onMouseEnter={escapeButton}
@@ -169,15 +161,15 @@ export default function UserHome() {
           className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-sm px-4 py-2 rounded-full font-semibold shadow-lg transition-all duration-300"
           style={{
             position: 'absolute',
-            left: 'calc(100% - 160px)', // 初始靠右 (假設按鈕寬度約100px~150px)
+            left: 'calc(100% - 160px)',
             top: '550px',
             animation: 'pulseScale 2s ease-in-out infinite',
           }}
         >
           🎁 點我拿優惠券！
         </button>
-
       </div>
+
 
       
 
