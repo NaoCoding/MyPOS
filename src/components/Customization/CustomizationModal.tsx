@@ -161,12 +161,12 @@ export default function CustomizationModal({ item, isOpen, onClose, onAddToCart 
             <div key={group.id} className="mb-6">
               <div className="flex items-center mb-3">
                 <h4 className="text-lg font-semibold text-gray-800">{group.name}</h4>
-                {group.is_required && (
+                {group.is_required ? (
                   <span className="ml-2 px-2 py-1 bg-red-100 text-red-600 text-xs rounded-full">必選</span>
-                )}
-                {group.is_multiple_choice && (
+                ) : <></>}
+                {group.is_multiple_choice ? (
                   <span className="ml-2 px-2 py-1 bg-blue-100 text-blue-600 text-xs rounded-full">可多選</span>
-                )}
+                ) : <></>}
               </div>
               
               {group.description && (
