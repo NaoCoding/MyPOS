@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 export default function UserLogin() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    phone: '',
+    name: '',
     password: ''
   });
   const [isLoading, setIsLoading] = useState(false);
@@ -23,11 +23,11 @@ export default function UserLogin() {
     setTimeout(() => {
       setIsLoading(false);
       // 這裡之後會接真實的登入 API
-      alert('登入成功！');
+      alert(`登入成功，歡迎 ${formData.name}！`);
       
       // 暫時儲存用戶資訊到 localStorage（模擬登入狀態）
       localStorage.setItem('user', JSON.stringify({
-        phone: formData.phone,
+        name: formData.name,
         isLoggedIn: true
       }));
       
@@ -106,19 +106,19 @@ export default function UserLogin() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  手機號碼
+                  姓名
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <span className="text-gray-400 text-lg">📱</span>
+                    <span className="text-gray-400 text-lg">👤</span>
                   </div>
                   <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
+                    type="text"
+                    name="name"
+                    value={formData.name}
                     onChange={handleInputChange}
                     className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-lg"
-                    placeholder="請輸入手機號碼"
+                    placeholder="請輸入姓名"
                     required
                   />
                 </div>
