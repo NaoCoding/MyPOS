@@ -20,12 +20,12 @@ import NoteAnalysis from './pages/NoteAnalysis';
 import CustomerAnalysis from './pages/CustomerAnalysis';
 import SalesRanking from './pages/SalesRanking';
 import Inventory from './pages/Inventory';
-import User_Home from './pages/user/User_Home';
-import User_Order from './pages/user/User_Order';
-import User_OrderSubmit from './pages/user/User_OrderSubmit';
-import User_OrderHistory from './pages/user/User_OrderHistory';
-import User_Login from './pages/user/User_Login';
-import User_Register from './pages/user/User_Register';
+import UserHome from './pages/user/UserHome';
+import UserOrder from './pages/user/UserOrder';
+import UserOrderSubmit from './pages/user/UserOrderSubmit';
+import UserOrderHistory from './pages/user/UserOrderHistory';
+import UserLogin from './pages/user/UserLogin';
+import UserRegister from './pages/user/UserRegister';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -94,12 +94,12 @@ function App() {
         <Route path="/PermissionSetting" element={<PermissionSetting/>} />
 
         {/* 手機端頁面 */}
-        <Route path="/user/Home" element={<User_Home/>} />
-        <Route path="/user/Order" element={<User_Order/>} />
-        <Route path="/user/Submit" element={<User_OrderSubmit/>} />
-        <Route path="/user/History" element={<User_OrderHistory/>} />
-        <Route path="/user/Login" element={<User_Login/>} />
-        <Route path="/user/Register" element={<User_Register/>} />
+        <Route path="/user/Home" element={<UserHome/>} />
+        <Route path="/user/Order" element={<UserOrder/>} />
+        <Route path="/user/Submit" element={<UserOrderSubmit/>} />
+        <Route path="/user/History" element={<UserOrderHistory/>} />
+        <Route path="/user/Login" element={<UserLogin/>} />
+        <Route path="/user/Register" element={<UserRegister/>} />
       
         {/* 404 Not Found */}
         <Route path="*" element={<NotFound />} />

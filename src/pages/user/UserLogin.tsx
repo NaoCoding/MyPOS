@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function User_Login() {
+export default function UserLogin() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     phone: '',

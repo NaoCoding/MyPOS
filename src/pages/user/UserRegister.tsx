@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function User_Register() {
+export default function UserRegister() {
   // 保留原版的狀態管理
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');

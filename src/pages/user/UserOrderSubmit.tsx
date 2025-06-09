@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function User_OrderSubmit() {
+export default function UserOrderSubmit() {
   // 保留原版的 navigate
   const navigate = useNavigate();
 

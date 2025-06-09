@@ -2,7 +2,7 @@
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function User_Home() {
+export default function UserHome() {
   const navigate = useNavigate();
   const naughtyBtnRef = useRef<HTMLButtonElement>(null);
 
