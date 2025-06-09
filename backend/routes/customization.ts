@@ -56,7 +56,18 @@ customizationRouter.post('/group', async (req: Request, res: Response) => {
 
 customizationRouter.get('/group', async (req: Request, res: Response) => {
     try {
-        const groups = await getCustomizationGroups();
+        const rawGroups = await getCustomizationGroups();
+        let groups = [];
+
+        for (const group of rawGroups) {
+            const customizations = await getCustomizationsFromGroup(group.id);
+
+            groups.push({
+                ...group,
+                customizations: customizations || []
+            });
+        }
+
         res.status(200).json(groups);
     }
     catch (error) {
