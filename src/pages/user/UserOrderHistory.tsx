@@ -15,17 +15,6 @@ export default function UserOrderHistory() {
   const [orders, setOrders] = useState<Order[]>([]);
   const navigate = useNavigate();
 
-  // 保留原版的 localStorage 檢查邏輯！！這很重要！！
-  useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (!user) {
-      alert('請先登入才能查詢歷史訂單');
-      navigate('/user/Login');
-    } else {
-      const parsed = JSON.parse(user);
-      setPhone(parsed.phone || '');
-    }
-  }, [navigate]);
 
   // 保留原版的查詢邏輯
   const handleSearch = async () => {
@@ -85,7 +74,7 @@ export default function UserOrderHistory() {
 
             <button
               onClick={handleSearch}
-              className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white py-4 rounded-xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white py-4 rounded-xl text-lg font-semibold transition-all duration-300 transform shadow-lg"
             >
               🔍 查詢訂單
             </button>
