@@ -2,29 +2,61 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// 保留原版的介面定義
-interface Order {
-  time: string;
-  items: string[];
-  total: number;
+const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
+interface Customization {
+  name: string;
+}
+
+interface TradeItem {
+  name: string;
+  quantity: number;
+  customizations: Customization[];
+}
+
+interface Trade {
+  id: number;
+  total_price: number;
+  trade_datetime: string;
+  trade_items: TradeItem[];
 }
 
 export default function UserOrderHistory() {
   // 保留原版的狀態管理
-  const [phone, setPhone] = useState('');
-  const [orders, setOrders] = useState<Order[]>([]);
   const navigate = useNavigate();
 
+  const [trades, setTrades] = useState<Trade[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // 保留原版的查詢邏輯
-  const handleSearch = async () => {
-    // 模擬 API 回傳結果
-    const mockData: Order[] = [
-      { time: '2024-06-01 12:30', items: ['雞腿便當', '紅茶'], total: 150 },
-      { time: '2024-06-03 18:45', items: ['排骨飯', '綠茶', '布丁'], total: 185 },
-    ];
-    setOrders(mockData);
-  };
+  const fetchTrades = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${backendAPI}/trade/my`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      console.log(data);
+      setTrades(data);
+    }
+    catch (error) {
+      console.error('Error fetching trades:', error);
+      setTrades([]);
+    }
+    finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => {
+    fetchTrades();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 pb-20">
@@ -48,41 +80,8 @@ export default function UserOrderHistory() {
       </div>
 
       <div className="px-4 py-6">
-        {/* 查詢區塊 - 保留原版邏輯 */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
-          <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl mx-auto flex items-center justify-center shadow-lg mb-4">
-              <span className="text-2xl font-bold text-white">📱</span>
-            </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">手機號碼查詢</h2>
-            <p className="text-gray-600">輸入您的手機號碼查詢訂單記錄</p>
-          </div>
-
-          <div className="space-y-4">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-400 text-lg">📱</span>
-              </div>
-              <input
-                type="text"
-                placeholder="輸入手機號碼"
-                value={phone}
-                onChange={e => setPhone(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-lg"
-              />
-            </div>
-
-            <button
-              onClick={handleSearch}
-              className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white py-4 rounded-xl text-lg font-semibold transition-all duration-300 transform shadow-lg"
-            >
-              🔍 查詢訂單
-            </button>
-          </div>
-        </div>
-
         {/* 訂單結果 */}
-        {orders.length === 0 ? (
+        {trades.length === 0 ? (
           <div className="text-center py-12">
             <div className="text-gray-400 text-6xl mb-4">📝</div>
             <p className="text-gray-500 text-lg mb-2">尚無訂單紀錄</p>
@@ -99,11 +98,11 @@ export default function UserOrderHistory() {
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-800">查詢結果</h3>
               <div className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
-                {orders.length} 筆訂單
+                {trades.length} 筆訂單
               </div>
             </div>
 
-            {orders.map((order, i) => (
+            {trades.map((trade, i) => (
               <div
                 key={i}
                 className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-200 p-6 transform hover:scale-105"
@@ -117,7 +116,7 @@ export default function UserOrderHistory() {
                     <div className="font-bold text-lg text-gray-800">訂單 #{i + 1}</div>
                     <div className="text-gray-500 flex items-center gap-2">
                       <span className="text-sm">🕐</span>
-                      <span className="text-sm">訂購時間：{order.time}</span>
+                      <span className="text-sm">訂購時間：{ new Date(trade.trade_datetime).toLocaleString() }</span>
                     </div>
                   </div>
                   <div className="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-medium">
@@ -133,7 +132,16 @@ export default function UserOrderHistory() {
                   </h4>
                   <div className="bg-gray-50 rounded-xl p-3">
                     <div className="text-gray-700">
-                      {order.items.join('、')}
+                      {trade.trade_items.map((item, index) => (
+                        <div key={index} className="flex items-center justify-between mb-2">
+                          <span>
+                            {item.name} * {item.quantity}
+                            （{item.customizations.length > 0
+                              ? item.customizations.map((c, idx) => c.name).join('、')
+                              : '無額外選項'}）
+                          </span>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -141,18 +149,18 @@ export default function UserOrderHistory() {
                 {/* 總金額和操作 */}
                 <div className="flex justify-between items-center pt-4 border-t border-gray-100">
                   <div className="text-2xl font-bold text-green-600">
-                    ${order.total}
+                    ${trade.total_price}
                   </div>
-                  <button
+                  {/* <button
                     onClick={() => {
-                      alert(`重新訂購：${order.items.join('、')}`);
+                      alert(`重新訂購：${trade.items.join('、')}`);
                       navigate('/user/Order');
                     }}
                     className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
                   >
                     <span>🔄</span>
                     重新訂購
-                  </button>
+                  </button> */}
                 </div>
               </div>
             ))}
