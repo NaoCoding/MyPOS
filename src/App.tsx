@@ -135,7 +135,6 @@ function App() {
           <Route path="/ProductItemForm" element={<ProductItemForm/>} />
           <Route path="/OrderManagement" element={<OrderManagement/>} />
           <Route path="/SystemSetting" element={<SystemSetting/>} />
-          <Route path="/manage/user" element={<UserManagement/>} />
           <Route path="/NoteManagement" element={<NoteManagement/>} />
           <Route path="/PermissionSetting" element={<PermissionSetting/>} />
 
