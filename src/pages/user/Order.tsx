@@ -1,5 +1,6 @@
 import React, { useState , useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 const categories = ['套餐', '主餐', '副餐', '點心' , '甜品', '飲料', '其他'] as const;
 type Category = typeof categories[number];
@@ -58,13 +59,13 @@ export default function UserOrderPage() {
       try {
         setIsLoading(true);
         setError(null);
-        const itemResponse = await fetch('http://localhost:5000/item');
+        const itemResponse = await fetch(backendAPI+'/item');
         if (!itemResponse.ok) {
           throw new Error(`无法获取菜单项目: ${itemResponse.statusText}`);
         }
         const items: ApiItem[] = await itemResponse.json();
 
-        const productResponse = await fetch('http://localhost:5000/product');
+        const productResponse = await fetch(backendAPI+'/product');
         if (!productResponse.ok) {
           throw new Error(`无法获取产品列表: ${productResponse.statusText}`);
         }

@@ -26,6 +26,7 @@ import UserOrder from './pages/user/Order';
 import UserOrderSubmit from './pages/user/OrderSubmit';
 import UserOrderHistory from './pages/user/OrderHistory';
 import UserCustomerInfo from './pages/user/CustomerInfo';
+const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 function App() {
   const [token, setToken] = useState<string>('');
@@ -36,7 +37,7 @@ function App() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await fetch('http://localhost:5000/auth/checkAuth', {
+        const response = await fetch(backendAPI+'/auth/checkAuth', {
           method: 'GET',
           credentials: 'include', // 重要：包含 httpOnly cookies
         });
