@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { createTrade, deleteTrade, findTrade, getTrades, updateTrade } from '../models/trade';
+import { createTrade, deleteTrade, findTrade, findUserTrades, getTrades, updateTrade } from '../models/trade';
 import { checkLogin } from '../middleware';
 import { findUser } from '../models/user';
 import { createTradeItem, deleteTradeItem, updateTradeItem } from '../models/trade_item';
@@ -150,9 +150,16 @@ tradeRouter.get('/', async (req: Request, res: Response) => {
 
         for (const rawTrade of rawTrades) {
             const tradeItems = await getTradeItemsWithCustomizations(rawTrade.id);
+            let price = 0.0;
+
+            for (const tradeItem of tradeItems) {
+                price += tradeItem.price || 0.0;
+            }
+
             trades.push({
                 ...rawTrade,
-                trade_items: tradeItems
+                trade_items: tradeItems,
+                total_price: price
             });
         }
 
@@ -160,6 +167,55 @@ tradeRouter.get('/', async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).json({
             message: "Error fetching trades"
+        });
+    }
+});
+
+tradeRouter.get('/my', async (req: Request, res: Response) => {
+    try {
+        const token = req.cookies.token;
+        const decoded = jwt.verify(token, JWT_TOKEN);
+
+        if (typeof decoded === 'string' || !decoded.username) {
+            res.status(401).json({
+                message: "Unauthorized: Invalid token payload"
+            });
+            return;
+        }
+
+        const user = await findUser({ username: decoded.username });
+
+        if (!user || !user.id) {
+            res.status(401).json({
+                message: "Unauthorized: User not found"
+            });
+            return;
+        }
+
+        const rawTrades = await findUserTrades(user.id);
+        let trades = [];
+
+        for (const rawTrade of rawTrades) {
+            const tradeItems = await getTradeItemsWithCustomizations(rawTrade.id);
+            let price = 0.0; 
+
+            for (const tradeItem of tradeItems) {
+                price += tradeItem.price || 0.0;
+            }
+
+            trades.push({
+                ...rawTrade,
+                trade_items: tradeItems,
+                total_price: price
+            });
+        }
+
+        res.status(200).json(trades);
+    }
+    catch (error) {
+        console.log("Error fetching user trades:", error);
+        res.status(500).json({
+            message: "Error fetching user trades"
         });
     }
 });
@@ -177,10 +233,16 @@ tradeRouter.get('/:id', async (req: Request, res: Response) => {
         }
 
         const tradeItems = await getTradeItemsWithCustomizations(Number(id));
+        let price = 0.0;
+
+        for (const tradeItem of tradeItems) {
+            price += tradeItem.price || 0.0;
+        }
 
         res.status(200).json({
             ...trade,
-            trade_items: tradeItems
+            trade_items: tradeItems,
+            total_price: price
         });
     } catch (error) {
         res.status(500).json({
@@ -282,6 +344,11 @@ async function getTradeItemsWithCustomizations(tradeId: number) {
         const item = await findItemWithPriceAndDiscount({ id: tradeItem.item_id });
         const tradeItemCustomizations = await findTradeItemCustomizationsByTradeItemId(tradeItem.id);
         let customizations = [];
+        let price = 0.0;
+
+        if (item && item.unit_price && tradeItem.quantity) {
+            price = item.unit_price * tradeItem.quantity;
+        }
 
         if (tradeItemCustomizations && tradeItemCustomizations.length > 0) {
             for (const tradeItemCustomization of tradeItemCustomizations) {
@@ -294,6 +361,10 @@ async function getTradeItemsWithCustomizations(tradeId: number) {
                         price_delta_snapshot: tradeItemCustomization.price_delta_snapshot
                     });
                 }
+
+                if (tradeItem.quantity) {
+                    price += tradeItemCustomization.price_delta_snapshot * tradeItem.quantity;
+                }
             }
         }
 
@@ -303,6 +374,7 @@ async function getTradeItemsWithCustomizations(tradeId: number) {
 
         itemsWithCustomizations.push({
             ...item,
+            price,
             customizations
         });
     }
