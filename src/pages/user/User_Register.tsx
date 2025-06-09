@@ -1,8 +1,8 @@
-// src/pages/Mobile/Mobile_Register.tsx
+// src/pages/user/User_Register.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Mobile_Register() {
+export default function User_Register() {
   // 保留原版的狀態管理
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -16,7 +16,7 @@ export default function Mobile_Register() {
       return;
     }
     alert(`註冊成功！\n姓名：${name}\n手機：${phone}`);
-    navigate('/Mobile/Home');
+    navigate('/user/Home');
   };
 
   return (
@@ -59,7 +59,7 @@ export default function Mobile_Register() {
       <div className="relative z-10 w-full max-w-md">
         {/* 返回按鈕 */}
         <button
-          onClick={() => navigate('/Mobile/Home')}
+          onClick={() => navigate('/user/Home')}
           className="slide-in-up mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
           style={{ animationDelay: '0.1s' }}
         >
@@ -154,7 +154,7 @@ export default function Mobile_Register() {
               <span className="text-gray-600">已經有帳號了？</span>
               <button
                 type="button"
-                onClick={() => navigate('/Mobile/Login')}
+                onClick={() => navigate('/user/Login')}
                 className="ml-1 text-purple-600 hover:text-purple-700 font-medium transition-colors"
               >
                 立即登入

@@ -1,24 +1,30 @@
-// src/pages/Mobile/Mobile_Home.tsx
+// src/pages/user/User_Home.tsx
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Mobile_Home() {
+export default function User_Home() {
   const navigate = useNavigate();
   const naughtyBtnRef = useRef<HTMLButtonElement>(null);
 
   const escapeButton = () => {
     const btn = naughtyBtnRef.current;
     if (btn) {
-      const container = btn.parentElement;
-      const maxX = container!.clientWidth - btn.offsetWidth;
-      const maxY = container!.clientHeight - btn.offsetHeight;
+      const container = btn.offsetParent as HTMLElement;
+      if (!container) return;
+
+      const margin = 20;
+      const containerRect = container.getBoundingClientRect();
+      const maxX = container.clientWidth - btn.offsetWidth - margin;
+      const maxY = container.clientHeight - btn.offsetHeight - margin;
       const newX = Math.random() * maxX;
       const newY = Math.random() * maxY;
-      btn.style.position = 'absolute';
+
+      btn.style.transition = 'top 0.2s ease-out, left 0.2s ease-out';
       btn.style.left = `${newX}px`;
       btn.style.top = `${newY}px`;
     }
   };
+
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-orange-50 px-6 overflow-hidden">
@@ -95,7 +101,7 @@ export default function Mobile_Home() {
         <div className="w-full max-w-sm space-y-4 mb-8">
           <button
             className="slide-in-up w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-xl py-5 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-            onClick={() => navigate('/Mobile/Login')}
+            onClick={() => navigate('/user/Login')}
             style={{ animationDelay: '0.1s' }}
           >
             <span className="text-2xl">🛒</span>
@@ -104,7 +110,7 @@ export default function Mobile_Home() {
           
           <button
             className="slide-in-up w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-xl py-5 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-            onClick={() => navigate('/Mobile/History')}
+            onClick={() => navigate('/user/History')}
             style={{ animationDelay: '0.2s' }}
           >
             <span className="text-2xl">📜</span>
@@ -113,7 +119,7 @@ export default function Mobile_Home() {
           
           <button
             className="slide-in-up w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-xl py-5 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-            onClick={() => navigate('/Mobile/Register')}
+            onClick={() => navigate('/user/Register')}
             style={{ animationDelay: '0.3s' }}
           >
             <span className="text-2xl">👤</span>
@@ -135,7 +141,7 @@ export default function Mobile_Home() {
           {/* 快速體驗按鈕 
           <button
             className="slide-in-up w-full bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white text-lg py-4 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-            onClick={() => navigate('/Mobile/Order')}
+            onClick={() => navigate('/user/Order')}
             style={{ animationDelay: '0.5s' }}
           >
             <span className="text-xl">⚡</span>
@@ -155,21 +161,26 @@ export default function Mobile_Home() {
             📱 手機優化
           </span>
         </div>
+        {/* 調皮按鈕 - 位置調整到更好的地方 */}
+        <button
+          ref={naughtyBtnRef}
+          onMouseEnter={escapeButton}
+          onClick={escapeButton}
+          className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-sm px-4 py-2 rounded-full font-semibold shadow-lg transition-all duration-300"
+          style={{
+            position: 'absolute',
+            right: '50px',  // 初始位置
+            top: '550px',
+            animation: 'pulseScale 2s ease-in-out infinite',
+          }}
+        >
+          🎁 點我拿優惠券！
+        </button>
+
       </div>
 
-      {/* 調皮按鈕 - 位置調整到更好的地方 */}
-      <button
-        ref={naughtyBtnRef}
-        onMouseEnter={escapeButton}
-        className="absolute bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-sm px-4 py-2 rounded-full font-semibold shadow-lg transform hover:scale-110 transition-all duration-300"
-        style={{ 
-          bottom: '15%', 
-          right: '20px',
-          animation: 'pulseScale 2s ease-in-out infinite'
-        }}
-      >
-        🎁 點我拿優惠券！
-      </button>
+      
+
     </div>
   );
 }

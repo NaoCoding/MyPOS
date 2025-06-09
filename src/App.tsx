@@ -20,12 +20,12 @@ import NoteAnalysis from './pages/NoteAnalysis';
 import CustomerAnalysis from './pages/CustomerAnalysis';
 import SalesRanking from './pages/SalesRanking';
 import Inventory from './pages/Inventory';
-import Mobile_Home from './pages/Mobile/Mobile_Home';
-import Mobile_Order from './pages/Mobile/Mobile_Order';
-import Mobile_OrderSubmit from './pages/Mobile/Mobile_OrderSubmit';
-import Mobile_OrderHistory from './pages/Mobile/Mobile_OrderHistory';
-import Mobile_Login from './pages/Mobile/Mobile_Login';
-import Mobile_Register from './pages/Mobile/Mobile_Register';
+import User_Home from './pages/user/User_Home';
+import User_Order from './pages/user/User_Order';
+import User_OrderSubmit from './pages/user/User_OrderSubmit';
+import User_OrderHistory from './pages/user/User_OrderHistory';
+import User_Login from './pages/user/User_Login';
+import User_Register from './pages/user/User_Register';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -48,12 +48,12 @@ function App() {
 
   const location = useLocation();
  const hideNavbarRoutes = [
-  '/Mobile/Home',
-  '/Mobile/Order',
-  '/Mobile/Submit',
-  '/Mobile/History',
-  '/Mobile/Login',
-  '/Mobile/Register'
+  '/user/Home',
+  '/user/Order',
+  '/user/Submit',
+  '/user/History',
+  '/user/Login',
+  '/user/Register'
 ];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
@@ -94,12 +94,12 @@ function App() {
         <Route path="/PermissionSetting" element={<PermissionSetting/>} />
 
         {/* 手機端頁面 */}
-        <Route path="/Mobile/Home" element={<Mobile_Home />} />
-        <Route path="/Mobile/Order" element={<Mobile_Order />} />
-        <Route path="/Mobile/Submit" element={<Mobile_OrderSubmit />} />
-        <Route path="/Mobile/History" element={<Mobile_OrderHistory />} />
-        <Route path="/Mobile/Login" element={<Mobile_Login />} />
-        <Route path="/Mobile/Register" element={<Mobile_Register />} />
+        <Route path="/user/Home" element={<User_Home/>} />
+        <Route path="/user/Order" element={<User_Order/>} />
+        <Route path="/user/Submit" element={<User_OrderSubmit/>} />
+        <Route path="/user/History" element={<User_OrderHistory/>} />
+        <Route path="/user/Login" element={<User_Login/>} />
+        <Route path="/user/Register" element={<User_Register/>} />
       
         {/* 404 Not Found */}
         <Route path="*" element={<NotFound />} />

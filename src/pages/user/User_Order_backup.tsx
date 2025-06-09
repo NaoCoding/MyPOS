@@ -59,7 +59,7 @@ const DUMMY_MENU: Record<Category, MenuItem[]> = {
   ]
 };
 
-export default function MobileOrderPage() {
+export default function UserOrderPage() {
   const navigate = useNavigate();
   const [category, setCategory] = useState<Category>('主餐');
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -96,7 +96,7 @@ export default function MobileOrderPage() {
   const handleSubmit = () => {
     alert(`送出訂單：\n${cart.map(i => `${i.name} x${i.quantity}`).join(', ')}\n總金額：$${totalPrice}`);
     setCart([]);
-    navigate('/Mobile/Submit');
+    navigate('/user/Submit');
   };
 
   return (
@@ -167,9 +167,9 @@ export default function MobileOrderPage() {
       </div>
 
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 text-sm z-50">
-        <button onClick={() => navigate('/Mobile/Home')} className="text-center">🏠<div>首頁</div></button>
-        <button onClick={() => navigate('/Mobile/Order')} className="text-center">🧾<div>點餐</div></button>
-        <button onClick={() => navigate('/Mobile/History')} className="text-center">📜<div>紀錄</div></button>
+        <button onClick={() => navigate('/user/Home')} className="text-center">🏠<div>首頁</div></button>
+        <button onClick={() => navigate('/user/Order')} className="text-center">🧾<div>點餐</div></button>
+        <button onClick={() => navigate('/user/History')} className="text-center">📜<div>紀錄</div></button>
       </nav>
 
       {modalItem && (

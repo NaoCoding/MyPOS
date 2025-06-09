@@ -1,11 +1,11 @@
-// src/pages/Mobile/Mobile_Order.tsx
+// src/pages/user/User_Order.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MOCK_MENU } from '../../data/mockData';
 import CustomizationModal from '../../components/Customization/CustomizationModal';
 import { MenuItemWithCustomizations, SelectedCustomization, CartItem } from '../../types/menu';
 
-export default function MobileOrderPage() {
+export default function UserOrderPage() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState(MOCK_MENU[0]?.id || '');
   const [cart, setCart] = useState<CartItem[]>([]);

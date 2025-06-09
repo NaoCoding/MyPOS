@@ -1,8 +1,8 @@
-// src/pages/Mobile/Mobile_OrderSubmit.tsx
+// src/pages/user/User_OrderSubmit.tsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Mobile_OrderSubmit() {
+export default function User_OrderSubmit() {
   // 保留原版的 navigate
   const navigate = useNavigate();
 
@@ -107,7 +107,7 @@ export default function Mobile_OrderSubmit() {
         <div className="slide-in-up space-y-4" style={{ animationDelay: '0.5s' }}>
           <button
             className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
-            onClick={() => navigate('/Mobile/Home')}
+            onClick={() => navigate('/user/Home')}
           >
             <span className="text-xl">🏠</span>
             返回首頁
@@ -115,7 +115,7 @@ export default function Mobile_OrderSubmit() {
           
           <button
             className="w-full bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white py-4 rounded-2xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
-            onClick={() => navigate('/Mobile/History')}
+            onClick={() => navigate('/user/History')}
           >
             <span className="text-xl">📜</span>
             查詢歷史訂單
@@ -123,7 +123,7 @@ export default function Mobile_OrderSubmit() {
 
           {/* 額外的繼續點餐按鈕 */}
           <button
-            onClick={() => navigate('/Mobile/Order')}
+            onClick={() => navigate('/user/Order')}
             className="w-full text-gray-500 hover:text-gray-700 py-3 text-lg transition-colors flex items-center justify-center gap-2"
           >
             <span className="text-lg">🍽️</span>
@@ -145,21 +145,21 @@ export default function Mobile_OrderSubmit() {
       {/* 保留原版的底部導航 */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg flex justify-around py-3 text-sm z-50">
         <button 
-          onClick={() => navigate('/Mobile/Home')} 
+          onClick={() => navigate('/user/Home')} 
           className="text-center py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
         >
           <div className="text-2xl mb-1">🏠</div>
           <div className="text-gray-600">首頁</div>
         </button>
         <button 
-          onClick={() => navigate('/Mobile/Order')} 
+          onClick={() => navigate('/user/Order')} 
           className="text-center py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
         >
           <div className="text-2xl mb-1">🧾</div>
           <div className="text-gray-600">點餐</div>
         </button>
         <button 
-          onClick={() => navigate('/Mobile/History')} 
+          onClick={() => navigate('/user/History')} 
           className="text-center py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
         >
           <div className="text-2xl mb-1">📜</div>

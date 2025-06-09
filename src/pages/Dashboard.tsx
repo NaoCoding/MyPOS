@@ -45,11 +45,11 @@ const Dashboard: React.FC = () => {
         <SectionBlock
           title="使用者模擬"
           buttons={[
-            { label: '首頁', path: '/Mobile/Home' },
-            { label: '下單頁', path: '/Mobile/Order' },
-            { label: '送出結果', path: '/Mobile/Submit' },
-            { label: '歷史訂單', path: '/Mobile/History' },
-            { label: '使用者註冊', path: '/Mobile/Register' },
+            { label: '首頁', path: '/user/Home' },
+            { label: '下單頁', path: '/user/Order' },
+            { label: '送出結果', path: '/user/Submit' },
+            { label: '歷史訂單', path: '/user/History' },
+            { label: '使用者註冊', path: '/user/Register' },
             { label: '404', path: '/NotFound' },
           ]}
         />

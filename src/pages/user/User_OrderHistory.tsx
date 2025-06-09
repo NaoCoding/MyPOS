@@ -1,4 +1,4 @@
-// src/pages/Mobile/Mobile_OrderHistory.tsx
+// src/pages/user/User_OrderHistory.tsx
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -9,7 +9,7 @@ interface Order {
   total: number;
 }
 
-export default function MobileOrderHistory() {
+export default function UserOrderHistory() {
   // 保留原版的狀態管理
   const [phone, setPhone] = useState('');
   const [orders, setOrders] = useState<Order[]>([]);
@@ -20,7 +20,7 @@ export default function MobileOrderHistory() {
     const user = localStorage.getItem('user');
     if (!user) {
       alert('請先登入才能查詢歷史訂單');
-      navigate('/Mobile/Login');
+      navigate('/user/Login');
     } else {
       const parsed = JSON.parse(user);
       setPhone(parsed.phone || '');
@@ -44,7 +44,7 @@ export default function MobileOrderHistory() {
         <div className="px-4 py-6">
           <div className="flex items-center justify-between mb-4">
             <button
-              onClick={() => navigate('/Mobile/Home')}
+              onClick={() => navigate('/user/Home')}
               className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,7 +99,7 @@ export default function MobileOrderHistory() {
             <p className="text-gray-500 text-lg mb-2">尚無訂單紀錄</p>
             <p className="text-gray-400 text-sm mb-6">輸入手機號碼查詢您的訂單歷史</p>
             <button
-              onClick={() => navigate('/Mobile/Order')}
+              onClick={() => navigate('/user/Order')}
               className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-medium transition-colors"
             >
               立即點餐
@@ -157,7 +157,7 @@ export default function MobileOrderHistory() {
                   <button
                     onClick={() => {
                       alert(`重新訂購：${order.items.join('、')}`);
-                      navigate('/Mobile/Order');
+                      navigate('/user/Order');
                     }}
                     className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
                   >
@@ -174,14 +174,14 @@ export default function MobileOrderHistory() {
       {/* 保留原版的底部導航 */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg flex justify-around py-3 text-sm z-50">
         <button 
-          onClick={() => navigate('/Mobile/Home')} 
+          onClick={() => navigate('/user/Home')} 
           className="text-center py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
         >
           <div className="text-2xl mb-1">🏠</div>
           <div className="text-gray-600">首頁</div>
         </button>
         <button 
-          onClick={() => navigate('/Mobile/Order')} 
+          onClick={() => navigate('/user/Order')} 
           className="text-center py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
         >
           <div className="text-2xl mb-1">🧾</div>

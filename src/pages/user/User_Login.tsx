@@ -1,8 +1,8 @@
-// src/pages/Mobile/Mobile_Login.tsx
+// src/pages/user/User.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function Mobile_Login() {
+export default function User_Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     phone: '',
@@ -31,7 +31,7 @@ export default function Mobile_Login() {
         isLoggedIn: true
       }));
       
-      navigate('/Mobile/Order');
+      navigate('/user/Order');
     }, 1000);
   };
 
@@ -75,7 +75,7 @@ export default function Mobile_Login() {
       <div className="relative z-10 w-full max-w-md">
         {/* 返回按鈕 */}
         <button
-          onClick={() => navigate('/Mobile/Home')}
+          onClick={() => navigate('/user/Home')}
           className="slide-in-up mb-6 flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
           style={{ animationDelay: '0.1s' }}
         >
@@ -181,7 +181,7 @@ export default function Mobile_Login() {
             {/* 快速體驗按鈕 
             <button
               type="button"
-              onClick={() => navigate('/Mobile/Order')}
+              onClick={() => navigate('/user/Order')}
               className="w-full py-4 border-2 border-gray-300 rounded-xl text-gray-700 font-medium hover:border-gray-400 hover:bg-gray-50 transition-all duration-200 flex items-center justify-center gap-2"
             >
               <span className="text-lg">⚡</span>
@@ -193,7 +193,7 @@ export default function Mobile_Login() {
               <span className="text-gray-600">還沒有帳號？</span>
               <button
                 type="button"
-                onClick={() => navigate('/Mobile/Register')}
+                onClick={() => navigate('/user/Register')}
                 className="ml-1 text-blue-600 hover:text-blue-700 font-medium transition-colors"
               >
                 立即註冊
