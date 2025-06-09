@@ -11,6 +11,7 @@ import {
     getCustomizations,
     findCustomization,
     updateCustomization,
+    deleteCustomization,
 } from '../models/customization';
 import { checkLogin } from '../middleware';
 
@@ -269,6 +270,33 @@ customizationRouter.put('/:id', async (req: Request, res: Response) => {
     }
     catch (error) {
         console.error("Error updating customization:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+customizationRouter.delete('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    if (!id) {
+        res.status(400).json({ message: "ID is required" });
+        return;
+    }
+
+    try {
+        if (!await findCustomization({ id: Number(id) })) {
+            res.status(404).json({
+                message: "Customization not found"
+            });
+            return;
+        }
+
+        await deleteCustomization({ id: Number(id) });
+        res.status(200).json({
+            message: "Customization deleted successfully"
+        });
+    }
+    catch (error) {
+        console.error("Error deleting customization:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });

@@ -15,6 +15,7 @@ export async function getCustomizations() {
         .select([
             'customization.id',
             'customization.name',
+            'customization_group.id as customization_group_id',
             'customization_group.name as customization_group_name',
             'customization.description',
             'customization.price_delta',
