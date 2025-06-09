@@ -3,7 +3,7 @@ import { createTrade, deleteTrade, findTrade, getTrades, updateTrade } from '../
 import { checkLogin } from '../middleware';
 import { findUser } from '../models/user';
 import { createTradeItem, deleteTradeItem, updateTradeItem } from '../models/trade_item';
-import { findItem, findItemsByTradeID } from '../models/item';
+import { findItem, findItemsByTradeID, findItemWithPriceAndDiscount } from '../models/item';
 import { findCustomizationGroupByItemID } from '../models/customization_group';
 import { findCustomization, findCustomizationsByGroupID } from '../models/customization';
 import { createTradeItemCustomization, findTradeItemCustomizationsByTradeItemId } from '../models/trade_item_customization';
@@ -244,7 +244,7 @@ async function getTradeItemsWithCustomizations(tradeId: number) {
             continue;
         }
 
-        const item = await findItem({ id: tradeItem.item_id });
+        const item = await findItemWithPriceAndDiscount({ id: tradeItem.item_id });
         const tradeItemCustomizations = await findTradeItemCustomizationsByTradeItemId(tradeItem.id);
         let customizations = [];
 
