@@ -344,6 +344,63 @@ itemRouter.delete('/:id', async (req: Request, res: Response) => {
     }
 });
 
+itemRouter.post('/customization-group', async (req: Request, res: Response) => {
+    const { item_id, customization_group_id } = req.body;
+
+    if (!item_id || !customization_group_id) {
+        res.status(400).json({
+            message: "Item ID and customization group ID are required"
+        });
+        return;
+    }
+
+    try {
+        const item = await findItem({ id: Number(item_id) });
+        const group = await findCustomizationGroup({ id: Number(customization_group_id) });
+
+        if (!item) {
+            res.status(404).json({
+                message: "Item not found"
+            });
+            return;
+        }
+
+        if (!group) {
+            res.status(404).json({
+                message: "Customization group not found"
+            });
+            return;
+        }
+
+        const existingItemCustomizationGroup = await findItemCustomizationGroup({
+            item_id: Number(item_id),
+            customization_group_id: Number(customization_group_id)
+        });
+
+        if (existingItemCustomizationGroup) {
+            res.status(400).json({
+                message: "Item already has this customization group"
+            });
+            return;
+        }
+
+        await createItemCustomizationGroup({
+            item_id: Number(item_id),
+            customization_group_id: Number(customization_group_id)
+        });
+
+        res.status(201).json({
+            message: "Item customization group created successfully"
+        });
+    }
+    catch (error) {
+        console.error("Error creating item customization group:", error);
+        res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+});
+
 async function getItemCustomizationGroups(itemId: number) {
     const customizationGroups = await findCustomizationGroupByItemID(itemId);
 

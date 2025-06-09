@@ -37,6 +37,13 @@ interface Items {
   customization_groups: CustomizationGroup[];
 }
 
+interface NewItemCustomizationGroup {
+  item_id: number;
+  item_name: string;
+  customization_group_id: number;
+  customization_group_name: string;
+}
+
 export default function NoteSettings() {
   const backendURL = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
   const [customizations, setCustomizations] = useState<Customization[]>([]);
@@ -56,6 +63,12 @@ export default function NoteSettings() {
   });
 
   const [items, setItems] = useState<Items[]>([]);
+  const [newItemCustomizationGroup, setNewItemCustomizationGroup] = useState<NewItemCustomizationGroup>({
+    item_id: 0,
+    item_name: '',
+    customization_group_id: 0,
+    customization_group_name: '',
+  });
 
   const [loadCustomizations, setLoadCustomizations] = useState(true);
   const [loadItemCustomizationGroups, setLoadItemCustomizationGroups] = useState(true);
@@ -216,6 +229,40 @@ export default function NoteSettings() {
         setError('新增備註類型時發生未知錯誤');
       }
       console.error("Failed to add customization group:", error);
+      return;
+    }
+  };
+
+  const handleAddItemCustomizationGroup = async () => {
+    if (!newItemCustomizationGroup.item_name.trim()) {
+      alert('請選擇物品');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${backendURL}/item/customization-group`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newItemCustomizationGroup),
+      });
+
+      if (!response.ok) {
+        console.log("HTTP error:", response.status, await response.json());
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      fetchCustomizations();
+      fetchItemCustomizationGroups();
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('新增物品備註類型時發生未知錯誤');
+      }
+      console.error("Failed to add item customization group:", error);
       return;
     }
   };
@@ -430,6 +477,56 @@ export default function NoteSettings() {
           ))}
         </tbody>
       </table>
+
+      <div className="bg-gray-50 border rounded p-4 mb-6">
+        <h2 className="text-lg font-semibold mb-2">新增物品備註類型</h2>
+        <div className="flex gap-4">
+          <select
+            className="border p-2 rounded"
+            value={newItemCustomizationGroup.item_name}
+            onChange={(e) => {
+              const selectedItem = items.find(item => item.name === e.target.value);
+              if (selectedItem) {
+                setNewItemCustomizationGroup({
+                  ...newItemCustomizationGroup,
+                  item_id: selectedItem.id,
+                  item_name: selectedItem.name,
+                });
+              }
+            }}
+          >
+            <option value="">選擇物品</option>
+            {items.map(item => (
+              <option key={item.id} value={item.name}>
+                {item.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="border p-2 rounded"
+            value={newItemCustomizationGroup.customization_group_name}
+            onChange={(e) => {
+              setNewItemCustomizationGroup({
+                ...newItemCustomizationGroup,
+                customization_group_id: Number(e.target.selectedOptions[0].id),
+                customization_group_name: e.target.value as Customization['customization_group_name']
+              });
+            }}
+          >
+            {customizationGroups.map(group => (
+              <option key={group.id} id={group.id.toString()} value={group.name}>
+                {group.name}
+              </option>
+            ))}
+          </select>
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            onClick={handleAddItemCustomizationGroup}
+          >
+            新增
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
