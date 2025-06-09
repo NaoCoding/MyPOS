@@ -83,7 +83,7 @@ export default function Mobile_Home() {
               animation: 'pulseScale 2.5s ease-in-out infinite',
             }}
           >
-            MyPOS 點餐系統
+            MyPOS!!!! 點餐系統
           </h1>
           
           <p className="text-gray-600 text-lg">
@@ -132,7 +132,7 @@ export default function Mobile_Home() {
             聯絡我們
           </button>
           
-          {/* 快速體驗按鈕 */}
+          {/* 快速體驗按鈕 
           <button
             className="slide-in-up w-full bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white text-lg py-4 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
             onClick={() => navigate('/Mobile/Order')}
@@ -140,7 +140,7 @@ export default function Mobile_Home() {
           >
             <span className="text-xl">⚡</span>
             快速體驗點餐
-          </button>
+          </button>*/}
         </div>
 
         {/* 特色標籤 */}

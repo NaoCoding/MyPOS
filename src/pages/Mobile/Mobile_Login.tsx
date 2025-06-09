@@ -168,7 +168,7 @@ export default function Mobile_Login() {
               )}
             </button>
 
-            {/* 分隔線 */}
+            {/* 分隔線 
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-300"></div>
@@ -176,9 +176,9 @@ export default function Mobile_Login() {
               <div className="relative flex justify-center text-sm">
                 <span className="px-2 bg-white text-gray-500">或</span>
               </div>
-            </div>
+            </div>*/}
 
-            {/* 快速體驗按鈕 */}
+            {/* 快速體驗按鈕 
             <button
               type="button"
               onClick={() => navigate('/Mobile/Order')}
@@ -186,7 +186,7 @@ export default function Mobile_Login() {
             >
               <span className="text-lg">⚡</span>
               快速體驗點餐
-            </button>
+            </button>*/}
 
             {/* 註冊連結 */}
             <div className="text-center pt-4">
