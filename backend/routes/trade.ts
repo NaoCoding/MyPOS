@@ -103,8 +103,7 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
         });
     } catch (error) {
         res.status(500).json({
-            message: "Error creating trade",
-            error
+            message: "Error creating trade"
         });
     }
 });
@@ -187,17 +186,18 @@ async function checkCustomizations(itemId: number, itemCustomizationIds: any[]):
     const customizationGroups = await findCustomizationGroupByItemID(itemId);
     if (!customizationGroups || customizationGroups.length === 0) {
         if (itemCustomizationIds.length > 0) {
-            console.error("Item does not support customizations");
+            console.log("Item does not support customizations");
             throw new Error("Item does not support customizations");
         }
 
         return true;
     }
 
+    // TODO: Optimize this by checking if the customizations exist in the database
     for (const customizationId of itemCustomizationIds) {
         const customization = await findCustomization({ id: customizationId });
         if (!customization) {
-            console.error(`Customization with ID ${customizationId} does not exist.`);
+            console.log(`Customization with ID ${customizationId} does not exist.`);
             throw new Error(`Customization with ID ${customizationId} does not exist.`);
         }
     }
@@ -220,7 +220,7 @@ async function checkCustomizations(itemId: number, itemCustomizationIds: any[]):
         const selectedCustomizations = itemCustomizationIds.filter(id => customizationIds.includes(id));
 
         if (selectedCustomizations.length < min || selectedCustomizations.length > max) {
-            console.error(`Invalid number of customizations for group ${customizationGroup.name}. Expected between ${min} and ${max}, but got ${selectedCustomizations.length}.`);
+            console.log(`Invalid number of customizations for group ${customizationGroup.name}. Expected between ${min} and ${max}, but got ${selectedCustomizations.length}.`);
             throw new Error(`Invalid number of customizations for group ${customizationGroup.name}. Expected between ${min} and ${max}, but got ${selectedCustomizations.length}.`);
         }
 
@@ -228,7 +228,7 @@ async function checkCustomizations(itemId: number, itemCustomizationIds: any[]):
     }
 
     if (validCustomizationCount !== itemCustomizationIds.length) {
-        console.error("Some customizations are not valid for the selected item.");
+        console.log("Some customizations are not valid for the selected item.");
         throw new Error("Some customizations are not valid for the selected item.");
     }
 

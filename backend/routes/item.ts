@@ -135,6 +135,7 @@ itemRouter.get('/', async (req: Request, res: Response) => {
         const rawItems = await getItemsWithPriceAndDiscount();
         let items = [];
 
+        // TODO: Optimize this by fetching customization groups in bulk
         for (const item of rawItems) {
             const groups = await getItemCustomizationGroups(item.id);
             items.push({
