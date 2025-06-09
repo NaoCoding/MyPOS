@@ -13,8 +13,6 @@ export interface Item {
   product_id: number;
   discount_id?: number;
   quantity: number;
-  created_at: string;
-  updated_at: string;
   // 關聯資料
   product?: Product;
   current_price?: number;
@@ -28,8 +26,6 @@ export interface CustomizationGroup {
   description?: string;
   is_required: boolean;        // 必選群組
   is_multiple_choice: boolean; // 多選 vs 單選
-  created_at: string;
-  updated_at: string;
   // 關聯的加料選項
   customizations?: Customization[];
 }
@@ -41,16 +37,12 @@ export interface Customization {
   description?: string;
   is_available: boolean;
   price_delta: number;  // 加價金額 (可以是負數表示折扣)
-  created_at: string;
-  updated_at: string;
 }
 
 export interface ItemCustomization {
   item_id: number;
   customization_group_id: number;
   price_delta: number;  // 覆寫預設加價
-  created_at: string;
-  updated_at: string;
 }
 
 // ===== 完整商品資料 (包含加料選項) =====

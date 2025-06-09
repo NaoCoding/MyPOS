@@ -1,40 +1,67 @@
-// src/pages/user/User_Order.tsx
+// src/pages/Mobile/Mobile_Order.tsx
 import React, { useState , useEffect } from 'react';
+import { 
+  MenuCategory, 
+  MenuItemWithCustomizations, 
+  CustomizationGroup, 
+  Customization,
+  Item,
+  Product ,
+  SelectedCustomization, 
+  CartItem 
+} from '../../types/menu';
 import { useNavigate } from 'react-router-dom';
-//import { MOCK_MENU } from '../../data/mockData';
+import { MOCK_MENU } from '../../data/mockData';
 import CustomizationModal from '../../components/Customization/CustomizationModal';
-import { MenuItemWithCustomizations, SelectedCustomization, CartItem } from '../../types/menu';
+const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 export default function UserOrderPage() {
-  const navigate = useNavigate();
-  
-  const [modalItem, setModalItem] = useState<MenuItemWithCustomizations | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
-  const [isLoading, setIsLoading] = useState(true);
+  const [itemData , setItemData] = useState();
+  const [loading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [menuData, setMenuData] = useState<any[]>([]);
+  const [categories, setCategories] = useState<MenuCategory[]>([]);
+  const [customizationGroups, setCustomizationGroups] = useState<CustomizationGroup[]>([]);
 
-  // 添加API数据结构
-  interface ApiItem {
-    id: number;
-    price: number;
-    unit_price: number;
-    product_id: number;
-    addons?: { name: string; price: number }[];
-  }
+  const processMenu = (itemsData: any[]) => {
+    // 处理null类别，给默认值
+    const itemsWithCategory = itemsData.map(item => ({
+      ...item,
+      category: item.category || '其他' // 为null的category设置默认值
+    }));
+    
+    const categories = Array.from(new Set(itemsWithCategory.map(item => item.category)));
 
-  interface ApiProduct {
-    id: number;
-    name: string;
-    description?: string;
-    category: string;
-    image?: string;
-  }
-
-  // 替换静态数据为动态数据状态
-  const [menuData, setMenuData] = useState<MenuItemWithCustomizations[]>([]);
-  const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
+    return categories.map(category => {
+      const categoryItems = itemsWithCategory.filter(
+        item => item.category === category
+      );
+      
+      return {
+        id: category,      
+        name: category, 
+        items: categoryItems.map(item => ({
+          item: {
+            id: item.id,
+            store_id: 1,
+            description: item.description || '',
+            product_id: item.product_id,  
+            quantity: item.quantity,
+            product: {
+              id: item.product_id,
+              name: item.product?.name || '未知商品',
+              description: item.product?.description || ''
+            },
+          },
+          base_price: item.unit_price,
+          images: ['/images/default.png'], 
+          customization_groups: item.customization_groups || []
+        }))
+      };
+    });
+  };
+  
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -42,77 +69,33 @@ export default function UserOrderPage() {
         setIsLoading(true);
         setError(null);
         
-        // 获取商品数据
+        // 获取商品数据和其他必要数据...
         const itemResponse = await fetch(`${backendAPI}/item`);
         if (!itemResponse.ok) {
           throw new Error(`无法获取菜单: ${itemResponse.statusText}`);
         }
-        const items: ApiItem[] = await itemResponse.json();
-  
-        // 获取产品数据
-        const productResponse = await fetch(`${backendAPI}/product`);
-        if (!productResponse.ok) {
-          throw new Error(`无法获取产品列表: ${productResponse.statusText}`);
-        }
-        const products: ApiProduct[] = await productResponse.json();
+        const items = await itemResponse.json();
+        console.log('获取到的商品数据:', items);
         
-        // 获取自定义选项数据
-        const customizationResponse = await fetch(`${backendAPI}/customization`);
+        // 处理数据，按分类分组
+        const processedCategories = processMenu(items);
+        
+        setMenuData(items); 
+        setCategories(processedCategories);
+        
+        console.log('处理后的菜单数据:', processedCategories);
+        
+        if (processedCategories.length > 0) {
+          setSelectedCategory(processedCategories[0].id);
+        }
+
+        const customizationResponse = await fetch(`${backendAPI}/customization/group`);
         if (!customizationResponse.ok) {
-          throw new Error(`无法获取自定义选项: ${customizationResponse.statusText}`);
+          throw new Error(`无法获取加料选项: ${customizationResponse.statusText}`);
         }
-        const customizationData = await customizationResponse.json();
-  
-        // 处理数据，转换为组件需要的格式
-        const processedMenuItems = items.map((item: ApiItem) => {
-          const product = products.find(p => p.id === item.product_id);
-          
-          // 查找对应的自定义选项组
-          const itemCustomizations = customizationData.filter(
-            (c: any) => c.item_id === item.id
-          );
-          
-          return {
-            item: {
-              id: item.id,
-              store_id: 1,
-              product_id: item.product_id,
-              quantity: 0, 
-              created_at: new Date().toISOString(), 
-              updated_at: new Date().toISOString(), 
-              product: {
-                id: product?.id || 0,
-                name: product?.name || 'Unknown Item',
-                description: product?.description || '',
-                category: product?.category || '',
-              }
-            },
-            base_price: item.unit_price,
-            images: [product?.image || '/images/default.png'],
-            customization_groups: itemCustomizations || []
-          };
-        });
-        
-        console.log(processedMenuItems)
-        
-        // 提取分类
-        const uniqueCategories = Array.from(
-          new Set(products.map(p => p.category))
-        ).map((category, index) => ({
-          id: `cat-${index}`,
-          name: category,
-          items: processedMenuItems.filter(
-            item => item.item.product?.category === category
-          )
-        }));
-        
-        setMenuData(processedMenuItems);
-        setCategories(uniqueCategories);
-        
-        // 设置默认选中的分类
-        if(uniqueCategories.length > 0) {
-          setSelectedCategory(uniqueCategories[0].id);
-        }
+        const customizationGroupsData = await customizationResponse.json();
+        setCustomizationGroups(customizationGroupsData);
+        console.log('获取到的加料选项:', customizationGroupsData);
         
       } catch (err) {
         console.error('获取菜单失败:', err);
@@ -125,9 +108,12 @@ export default function UserOrderPage() {
     fetchMenuItems();
   }, []);
   
-  const [selectedCategory, setSelectedCategory] = useState(menuData[0]?.id || '');
-  const [cart, setCart] = useState<CartItem[]>([]);
 
+  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]?.id || '');
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [modalItem, setModalItem] = useState<MenuItemWithCustomizations | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 處理商品點擊
   const handleItemClick = (item: MenuItemWithCustomizations) => {
@@ -182,11 +168,11 @@ export default function UserOrderPage() {
 
     alert(`訂單送出成功！\n\n${orderSummary}\n\n總金額：$${cartTotal}`);
     setCart([]);
-    navigate('/Mobile/Submit');
+    navigate('/user/Submit');
   };
 
   // 獲取當前分類的商品
-  const currentCategoryItems = menuData.find(cat => cat.id === selectedCategory)?.items || [];
+  const currentCategoryItems = categories.find(cat => cat.id === selectedCategory)?.items || [];
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 pb-20">
@@ -197,7 +183,7 @@ export default function UserOrderPage() {
           
           {/* 分類選擇 */}
           <div className="flex gap-2">
-            {menuData.map(category => (
+            {categories.map(category => (
               <button
                 key={category.id}
                 className={`
@@ -222,7 +208,7 @@ export default function UserOrderPage() {
           {currentCategoryItems.map((item) => (
             <button
               key={item.item.id}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transform hover:scale-105 transition-all duration-200 text-left"
+              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transform transition-all duration-200 text-left"
               onClick={() => handleItemClick(item)}
             >
               <div className="w-full aspect-[4/3] bg-gray-200 relative overflow-hidden">
@@ -346,7 +332,7 @@ export default function UserOrderPage() {
             w-full py-4 rounded-xl text-lg font-semibold transition-all duration-200 shadow-lg
             ${cart.length === 0
               ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-xl transform hover:scale-105'
+              : 'bg-blue-500 hover:bg-blue-600 text-white hover:shadow-xl transform'
             }
           `}
         >
@@ -357,14 +343,14 @@ export default function UserOrderPage() {
       {/* 底部導航 */}
       <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg flex justify-around py-3 text-sm z-50">
         <button 
-          onClick={() => navigate('/Mobile/Home')} 
+          onClick={() => navigate('/user/Home')} 
           className="text-center py-2 px-4 rounded-lg hover:bg-gray-100 transition-colors"
         >
           <div className="text-2xl mb-1">🏠</div>
           <div className="text-gray-600">首頁</div>
         </button>
         <button 
-          onClick={() => navigate('/Mobile/Order')} 
+          onClick={() => navigate('/user/Order')} 
           className="text-center py-2 px-4 rounded-lg bg-blue-50 text-blue-600"
         >
           <div className="text-2xl mb-1">🧾</div>

@@ -17,8 +17,6 @@ const sizeGroup: CustomizationGroup = {
   description: '選擇餐點大小',
   is_required: true,
   is_multiple_choice: false,
-  created_at: '2024-01-01T00:00:00Z',
-  updated_at: '2024-01-01T00:00:00Z',
   customizations: [
     {
       id: 1,
@@ -27,8 +25,6 @@ const sizeGroup: CustomizationGroup = {
       description: '適合小食量',
       is_available: true,
       price_delta: 0,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 2,
@@ -37,8 +33,6 @@ const sizeGroup: CustomizationGroup = {
       description: '份量加大',
       is_available: true,
       price_delta: 20,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     }
   ]
 };
@@ -49,8 +43,6 @@ const spicyGroup: CustomizationGroup = {
   description: '選擇辣度等級',
   is_required: false,
   is_multiple_choice: false,
-  created_at: '2024-01-01T00:00:00Z',
-  updated_at: '2024-01-01T00:00:00Z',
   customizations: [
     {
       id: 3,
@@ -58,8 +50,6 @@ const spicyGroup: CustomizationGroup = {
       name: '不辣',
       is_available: true,
       price_delta: 0,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 4,
@@ -67,8 +57,6 @@ const spicyGroup: CustomizationGroup = {
       name: '小辣',
       is_available: true,
       price_delta: 0,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 5,
@@ -76,8 +64,6 @@ const spicyGroup: CustomizationGroup = {
       name: '中辣',
       is_available: true,
       price_delta: 0,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 6,
@@ -85,8 +71,6 @@ const spicyGroup: CustomizationGroup = {
       name: '大辣',
       is_available: true,
       price_delta: 5,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     }
   ]
 };
@@ -97,8 +81,6 @@ const addOnsGroup: CustomizationGroup = {
   description: '可選擇多項加料',
   is_required: false,
   is_multiple_choice: true,
-  created_at: '2024-01-01T00:00:00Z',
-  updated_at: '2024-01-01T00:00:00Z',
   customizations: [
     {
       id: 7,
@@ -106,8 +88,6 @@ const addOnsGroup: CustomizationGroup = {
       name: '加蛋',
       is_available: true,
       price_delta: 15,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 8,
@@ -115,8 +95,6 @@ const addOnsGroup: CustomizationGroup = {
       name: '加飯',
       is_available: true,
       price_delta: 10,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 9,
@@ -124,8 +102,6 @@ const addOnsGroup: CustomizationGroup = {
       name: '加起司',
       is_available: true,
       price_delta: 20,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 10,
@@ -133,8 +109,6 @@ const addOnsGroup: CustomizationGroup = {
       name: '加醬料',
       is_available: true,
       price_delta: 5,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     }
   ]
 };
@@ -145,8 +119,6 @@ const drinkCustomGroup: CustomizationGroup = {
   description: '飲料客製化選項',
   is_required: false,
   is_multiple_choice: true,
-  created_at: '2024-01-01T00:00:00Z',
-  updated_at: '2024-01-01T00:00:00Z',
   customizations: [
     {
       id: 11,
@@ -154,8 +126,6 @@ const drinkCustomGroup: CustomizationGroup = {
       name: '去冰',
       is_available: true,
       price_delta: 0,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 12,
@@ -163,8 +133,6 @@ const drinkCustomGroup: CustomizationGroup = {
       name: '少冰',
       is_available: true,
       price_delta: 0,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 13,
@@ -172,8 +140,6 @@ const drinkCustomGroup: CustomizationGroup = {
       name: '微糖',
       is_available: true,
       price_delta: 0,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 14,
@@ -181,8 +147,6 @@ const drinkCustomGroup: CustomizationGroup = {
       name: '半糖',
       is_available: true,
       price_delta: 0,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     },
     {
       id: 15,
@@ -190,8 +154,6 @@ const drinkCustomGroup: CustomizationGroup = {
       name: '無糖',
       is_available: true,
       price_delta: 0,
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T00:00:00Z'
     }
   ]
 };
@@ -208,14 +170,10 @@ export const MOCK_MENU: MenuCategory[] = [
           store_id: 1,
           product_id: 1,
           quantity: 100,
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z',
           product: {
             id: 1,
             name: '雞腿便當',
             description: '附三樣配菜與米飯，營養均衡美味',
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: '2024-01-01T00:00:00Z'
           }
         },
         customization_groups: [sizeGroup, spicyGroup, addOnsGroup],
@@ -228,14 +186,10 @@ export const MOCK_MENU: MenuCategory[] = [
           store_id: 1,
           product_id: 2,
           quantity: 100,
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z',
           product: {
             id: 2,
             name: '排骨飯',
             description: '酥炸排骨，經典口味，香酥可口',
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: '2024-01-01T00:00:00Z'
           }
         },
         customization_groups: [sizeGroup, spicyGroup, addOnsGroup],
@@ -248,14 +202,10 @@ export const MOCK_MENU: MenuCategory[] = [
           store_id: 1,
           product_id: 3,
           quantity: 100,
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z',
           product: {
             id: 3,
             name: '牛肉燴飯',
             description: '香濃醬汁，滑嫩牛肉，口感豐富',
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: '2024-01-01T00:00:00Z'
           }
         },
         customization_groups: [sizeGroup, spicyGroup, addOnsGroup],
@@ -268,14 +218,10 @@ export const MOCK_MENU: MenuCategory[] = [
           store_id: 1,
           product_id: 4,
           quantity: 100,
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z',
           product: {
             id: 4,
             name: '咖哩雞飯',
             description: '濃郁日式咖哩風味，香料豐富',
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: '2024-01-01T00:00:00Z'
           }
         },
         customization_groups: [sizeGroup, spicyGroup, addOnsGroup],
@@ -294,14 +240,10 @@ export const MOCK_MENU: MenuCategory[] = [
           store_id: 1,
           product_id: 5,
           quantity: 100,
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z',
           product: {
             id: 5,
             name: '珍珠奶茶',
             description: '人氣招牌飲品，Q彈珍珠配濃郁奶茶',
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: '2024-01-01T00:00:00Z'
           }
         },
         customization_groups: [drinkCustomGroup],
@@ -314,14 +256,10 @@ export const MOCK_MENU: MenuCategory[] = [
           store_id: 1,
           product_id: 6,
           quantity: 100,
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z',
           product: {
             id: 6,
             name: '紅茶',
             description: '古早味紅茶，回甘甘甜',
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: '2024-01-01T00:00:00Z'
           }
         },
         customization_groups: [drinkCustomGroup],
@@ -334,14 +272,10 @@ export const MOCK_MENU: MenuCategory[] = [
           store_id: 1,
           product_id: 7,
           quantity: 100,
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z',
           product: {
             id: 7,
             name: '冬瓜檸檬',
             description: '酸甜清爽，解渴首選',
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: '2024-01-01T00:00:00Z'
           }
         },
         customization_groups: [drinkCustomGroup],
@@ -360,14 +294,10 @@ export const MOCK_MENU: MenuCategory[] = [
           store_id: 1,
           product_id: 8,
           quantity: 100,
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z',
           product: {
             id: 8,
             name: '提拉米蘇',
             description: '經典義式甜點，濃郁咖啡香',
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: '2024-01-01T00:00:00Z'
           }
         },
         customization_groups: [], // 甜點通常不需要太多客製化
@@ -380,14 +310,10 @@ export const MOCK_MENU: MenuCategory[] = [
           store_id: 1,
           product_id: 9,
           quantity: 100,
-          created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z',
           product: {
             id: 9,
             name: '起司蛋糕',
             description: '香濃綿密起司風味，入口即化',
-            created_at: '2024-01-01T00:00:00Z',
-            updated_at: '2024-01-01T00:00:00Z'
           }
         },
         customization_groups: [],

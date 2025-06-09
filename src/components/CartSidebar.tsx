@@ -64,7 +64,7 @@ export default function CartSidebar({ items, onAdd, onRemove, onSelect, selected
             )}
             {item.addons && item.addons.length > 0 && (
               <div className="text-sm text-orange-600 mt-1">
-                加料：{item.addons.join(' / ')}
+                備註選項：{item.addons.join(' / ')}
               </div>
             )}
           </div>
