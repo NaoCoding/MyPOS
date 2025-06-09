@@ -413,7 +413,7 @@ export default function NoteSettings() {
               type="text"
               placeholder="備註介紹描述"
               className="border p-2 rounded flex-1"
-              value={newCustomizationGroup.name}
+              value={newCustomizationGroup.description}
               onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, description: e.target.value })}
             />
         </div>
@@ -466,7 +466,7 @@ export default function NoteSettings() {
               type="text"
               placeholder="備註介紹描述"
               className="border p-2 rounded flex-1"
-              value={newCustomizationGroup.name}
+              value={newCustomization.description}
               onChange={(e) => setNewCustomization({ ...newCustomization, description: e.target.value })}
             />
         </div>
