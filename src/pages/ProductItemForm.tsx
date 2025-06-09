@@ -1,5 +1,6 @@
 // src/pages/ProductItemForm.tsx
 import React, { useState , useEffect } from 'react';
+const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 interface ItemRow {
   id: number;
@@ -16,7 +17,7 @@ export default function ProductItemList() {
   const fetchItems = async () => {
     try {
       setLoading(true); // 開始載入前設置 loading
-      const response = await fetch('http://localhost:5000/product', {
+      const response = await fetch(backendAPI+'/product', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +70,7 @@ export default function ProductItemList() {
     //console.log(newItemPayload)
 
     try {
-      const response = await fetch('http://localhost:5000/product', {
+      const response = await fetch(backendAPI+'/product', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,7 +104,7 @@ export default function ProductItemList() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/product/${itemId}`, {
+      const response = await fetch(backendAPI+`/product/${itemId}`, {
         method: 'DELETE',
       });
 

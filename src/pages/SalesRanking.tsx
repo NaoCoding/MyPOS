@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, Legend
 } from 'recharts';
@@ -9,16 +9,17 @@ interface ProductStat {
   revenue: number;
   profit: number;
   category: string;
+  price: number;
+  trade_items?: [{
+    name: string;
+    category: string;
+    unit_price: number;
+    discount_amount: number;
+    discount_type: string;
+    quantity: number;
+  }]
 }
 
-const mockData: ProductStat[] = [
-  { name: '雞腿便當', quantity: 120, revenue: 14400, profit: 4200, category: '主餐' },
-  { name: '排骨便當', quantity: 90, revenue: 9900, profit: 2800, category: '主餐' },
-  { name: '蔬菜便當', quantity: 60, revenue: 6600, profit: 1900, category: '主餐' },
-  { name: '可樂', quantity: 150, revenue: 4500, profit: 2200, category: '飲料' },
-  { name: '味噌湯', quantity: 80, revenue: 1600, profit: 1000, category: '湯品' },
-  { name: '炸豆腐', quantity: 50, revenue: 2500, profit: 1500, category: '配菜' },
-];
 
 const colorMap = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
@@ -27,11 +28,82 @@ export default function SalesRanking() {
   const [categoryFilter, setCategoryFilter] = useState<'全部' | '主餐' | '飲料' | '配菜' | '湯品'>('全部');
   const [search, setSearch] = useState('');
 
-  const filtered = mockData
+  const [trade_data , setFetchdata] = useState<ProductStat[]>([]);
+  const [item_list , setItemList] = useState<{ id: number; name: string; count:number; 
+    price: number; category: string; revenue: number, profit:number,
+    quantity: number }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(process.env.REACT_APP_BACKEND_API + '/trade');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data: ProductStat[] = await response.json();
+      setFetchdata(data);
+      console.log("Fetched data:", data);
+
+      const itemResponse = await fetch(process.env.REACT_APP_BACKEND_API + '/item');
+      if (!itemResponse.ok) {
+        throw new Error(`HTTP error! status: ${itemResponse.status}`);
+      }
+      const itemListData: { id: number; name: string; count:number; 
+        price: number; category: string; revenue: number, profit:number,
+      quantity: number }[] = await itemResponse.json();
+      setItemList(itemListData);
+      console.log("Fetched item list:", itemListData);
+      
+      const processedData = itemListData.map(item => {
+        item.count = 0;
+        item.quantity = 0;
+        item.price = 0;
+        for(const tradeItems of data) {
+          for(const tradeItem of tradeItems.trade_items? tradeItems.trade_items : []) {
+            if (tradeItem.name === item.name) {
+              item.count += tradeItem.quantity;
+              item.price += 
+              (tradeItem.discount_type === 'percentage' && tradeItem.discount_amount > 0)
+                ? tradeItem.unit_price  * (tradeItem.discount_amount) * tradeItem.quantity
+                : ((tradeItem.discount_type === 'fixed' && tradeItem.discount_amount > 0)
+                ? tradeItem.discount_amount * tradeItem.quantity : 0);
+              item.revenue = item.price;
+              item.profit = item.price;
+              item.quantity = item.count;
+            }
+          }
+        }
+        return item;
+      });
+      setItemList(processedData);
+      console.log("Processed data:", processedData);
+      
+
+    } catch (e) {
+      if (e instanceof Error) {
+        setError(e.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+      console.error("Failed to fetch data:", e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+
+  const filtered = item_list.length > 0 ? item_list
     .filter(p => categoryFilter === '全部' || p.category === categoryFilter)
     .filter(p => p.name.includes(search))
     .sort((a, b) => b[metric] - a[metric])
-    .slice(0, 10);
+    .slice(0, 10) : [];
 
   const total = filtered.reduce((sum, p) => sum + p[metric], 0);
 
@@ -119,8 +191,8 @@ export default function SalesRanking() {
               <td className="border px-4 py-2">{p.name}</td>
               <td className="border px-4 py-2 text-right">{p.category}</td>
               <td className="border px-4 py-2 text-right">{p.quantity}</td>
-              <td className="border px-4 py-2 text-right">${p.revenue}</td>
-              <td className="border px-4 py-2 text-right">${p.profit}</td>
+              <td className="border px-4 py-2 text-right">{p.revenue > 0 ? '$' : ''}{p.revenue}</td>
+              <td className="border px-4 py-2 text-right">{p.profit > 0 ? '$' : ''}{p.profit}</td>
               <td className="border px-4 py-2 text-right">
                 {((p[metric] / total) * 100).toFixed(1)}%
               </td>
