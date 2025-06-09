@@ -1,6 +1,7 @@
 // src/pages/user/User_Home.tsx
 import React, { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 export default function UserHome() {
   const navigate = useNavigate();
@@ -126,7 +127,7 @@ export default function UserHome() {
             className="slide-in-up w-full bg-gradient-to-r from-gray-400 to-gray-600 hover:from-gray-500 hover:to-gray-700 text-white text-lg py-4 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
             onClick={() => {
               // 登出後導回登入頁
-              fetch('http://localhost:5000/logout', {
+              fetch(backendAPI+'/logout', {
                 method: 'POST',
                 credentials: 'include',
               }).then(() => {
