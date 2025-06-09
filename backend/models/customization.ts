@@ -29,6 +29,14 @@ export async function findCustomization(data: Partial<Customization>) {
     return await query.selectAll().executeTakeFirst();
 }
 
+export async function findCustomizationsByGroupID(customizationGroupId: number) {
+    return await db
+        .selectFrom('customization')
+        .where('customization.customization_group_id', '=', customizationGroupId)
+        .selectAll()
+        .execute();
+}
+
 export async function updateCustomization(customization: CustomizationUpdate) {
     if (!customization.id) {
         throw new Error('id is required to update customization');
