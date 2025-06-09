@@ -35,12 +35,13 @@ export default function Mobile_Home() {
       </style>
 
       <h1
-        className="text-3xl font-bold mb-8 text-orange-600"
+        className="text-3xl font-bold mb-8 text-orange-600 text-center"
         style={{
           animation: 'pulseScale 2.5s ease-in-out infinite',
         }}
       >
-        歡迎使用 MyPOS 點餐系統
+        <span className="block">歡迎使用</span>
+        <span className="block">MyPOS!!!! 點餐系統</span>
       </h1>
 
       <button
@@ -76,7 +77,7 @@ export default function Mobile_Home() {
         ref={naughtyBtnRef}
         onMouseEnter={escapeButton}
         className="bg-red-500 text-white text-sm px-3 py-2 rounded-lg font-semibold shadow absolute"
-        style={{ top: '80%' }}
+        style={{ top: '85%' }}
       >
         點我拿優惠券！
       </button>

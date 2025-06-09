@@ -26,6 +26,7 @@ import Mobile_OrderSubmit from './pages/Mobile/Mobile_OrderSubmit';
 import Mobile_OrderHistory from './pages/Mobile/Mobile_OrderHistory';
 import Mobile_Login from './pages/Mobile/Mobile_Login';
 import Mobile_Register from './pages/Mobile/Mobile_Register';
+import NotFound from './pages/NotFound';
 
 function App() {
 
@@ -99,6 +100,9 @@ function App() {
         <Route path="/Mobile/History" element={<Mobile_OrderHistory />} />
         <Route path="/Mobile/Login" element={<Mobile_Login />} />
         <Route path="/Mobile/Register" element={<Mobile_Register />} />
+      
+        {/* 404 Not Found */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
     </div>
