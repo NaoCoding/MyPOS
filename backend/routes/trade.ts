@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { createTrade, deleteTrade, findTrade, getTrades, updateTrade } from '../models/trade';
 import { checkLogin } from '../middleware';
-import { findUser, findUserByToken } from '../models/user';
+import { findUser } from '../models/user';
 import { createTradeItem, deleteTradeItem, updateTradeItem } from '../models/trade_item';
 import { findItem, findItemsByTradeID, findItemWithPriceAndDiscount } from '../models/item';
 import { findCustomizationGroupByItemID } from '../models/customization_group';
