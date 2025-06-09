@@ -1,6 +1,7 @@
 // src/pages/OrderManagement.tsx
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 interface OrderItem {
   name: string;
@@ -38,6 +39,22 @@ const DUMMY_ORDERS: Order[] = [
 export default function OrderManagement() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    
+    const fetchOrders = async () => {
+      const response = await fetch(backendAPI+'/trade');
+      if (!response.ok) {
+        console.error('Failed to fetch orders');
+        return;
+      }
+      const orders: Order[] = await response.json();
+      console.log('Fetched orders:', orders);
+    }
+
+    setSelectedOrder(null);
+    fetchOrders();
+  }, []);
 
   return (
     <div className="flex h-screen">

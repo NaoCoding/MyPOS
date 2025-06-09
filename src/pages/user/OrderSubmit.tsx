@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-export default function User_OrderSubmit() {
+export default function UserOrderSubmit() {
   const navigate = useNavigate();
 
   return (

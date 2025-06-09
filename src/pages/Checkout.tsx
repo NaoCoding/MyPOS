@@ -6,6 +6,7 @@ import SharedNotes from '../components/SharedNotes';
 import FooterActionBar from '../components/FooterActionBar';
 import CartSidebar from '../components/CartSidebar';
 import { CartItem, MenuItem } from '../types';
+const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 const categories = ['套餐', '主餐', '副餐', '點心', '甜品' , '飲料' , '其他'] as const;
 type Category = typeof categories[number];
@@ -35,12 +36,12 @@ export default function OrderPage() {
         setIsLoadingMenu(true);
         setMenuError(null);
         // 假設您的後端 API 端點是 /api/menu-items
-        const response = await fetch('http://localhost:5000/item');
+        const response = await fetch(backendAPI+'/item');
         if (!response.ok) {
           throw new Error(`無法獲取菜單項目: ${response.statusText}`);
         }
         const itemsFromBackend: MenuItem[] = await response.json();
-        const productResponse = await fetch('http://localhost:5000/product');
+        const productResponse = await fetch(backendAPI+'/product');
         if (!productResponse.ok) {
           throw new Error(`無法獲取產品列表: ${productResponse.statusText}`);
         }
@@ -173,7 +174,7 @@ export default function OrderPage() {
 
     try {
       // 假設您的後端 API 端點是 /api/orders
-      const response = await fetch('http://localhost:5000/api/orders', {
+      const response = await fetch(backendAPI+'/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
