@@ -202,9 +202,9 @@ export default function NoteSettings() {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError('新增備註時發生未知錯誤');
+        setError('更新備註狀態時發生未知錯誤');
       }
-      console.error("Failed to add customization:", error);
+      console.error("Failed to update customization:", error);
       return;
     }
   };
@@ -233,9 +233,9 @@ export default function NoteSettings() {
       if (error instanceof Error) {
         setError(error.message);
       } else {
-        setError('新增備註時發生未知錯誤');
+        setError('刪除備註時發生未知錯誤');
       }
-      console.error("Failed to add customization:", error);
+      console.error("Failed to delete customization:", error);
       return;
     }
   };
@@ -341,7 +341,6 @@ export default function NoteSettings() {
             className="border p-2 rounded"
             value={newCustomization.customization_group_name}
             onChange={(e) => {
-              console.log(e.target.selectedOptions[0]);
               setNewCustomization({
                 ...newCustomization,
                 customization_group_id: Number(e.target.selectedOptions[0].id),
