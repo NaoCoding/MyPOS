@@ -24,6 +24,12 @@ interface NewCustomization {
   price_delta: number;
 }
 
+interface NewCustomizationGroup {
+  name: string;
+  is_required: boolean;
+  is_multiple_choice: boolean;
+}
+
 export default function NoteSettings() {
   const backendURL = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
   const [customizations, setCustomizations] = useState<Customization[]>([]);
@@ -35,6 +41,11 @@ export default function NoteSettings() {
     description: '',
     is_available: true,
     price_delta: 0,
+  });
+  const [newCustomizationGroup, setNewCustomizationGroup] = useState<NewCustomizationGroup>({
+    name: '',
+    is_required: false,
+    is_multiple_choice: false,
   });
 
   const [loading, setLoading] = useState(true);
@@ -130,6 +141,39 @@ export default function NoteSettings() {
         setError('新增備註時發生未知錯誤');
       }
       console.error("Failed to add customization:", error);
+      return;
+    }
+  };
+
+  const handleAddGroup = async () => {
+    if (!newCustomizationGroup.name.trim()) {
+      alert('請輸入備註類型名稱');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${backendURL}/customization/group`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newCustomizationGroup),
+      });
+
+      if (!response.ok) {
+        console.log("HTTP error:", response.status, await response.json());
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      fetchCustomizations();
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('新增備註類型時發生未知錯誤');
+      }
+      console.error("Failed to add customization group:", error);
       return;
     }
   };
@@ -240,6 +284,40 @@ export default function NoteSettings() {
           ))}
         </tbody>
       </table>
+
+      {/* ➕ 新增備註類型 */}
+      <div className="bg-gray-50 border rounded p-4 mb-6">
+        <h2 className="text-lg font-semibold mb-2">新增備註類型</h2>
+        <div className="flex gap-4">
+          <input
+            type="text"
+            placeholder="備註類型名稱"
+            className="border p-2 rounded flex-1"
+            value={newCustomizationGroup.name}
+            onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, name: e.target.value })}
+          />
+          <p>是否必填</p>
+          <input
+            type="checkbox"
+            className="mt-2"
+            checked={newCustomizationGroup.is_required}
+            onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, is_required: e.target.checked })}
+          />
+          <p>是否多選</p>
+          <input
+            type="checkbox"
+            className="mt-2"
+            checked={newCustomizationGroup.is_multiple_choice}
+            onChange={(e) => setNewCustomizationGroup({ ...newCustomizationGroup, is_multiple_choice: e.target.checked })}
+          />
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            onClick={handleAddGroup}
+          >
+            新增
+          </button>
+        </div>
+      </div>
 
       {/* ➕ 新增備註 */}
       <div className="bg-gray-50 border rounded p-4">
