@@ -3,7 +3,7 @@ import { createTrade, deleteTrade, findTrade, getTrades, updateTrade } from '../
 import { checkLogin } from '../middleware';
 import { findUser } from '../models/user';
 import { createTradeItem, deleteTradeItem, updateTradeItem } from '../models/trade_item';
-import { findItem, findItemsByTradeID, findItemWithPriceAndDiscount } from '../models/item';
+import { findItem, findItemsByTradeID, findItemWithPriceAndDiscount, updateItem } from '../models/item';
 import { findCustomizationGroupByItemID } from '../models/customization_group';
 import { findCustomization, findCustomizationsByGroupID } from '../models/customization';
 import { createTradeItemCustomization, findTradeItemCustomizationsByTradeItemId } from '../models/trade_item_customization';
@@ -72,6 +72,12 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
                 });
                 return;
             }
+            else if (item.quantity < trade_item.quantity) {
+                res.status(400).json({
+                    message: `Insufficient quantity for item with ID ${trade_item.id}. Available: ${item.quantity}, Requested: ${trade_item.quantity}`
+                });
+                return;
+            }
 
             await checkCustomizations(trade_item.id, trade_item.customizations || []);
         }
@@ -88,6 +94,16 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
                 quantity: trade_item.quantity
             });
             const tradeItemId = Number(newTradeItem.insertId);
+
+            const item = await findItem({ id: trade_item.id });
+
+            if (item) {
+                await updateItem({
+                    id: item.id,
+                    product_id: item.product_id,
+                    quantity: item.quantity - trade_item.quantity
+                });
+            }
 
             if (!trade_item.customizations || trade_item.customizations.length === 0) {
                 continue;
@@ -115,6 +131,7 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
             message: "Trade created successfully"
         });
     } catch (error) {
+        console.log("Error creating trade:", error);
         res.status(500).json({
             message: "Error creating trade"
         });
