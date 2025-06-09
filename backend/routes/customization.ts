@@ -11,6 +11,7 @@ import {
     getCustomizations,
     findCustomization,
     updateCustomization,
+    deleteCustomization,
 } from '../models/customization';
 import { checkLogin } from '../middleware';
 
@@ -39,7 +40,7 @@ customizationRouter.post('/group', async (req: Request, res: Response) => {
         await createCustomizationGroup({
             name,
             description: description || null,
-            is_required: is_required ? true : false,
+            is_required: is_required ? 1 : 0,
             is_multiple_choice: is_multiple_choice ? 1 : 0
         });
 
@@ -55,7 +56,18 @@ customizationRouter.post('/group', async (req: Request, res: Response) => {
 
 customizationRouter.get('/group', async (req: Request, res: Response) => {
     try {
-        const groups = await getCustomizationGroups();
+        const rawGroups = await getCustomizationGroups();
+        let groups = [];
+
+        for (const group of rawGroups) {
+            const customizations = await getCustomizationsFromGroup(group.id);
+
+            groups.push({
+                ...group,
+                customizations: customizations || []
+            });
+        }
+
         res.status(200).json(groups);
     }
     catch (error) {
@@ -118,7 +130,7 @@ customizationRouter.put('/group/:id', async (req: Request, res: Response) => {
             id: Number(id),
             name,
             description: description || null,
-            is_required: is_required ? true : false,
+            is_required: is_required ? 1 : 0,
             is_multiple_choice: is_multiple_choice ? 1 : 0
         });
 
@@ -269,6 +281,33 @@ customizationRouter.put('/:id', async (req: Request, res: Response) => {
     }
     catch (error) {
         console.error("Error updating customization:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+customizationRouter.delete('/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+
+    if (!id) {
+        res.status(400).json({ message: "ID is required" });
+        return;
+    }
+
+    try {
+        if (!await findCustomization({ id: Number(id) })) {
+            res.status(404).json({
+                message: "Customization not found"
+            });
+            return;
+        }
+
+        await deleteCustomization({ id: Number(id) });
+        res.status(200).json({
+            message: "Customization deleted successfully"
+        });
+    }
+    catch (error) {
+        console.error("Error deleting customization:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });

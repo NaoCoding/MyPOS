@@ -20,10 +20,10 @@ import purchaseOrderItemRouter from './routes/purchaseOrderItem';
 import customizationRouter from './routes/customization';
 import tradeRouter from './routes/trade';
 
-
+const frontendAPI = process.env.REACT_APP_FRONTEND_API || 'http://localhost:3000';
 const BACKEND_PORT = process.env.BACKEND_PORT || 5000;
 const corsOpt = {
-    origin: "http://localhost:3000",
+    origin: frontendAPI,
     credentials: true,
 };
 

@@ -15,8 +15,6 @@ const DUMMY_NOTE_OPTIONS = [
   '無糖','少糖','半糖','七分糖','全糖','去冰','微冰','少冰','多冰', '不加蔥', '不加蒜'
 ];
 
-const ADDON_OPTIONS = ['加蛋', '加飯', '加醬', '加辣', '加肉'];
-
 export default function OrderPage() {
   const [orderType, setOrderType] = useState<string>('內用');
   const [category, setCategory] = useState<Category>('套餐');
@@ -28,6 +26,8 @@ export default function OrderPage() {
   const [menuData, setMenuData] = useState<Record<Category, MenuItem[]>>({} as Record<Category, MenuItem[]>);
   const [isLoadingMenu, setIsLoadingMenu] = useState(true);
   const [menuError, setMenuError] = useState<string | null>(null);
+  const [noteOption , setNoteOption] = useState<string[]>(DUMMY_NOTE_OPTIONS);
+  const [itemData , setItemData] = useState<MenuItem[]>([]);
 
   // 從後端獲取菜單項目
   useEffect(() => {
@@ -57,6 +57,7 @@ export default function OrderPage() {
         });
 
         console.log("獲取的菜單項目:", itemsWithProductNames);
+        setItemData(itemsWithProductNames);
 
         // 將獲取的項目按分類分組
         const groupedItems = itemsWithProductNames.reduce((acc, item) => {
@@ -101,14 +102,45 @@ export default function OrderPage() {
     fetchMenuItems();
   }, []);
 
+
+  useEffect(() => {
+    // 當 selectedItemId 改變時，更新選中的項目
+    if (selectedItemId !== null) {
+      console.log(itemData.find(item => item.id === selectedItemId))
+      const selectedItem = itemData.find(item => item.id === selectedItemId);
+      if (selectedItem) {
+        const modifyAddons = selectedItem.customization_groups?.map(group => {
+          return group.customizations.map(customization => customization.name);
+        })
+        console.log("選中的項目:", modifyAddons);
+        if(modifyAddons && modifyAddons.length > 0){
+          setNoteOption(modifyAddons.flat() || []);
+        }
+        else{
+          setNoteOption([])
+        }
+        console.log(noteOption);
+      } else {
+        setSelectedItemId(null); // 如果找不到，清除選中項目
+      }
+    }
+    
+  } , [selectedItemId]);
+
   const handleAddItem = (item: MenuItem) => {
     setCartItems(prev => {
       const found = prev.find(i => i.id === item.id);
       if (found) {
         return prev.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i);
       }
+
+      // TODO: 根據該 item 有的 customization 來顯示 addons
+      
+      
+
       // 確保新加入購物車的項目包含 price, notes 和 addons
       return [...prev, { ...item, quantity: 1, notes: [], addons: [] }];
+
     });
   };
 
@@ -128,7 +160,7 @@ export default function OrderPage() {
 
   const handleToggleNote = (note: string) => {
     if (selectedItemId === null) return;
-    setCartItems(prev => prev.map(item => {
+      setCartItems(prev => prev.map(item => {
       if (item.id !== selectedItemId) return item;
       const hasNote = item.notes.includes(note);
       const newNotes = hasNote ? item.notes.filter(n => n !== note) : [...item.notes, note];
@@ -137,6 +169,7 @@ export default function OrderPage() {
   };
 
   const handleToggleAddon = (addon: string) => {
+    
     if (selectedItemId === null) return;
     setCartItems(prev => prev.map(item => {
       if (item.id !== selectedItemId) return item;
@@ -218,30 +251,12 @@ export default function OrderPage() {
           {/* 使用 menuData 而不是 DUMMY_ITEMS */}
           <MenuGrid items={menuData[category]} onAdd={handleAddItem} />
 
-          <div className="grid grid-cols-5 gap-2 mb-2">
-            {DUMMY_NOTE_OPTIONS.map((note, index) => {
-              const isSelected = selectedItem?.notes.includes(note);
-              return (
-                <button
-                  key={index}
-                  disabled={!selectedItem}
-                  onClick={() => handleToggleNote(note)}
-                  className={`
-                    p-2 rounded border 
-                    ${isSelected ? 'bg-green-200 ring-2 ring-green-500' : 'bg-green-100 hover:bg-green-200'} 
-                    ${!selectedItem ? 'opacity-50 cursor-not-allowed' : ''}
-                  `}
-                >
-                  {note}
-                </button>
-              );
-            })}
-          </div>
+      
 
           <div className="mt-4">
-            <div className="font-semibold text-sm mb-1">加料：</div>
+          <div className="font-semibold text-sm mb-1">備註選項：</div>
             <div className="grid grid-cols-5 gap-2">
-              {ADDON_OPTIONS.map((addon, index) => {
+              {noteOption.map((addon, index) => {
                 const isSelected = selectedItem?.addons?.includes(addon);
                 return (
                   <button

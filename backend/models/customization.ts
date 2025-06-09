@@ -11,7 +11,16 @@ export async function createCustomization(customization: CustomizationInsert) {
 export async function getCustomizations() {
     return await db
         .selectFrom('customization')
-        .selectAll()
+        .innerJoin('customization_group', 'customization.customization_group_id', 'customization_group.id')
+        .select([
+            'customization.id',
+            'customization.name',
+            'customization_group.id as customization_group_id',
+            'customization_group.name as customization_group_name',
+            'customization.description',
+            'customization.price_delta',
+            'customization.is_available'
+        ])
         .execute();
 }
 
@@ -27,6 +36,14 @@ export async function findCustomization(data: Partial<Customization>) {
     }
 
     return await query.selectAll().executeTakeFirst();
+}
+
+export async function findCustomizationsByGroupID(customizationGroupId: number) {
+    return await db
+        .selectFrom('customization')
+        .where('customization.customization_group_id', '=', customizationGroupId)
+        .selectAll()
+        .execute();
 }
 
 export async function updateCustomization(customization: CustomizationUpdate) {

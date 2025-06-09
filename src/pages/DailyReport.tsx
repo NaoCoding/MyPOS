@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 
 interface ReportItem {
   name: string;
@@ -12,15 +12,95 @@ export default function DailyReport() {
   const [note, setNote] = useState('');
 
   // 模擬資料，可從後端 fetch
-  const data: ReportItem[] = [
-    { name: '雞腿便當', quantity: 20, revenue: 2400 },
-    { name: '排骨便當', quantity: 15, revenue: 1650 },
-    { name: '素食便當', quantity: 5, revenue: 500 },
-  ];
+  
 
-  const totalRevenue = data.reduce((sum, i) => sum + i.revenue, 0);
-  const totalQuantity = data.reduce((sum, i) => sum + i.quantity, 0);
-  const avgOrderValue = totalRevenue / data.length;
+  const [trade_data , setFetchdata] = useState([]);
+  const [data , setItemList] = useState<{ id: number; name: string; count:number; 
+    price: number; category: string; revenue: number, profit:number,
+    quantity: number }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState(0);
+  const [avgOrderValue, setAvgOrderValue] = useState(0);
+  
+  
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(process.env.REACT_APP_BACKEND_API + '/trade');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setFetchdata(data);
+        console.log("Fetched data:", data);
+  
+        const itemResponse = await fetch(process.env.REACT_APP_BACKEND_API + '/item');
+        if (!itemResponse.ok) {
+          throw new Error(`HTTP error! status: ${itemResponse.status}`);
+        }
+        const itemListData: { id: number; name: string; count:number; 
+          price: number; category: string; revenue: number, profit:number,
+        quantity: number }[] = await itemResponse.json();
+        setItemList(itemListData);
+        console.log("Fetched item list:", itemListData);
+        
+        const processedData = itemListData.map(item => {
+          item.count = 0;
+          item.quantity = 0;
+          item.price = 0;
+          for(const tradeItems of data) {
+            for(const tradeItem of tradeItems.trade_items? tradeItems.trade_items : []) {
+              if (tradeItem.name === item.name) {
+                item.count += tradeItem.quantity;
+                item.price += 
+                (tradeItem.discount_type === 'percentage' && tradeItem.discount_amount > 0)
+                  ? tradeItem.unit_price  * (tradeItem.discount_amount) * tradeItem.quantity
+                  : ((tradeItem.discount_type === 'fixed' && tradeItem.discount_amount > 0)
+                  ? tradeItem.discount_amount * tradeItem.quantity : 0);
+                item.revenue = item.price;
+                item.profit = item.price;
+                item.quantity = item.count;
+
+              }
+            }
+          }
+          return item;
+        });
+        setTotalRevenue(0)
+        setTotalQuantity(0)
+        for(const item of processedData) {
+          console.log("item:", item);
+          setTotalRevenue(prev => prev + item.price);
+          setTotalQuantity(prev => prev + item.count);
+        }
+        setItemList(processedData);
+        console.log("Processed data:", processedData);
+  
+      } catch (e) {
+        if (e instanceof Error) {
+          setError(e.message);
+        } else {
+          setError('An unknown error occurred');
+        }
+        console.error("Failed to fetch data:", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      fetchData();
+    }, []);
+
+    useEffect(() => {
+      setAvgOrderValue(totalRevenue / totalQuantity);
+    }, [totalRevenue, totalQuantity]);
+  
+
+  
 
   return (
     <div className="max-w-5xl mx-auto p-8 mt-10 bg-white rounded shadow text-gray-800">
@@ -68,9 +148,11 @@ export default function DailyReport() {
             <tr key={idx} className="hover:bg-gray-50">
               <td className="border px-4 py-2">{item.name}</td>
               <td className="border px-4 py-2 text-right">{item.quantity}</td>
-              <td className="border px-4 py-2 text-right">${item.revenue}</td>
+              <td className="border px-4 py-2 text-right">{item.revenue ? "$" : ''}{item.revenue}</td>
               <td className="border px-4 py-2 text-right">
-                {((item.revenue / totalRevenue) * 100).toFixed(1)}%
+                {item.revenue ?
+                  ((item.revenue / totalRevenue) * 100).toFixed(2) + '%'
+                  : '0%'}
               </td>
             </tr>
           ))}

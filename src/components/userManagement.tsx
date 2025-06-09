@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/userManagement.css';
+const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
 
 interface User {
   id: number;
@@ -48,7 +49,7 @@ export default function UserManagement() {
   // 獲取所有用戶
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/users', {
+      const response = await fetch(backendAPI+'/api/users', {
         method: 'GET',
         credentials: 'include', // 重要：包含 httpOnly cookies
       });
@@ -87,8 +88,8 @@ export default function UserManagement() {
     
     try {
       const url = editingUser 
-        ? `http://localhost:5000/api/users/${editingUser.id}`
-        : 'http://localhost:5000/api/users';
+        ? `${backendAPI}/api/users/${editingUser.id}`
+        : backendAPI+'/api/users';
       
       const method = editingUser ? 'PUT' : 'POST';
       
@@ -131,7 +132,7 @@ export default function UserManagement() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+      const response = await fetch(`${backendAPI}/api/users/${userId}`, {
         method: 'DELETE',
         credentials: 'include', // 重要：包含 httpOnly cookies
       });

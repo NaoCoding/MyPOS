@@ -18,6 +18,7 @@ export async function getItems() {
 export async function getItemsWithPriceAndDiscount() {
     return await db
         .selectFrom('item')
+        .innerJoin('product', 'item.product_id', 'product.id')
         .leftJoin('price', 'item.id', 'price.item_id')
         .leftJoin('discount', 'item.id', 'discount.item_id')
         .where('price.end_datetime', 'is', null)
@@ -25,6 +26,9 @@ export async function getItemsWithPriceAndDiscount() {
         .select([
             'item.id',
             'item.product_id',
+            'product.name',
+            'product.description',
+            'product.category',
             'item.quantity',
             'price.unit_price',
             'discount.type as discount_type',
@@ -34,7 +38,9 @@ export async function getItemsWithPriceAndDiscount() {
 }
 
 export async function findItem(data: Partial<Item>) {
-    let query = db.selectFrom('item');
+    let query = db
+        .selectFrom('item')
+        .innerJoin('product', 'item.product_id', 'product.id')
 
     if (data.id) {
         query = query.where('item.id', '=', data.id);
@@ -44,11 +50,19 @@ export async function findItem(data: Partial<Item>) {
         query = query.where('item.product_id', '=', data.product_id);
     }
 
-    return await query.selectAll().executeTakeFirst();
+    return await query.select([
+        'item.id',
+        'item.product_id',
+        'product.name',
+        'product.description',
+        'product.category',
+        'item.quantity'
+    ]).executeTakeFirst();
 }
 
 export async function findItemWithPriceAndDiscount(data: Partial<Item>) {
     let query = db.selectFrom('item')
+        .innerJoin('product', 'item.product_id', 'product.id')
         .leftJoin('price', 'item.id', 'price.item_id')
         .leftJoin('discount', 'item.id', 'discount.item_id')
         .where('price.end_datetime', 'is', null)
@@ -66,6 +80,9 @@ export async function findItemWithPriceAndDiscount(data: Partial<Item>) {
         .select([
             'item.id',
             'item.product_id',
+            'product.name',
+            'product.description',
+            'product.category',
             'item.quantity',
             'price.unit_price',
             'discount.type as discount_type',
@@ -95,15 +112,6 @@ export async function findItemsByTradeID(tradeId: number) {
             'discount.type as discount_type',
             'discount.amount as discount_amount'
         ])
-        .execute();
-}
-
-export async function findCustomizationGroupOfItem(itemId: number) {
-    return await db
-        .selectFrom('customization_group')
-        .leftJoin('item_customization_group', 'customization_group.id', 'item_customization_group.customization_group_id')
-        .where('item_customization_group.item_id', '=', itemId)
-        .selectAll('customization_group')
         .execute();
 }
 

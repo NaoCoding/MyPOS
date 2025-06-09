@@ -17,9 +17,9 @@ const Dashboard: React.FC = () => {
         <SectionBlock
           title="報表作業"
           buttons={[
-            { label: '交班表', path: '/ShiftReport' },
-            { label: '日報表', path: '/DailyReport' },
-            { label: '月報表', path: '/MonthlyReport' },
+            { label: '交班表', path: '/Report/Shift' },
+            { label: '日報表', path: '/Report/Daily' },
+            { label: '月報表', path: '/Report/Monthly' },
             
           ]}
         />
@@ -37,7 +37,7 @@ const Dashboard: React.FC = () => {
             { label: '商品管理', path: '/ProductItemForm' },
             { label: '訂單管理', path: '/OrderManagement' },
             { label: '備註管理', path: '/NoteManagement' },
-            { label: '人員設定', path: '/manage/user' },
+            { label: '用戶管理', path: '/manage/user' },
             { label: '權限設定', path: '/PermissionSetting' },
             { label: '系統設定', path: '/SystemSetting' },
           ]}
@@ -49,6 +49,8 @@ const Dashboard: React.FC = () => {
             { label: '下單頁', path: '/user/Order' },
             { label: '送出結果', path: '/user/Submit' },
             { label: '歷史訂單', path: '/user/History' },
+            { label: '使用者註冊', path: '/user/Register' },
+            { label: '404', path: '/NotFound' },
           ]}
         />
 

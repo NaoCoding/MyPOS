@@ -4,6 +4,10 @@ export interface MenuItem {
   name: string;
   price: number;
   category: string;
+  customization_groups: [{
+    customizations:[{id: number, name:string}]
+  }
+  ];
 }
 
 export interface CartItem extends MenuItem {
