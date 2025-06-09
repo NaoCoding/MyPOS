@@ -133,10 +133,35 @@ export default function NoteSettings() {
     }
   };
 
-  const toggleEnable = (id: number) => {
-    setCustomizations(prev =>
-      prev.map(n => n.id === id ? { ...n, is_available: !n.is_available } : n)
-    );
+  const toggleEnable = async (id: number) => {
+    const customization = customizations.find(n => n.id === id);
+    customization!.is_available = !customization!.is_available;
+
+    try {
+      const response = await fetch(`${backendURL}/customization/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(customization),
+      });
+
+      if (!response.ok) {
+        console.log("HTTP error:", response.status, await response.json());
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      fetchCustomizations();
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('新增備註時發生未知錯誤');
+      }
+      console.error("Failed to add customization:", error);
+      return;
+    }
   };
 
   const handleDelete = async (id: number) => {
