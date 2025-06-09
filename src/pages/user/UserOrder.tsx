@@ -1,16 +1,133 @@
 // src/pages/user/User_Order.tsx
-import React, { useState } from 'react';
+import React, { useState , useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MOCK_MENU } from '../../data/mockData';
+//import { MOCK_MENU } from '../../data/mockData';
 import CustomizationModal from '../../components/Customization/CustomizationModal';
 import { MenuItemWithCustomizations, SelectedCustomization, CartItem } from '../../types/menu';
 
 export default function UserOrderPage() {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState(MOCK_MENU[0]?.id || '');
-  const [cart, setCart] = useState<CartItem[]>([]);
+  
   const [modalItem, setModalItem] = useState<MenuItemWithCustomizations | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const backendAPI = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // 添加API数据结构
+  interface ApiItem {
+    id: number;
+    price: number;
+    unit_price: number;
+    product_id: number;
+    addons?: { name: string; price: number }[];
+  }
+
+  interface ApiProduct {
+    id: number;
+    name: string;
+    description?: string;
+    category: string;
+    image?: string;
+  }
+
+  // 替换静态数据为动态数据状态
+  const [menuData, setMenuData] = useState<MenuItemWithCustomizations[]>([]);
+  const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
+
+  useEffect(() => {
+    const fetchMenuItems = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        // 获取商品数据
+        const itemResponse = await fetch(`${backendAPI}/item`);
+        if (!itemResponse.ok) {
+          throw new Error(`无法获取菜单: ${itemResponse.statusText}`);
+        }
+        const items: ApiItem[] = await itemResponse.json();
+  
+        // 获取产品数据
+        const productResponse = await fetch(`${backendAPI}/product`);
+        if (!productResponse.ok) {
+          throw new Error(`无法获取产品列表: ${productResponse.statusText}`);
+        }
+        const products: ApiProduct[] = await productResponse.json();
+        
+        // 获取自定义选项数据
+        const customizationResponse = await fetch(`${backendAPI}/customization`);
+        if (!customizationResponse.ok) {
+          throw new Error(`无法获取自定义选项: ${customizationResponse.statusText}`);
+        }
+        const customizationData = await customizationResponse.json();
+  
+        // 处理数据，转换为组件需要的格式
+        const processedMenuItems = items.map((item: ApiItem) => {
+          const product = products.find(p => p.id === item.product_id);
+          
+          // 查找对应的自定义选项组
+          const itemCustomizations = customizationData.filter(
+            (c: any) => c.item_id === item.id
+          );
+          
+          return {
+            item: {
+              id: item.id,
+              store_id: 1,
+              product_id: item.product_id,
+              quantity: 0, 
+              created_at: new Date().toISOString(), 
+              updated_at: new Date().toISOString(), 
+              product: {
+                id: product?.id || 0,
+                name: product?.name || 'Unknown Item',
+                description: product?.description || '',
+                category: product?.category || '',
+              }
+            },
+            base_price: item.unit_price,
+            images: [product?.image || '/images/default.png'],
+            customization_groups: itemCustomizations || []
+          };
+        });
+        
+        console.log(processedMenuItems)
+        
+        // 提取分类
+        const uniqueCategories = Array.from(
+          new Set(products.map(p => p.category))
+        ).map((category, index) => ({
+          id: `cat-${index}`,
+          name: category,
+          items: processedMenuItems.filter(
+            item => item.item.product?.category === category
+          )
+        }));
+        
+        setMenuData(processedMenuItems);
+        setCategories(uniqueCategories);
+        
+        // 设置默认选中的分类
+        if(uniqueCategories.length > 0) {
+          setSelectedCategory(uniqueCategories[0].id);
+        }
+        
+      } catch (err) {
+        console.error('获取菜单失败:', err);
+        setError(err instanceof Error ? err.message : '发生未知错误');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchMenuItems();
+  }, []);
+  
+  const [selectedCategory, setSelectedCategory] = useState(menuData[0]?.id || '');
+  const [cart, setCart] = useState<CartItem[]>([]);
+
 
   // 處理商品點擊
   const handleItemClick = (item: MenuItemWithCustomizations) => {
@@ -69,7 +186,7 @@ export default function UserOrderPage() {
   };
 
   // 獲取當前分類的商品
-  const currentCategoryItems = MOCK_MENU.find(cat => cat.id === selectedCategory)?.items || [];
+  const currentCategoryItems = menuData.find(cat => cat.id === selectedCategory)?.items || [];
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 pb-20">
@@ -80,7 +197,7 @@ export default function UserOrderPage() {
           
           {/* 分類選擇 */}
           <div className="flex gap-2">
-            {MOCK_MENU.map(category => (
+            {menuData.map(category => (
               <button
                 key={category.id}
                 className={`

@@ -22,7 +22,7 @@ import CustomerAnalysis from './pages/CustomerAnalysis';
 import SalesRanking from './pages/SalesRanking';
 import Inventory from './pages/Inventory';
 import UserHome from './pages/user/UserHome';
-import UserOrder from './pages/user/UserOrder';
+import UserOrder from './pages/user/Order';
 import UserOrderSubmit from './pages/user/UserOrderSubmit';
 import UserOrderHistory from './pages/user/UserOrderHistory';
 import UserCustomerInfo from './pages/user/CustomerInfo';

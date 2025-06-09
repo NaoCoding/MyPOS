@@ -101,7 +101,7 @@ export default function UserHome() {
         <div className="w-full max-w-sm space-y-4 mb-8">
           <button
             className="slide-in-up w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-xl py-5 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center justify-center gap-3"
-            onClick={() => navigate('/user/Login')}
+            onClick={() => navigate('/user/order')}
             style={{ animationDelay: '0.1s' }}
           >
             <span className="text-2xl">🛒</span>
