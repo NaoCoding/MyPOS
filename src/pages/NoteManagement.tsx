@@ -30,6 +30,13 @@ interface NewCustomizationGroup {
   is_multiple_choice: boolean;
 }
 
+interface Items {
+  id: number;
+  name: string;
+  quantity: number;
+  customization_groups: CustomizationGroup[];
+}
+
 export default function NoteSettings() {
   const backendURL = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
   const [customizations, setCustomizations] = useState<Customization[]>([]);
@@ -48,12 +55,15 @@ export default function NoteSettings() {
     is_multiple_choice: false,
   });
 
-  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<Items[]>([]);
+
+  const [loadCustomizations, setLoadCustomizations] = useState(true);
+  const [loadItemCustomizationGroups, setLoadItemCustomizationGroups] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchCustomizations = async () => {
     try {
-      setLoading(true);
+      setLoadCustomizations(true);
       const customizationsResponse = await fetch(`${backendURL}/customization`, {
         method: 'GET',
         headers: {
@@ -104,12 +114,44 @@ export default function NoteSettings() {
       setCustomizationGroups([]);
     }
     finally {
-      setLoading(false);
+      setLoadCustomizations(false);
+    }
+  };
+
+  const fetchItemCustomizationGroups = async () => {
+    try {
+      setLoadItemCustomizationGroups(true);
+      const response = await fetch(`${backendURL}/item`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        console.log("HTTP error:", response.status, await response.json());
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      setItems(data);
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+      console.error("Failed to fetch item customization groups:", error);
+    }
+    finally {
+      setLoadItemCustomizationGroups(false);
     }
   };
 
   useEffect(() => {
     fetchCustomizations();
+    fetchItemCustomizationGroups();
   }, []);
 
   const handleAdd = async () => {
@@ -320,7 +362,7 @@ export default function NoteSettings() {
       </div>
 
       {/* ➕ 新增備註 */}
-      <div className="bg-gray-50 border rounded p-4">
+      <div className="bg-gray-50 border rounded p-4 mb-6">
         <h2 className="text-lg font-semibold mb-2">新增備註</h2>
         <div className="flex gap-4">
           <input
@@ -362,6 +404,32 @@ export default function NoteSettings() {
           </button>
         </div>
       </div>
+
+      <h1 className="text-2xl font-bold mt-10 mb-6">物品備註類型管理</h1>
+      <table className="w-full table-auto border border-gray-300 text-sm mb-6">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="border px-4 py-2 text-center">物品</th>
+            <th className="border px-4 py-2 text-center">備註類型</th>
+          </tr>
+        </thead>
+        <tbody>
+          {items.map((item) => (
+            <tr key={item.id}>
+              <td className="border px-4 py-2 text-center space-x-2">{item.name}</td>
+              <td className="border px-4 py-2 text-center space-x-2">
+                {item.customization_groups.length > 0 ? (
+                  item.customization_groups.map((group) => (
+                    <span key={group.id}>{group.name}</span>
+                  ))
+                ) : (
+                  <span>無</span>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
