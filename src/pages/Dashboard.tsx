@@ -50,6 +50,7 @@ const Dashboard: React.FC = () => {
             { label: '送出結果', path: '/Mobile/Submit' },
             { label: '歷史訂單', path: '/Mobile/History' },
             { label: '使用者註冊', path: '/Mobile/Register' },
+            { label: '404', path: '/NotFound' },
           ]}
         />
 
