@@ -7,6 +7,7 @@ interface Customization {
   customization_group_id: number;
   customization_group_name: string;
   is_available: boolean;
+  price_delta: number;
 }
 
 interface CustomizationGroup {
@@ -205,6 +206,7 @@ export default function NoteSettings() {
           <tr>
             <th className="border px-4 py-2 text-left">備註內容</th>
             <th className="border px-4 py-2 text-left">類型</th>
+            <th className="border px-4 py-2 text-left">價格</th>
             <th className="border px-4 py-2 text-center">狀態</th>
             <th className="border px-4 py-2 text-center">操作</th>
           </tr>
@@ -214,6 +216,7 @@ export default function NoteSettings() {
             <tr key={note.id} className="hover:bg-gray-50">
               <td className="border px-4 py-2">{note.name}</td>
               <td className="border px-4 py-2">{note.customization_group_name}</td>
+              <td className="border px-4 py-2">{note.price_delta !== 0 ? `NT$ ${note.price_delta}` : '免費'}</td>
               <td className="border px-4 py-2 text-center">
                 <span className={note.is_available ? 'text-green-600' : 'text-gray-500'}>
                   {note.is_available ? '啟用中' : '停用'}
@@ -248,6 +251,13 @@ export default function NoteSettings() {
             className="border p-2 rounded flex-1"
             value={newCustomization.name}
             onChange={(e) => setNewCustomization({ ...newCustomization, name: e.target.value })}
+          />
+          <input
+            type="number"
+            placeholder="價格（如：10，留空則表示 0）"
+            className="border p-2 rounded flex-1"
+            value={newCustomization.price_delta}
+            onChange={(e) => setNewCustomization({ ...newCustomization, price_delta: Number(e.target.value) })}
           />
           <select
             className="border p-2 rounded"
