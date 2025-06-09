@@ -3,39 +3,93 @@ import React, { useEffect, useState } from 'react';
 interface Customization {
   id: number;
   name: string;
+  description: string;
+  customization_group_id: number;
   customization_group_name: string;
   is_available: boolean;
 }
 
+interface CustomizationGroup {
+  id: number;
+  name: string;
+}
+
+interface NewCustomization {
+  name: string;
+  customization_group_id: number;
+  customization_group_name: Customization['customization_group_name'];
+  description: string;
+  is_available: boolean;
+  price_delta: number;
+}
+
 export default function NoteSettings() {
+  const backendURL = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
   const [customizations, setCustomizations] = useState<Customization[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [newCustomization, setNewCustomization] = useState({
+  const [customizationGroups, setCustomizationGroups] = useState<CustomizationGroup[]>([]);
+  const [newCustomization, setNewCustomization] = useState<NewCustomization>({
     name: '',
-    customization_group_name: '加價選項' as Customization['customization_group_name'],
+    customization_group_id: customizationGroups.length > 0 ? customizationGroups[0].id : 0,
+    customization_group_name: customizationGroups.length > 0 ? customizationGroups[0].name : '',
+    description: '',
+    is_available: true,
+    price_delta: 0,
   });
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchCustomizations = async () => {
     try {
       setLoading(true);
-      const backendURL = process.env.REACT_APP_BACKEND_API || 'http://localhost:5000';
-      const customizations = await fetch(`${backendURL}/customization`, {
+      const customizationsResponse = await fetch(`${backendURL}/customization`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      if (!customizations.ok) {
-        console.log("HTTP error:", customizations.status, await customizations.json());
-        throw new Error(`HTTP error! status: ${customizations.status}`);
+      if (!customizationsResponse.ok) {
+        console.log("HTTP error:", customizationsResponse.status, await customizationsResponse.json());
+        throw new Error(`HTTP error! status: ${customizationsResponse.status}`);
       }
 
-      const data = await customizations.json();
-      setCustomizations(data);
+      const customizationsData = await customizationsResponse.json();
+      setCustomizations(customizationsData);
+
+      const customizationGroupsResponse = await fetch(`${backendURL}/customization/group`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!customizationGroupsResponse.ok) {
+        console.log("HTTP error:", customizationGroupsResponse.status, await customizationGroupsResponse.json());
+        throw new Error(`HTTP error! status: ${customizationGroupsResponse.status}`);
+      }
+
+      const customizationGroupsData = await customizationGroupsResponse.json();
+      setCustomizationGroups(customizationGroupsData);
+      setNewCustomization({
+        name: '',
+        customization_group_id: customizationGroupsData.length > 0 ? customizationGroupsData[0].id : 0,
+        customization_group_name: customizationGroupsData.length > 0 ? customizationGroupsData[0].name : '',
+        description: '',
+        is_available: true,
+        price_delta: 0,
+      });
     }
     catch (error) {
-      console.error('取得自訂選項時發生錯誤:', error);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('An unknown error occurred');
+      }
+      console.error("Failed to fetch items:", error);
+
+      setCustomizations([]);
+      setCustomizationGroups([]);
     }
     finally {
       setLoading(false);
@@ -46,19 +100,37 @@ export default function NoteSettings() {
     fetchCustomizations();
   }, []);
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     if (!newCustomization.name.trim()) {
       alert('請輸入備註內容');
       return;
     }
-    const next: Customization = {
-      id: customizations.length + 1,
-      name: newCustomization.name.trim(),
-      customization_group_name: newCustomization.customization_group_name,
-      is_available: true,
-    };
-    setCustomizations(prev => [...prev, next]);
-    setNewCustomization({ name: '', customization_group_name: '加價選項' });
+
+    try {
+      const response = await fetch(`${backendURL}/customization`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newCustomization),
+      });
+
+      if (!response.ok) {
+        console.log("HTTP error:", response.status, await response.json());
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      fetchCustomizations();
+    }
+    catch (error) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('新增備註時發生未知錯誤');
+      }
+      console.error("Failed to add customization:", error);
+      return;
+    }
   };
 
   const toggleEnable = (id: number) => {
@@ -130,10 +202,20 @@ export default function NoteSettings() {
           <select
             className="border p-2 rounded"
             value={newCustomization.customization_group_name}
-            onChange={(e) => setNewCustomization({ ...newCustomization, customization_group_name: e.target.value as Customization['customization_group_name'] })}
+            onChange={(e) => {
+              console.log(e.target.selectedOptions[0]);
+              setNewCustomization({
+                ...newCustomization,
+                customization_group_id: Number(e.target.selectedOptions[0].id),
+                customization_group_name: e.target.value as Customization['customization_group_name']
+              });
+            }}
           >
-            <option value="加價選項">加價選項</option>
-            <option value="備註標記">備註標記</option>
+            {customizationGroups.map(group => (
+              <option key={group.id} id={group.id.toString()} value={group.name}>
+                {group.name}
+              </option>
+            ))}
           </select>
           <button
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
