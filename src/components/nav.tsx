@@ -37,7 +37,7 @@ export default function Navbar({ role_id, setToken }: NavbarProps) {
     return (
       <nav className="nav">
         <Link to="/" className="site-title">
-          MyPos
+          MyPOS
         </Link>
         <ul>
           <CustomLink to="/">Home</CustomLink>
@@ -55,7 +55,7 @@ export default function Navbar({ role_id, setToken }: NavbarProps) {
     return (
       <nav className="nav">
         <Link to="/" className="site-title">
-          MyPos
+          MyPOS
         </Link>
         <ul>
           <CustomLink to="/">Home</CustomLink>
@@ -75,7 +75,7 @@ export default function Navbar({ role_id, setToken }: NavbarProps) {
     return (
       <nav className="nav">
         <Link to="/" className="site-title">
-          MyPos
+          MyPOS
         </Link>
         <ul>
           <CustomLink to="/">Home</CustomLink>

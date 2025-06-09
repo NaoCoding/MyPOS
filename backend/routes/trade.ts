@@ -7,17 +7,18 @@ import { findItem, findItemsByTradeID, findItemWithPriceAndDiscount } from '../m
 import { findCustomizationGroupByItemID } from '../models/customization_group';
 import { findCustomization, findCustomizationsByGroupID } from '../models/customization';
 import { createTradeItemCustomization, findTradeItemCustomizationsByTradeItemId } from '../models/trade_item_customization';
+import jwt from 'jsonwebtoken';
 
 const tradeRouter = Router();
 tradeRouter.use(checkLogin);
 
 tradeRouter.post('/', async (req: Request, res: Response) => {
-    const { user_id, trade_items } = req.body;
+    const { trade_items } = req.body;
 
     // Validate request body
-    if (!user_id || !trade_items) {
+    if (!trade_items) {
         res.status(400).json({
-            message: "User ID and status are required"
+            message: "Trade items are required"
         });
         return;
     }
@@ -44,9 +45,21 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
     }
 
     try {
-        if (!await findUser({ id: user_id })) {
-            res.status(400).json({
-                message: "User with this ID does not exist"
+        const token = req.cookies.token;
+        const decoded = jwt.verify(token, process.env.JWT_TOKEN || '');
+
+        if (typeof decoded === 'string' || !decoded.username) {
+            res.status(401).json({
+                message: "Unauthorized: Invalid token payload"
+            });
+            return;
+        }
+
+        const user = await findUser({ username: decoded.username });
+
+        if (!user || !user.id) {
+            res.status(401).json({
+                message: "Unauthorized: User not found"
             });
             return;
         }
@@ -64,7 +77,7 @@ tradeRouter.post('/', async (req: Request, res: Response) => {
         }
 
         const trade = await createTrade({
-            user_id,
+            user_id: user.id,
             status: 'pending'
         });
 
