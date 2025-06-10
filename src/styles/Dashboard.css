@@ -1,65 +1,159 @@
-/* 根容器滿版 */
-.main-container {
-  padding: 2rem;
+/* Dashboard.css */
+.dashboard-container {
+  position: relative;
+  z-index: 1;
   min-height: 100vh;
-  background-color: #222;
-  color: white;
-  box-sizing: border-box;
-}
-
-/* 使用 2 欄排版，螢幕夠大時拉滿 */
-.grid-layout {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 固定 2 欄 */
-  gap: 32px;
-  max-width: 1400px; /* 控制寬度，避免過寬 */
-  margin: 2rem auto; /* 自動水平置中 */
-}
-
-/* 區塊卡片加大 + 陰影 + 色塊感 */
-.section-block {
-  background-color: #b4ecff;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-  color: #111;
-  min-height: 280px;
+  padding: 3rem 2rem;
+  background: linear-gradient(to bottom right, #f0f8ff, #fff8f0);
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  align-items: center;
+  font-size: 1.2rem;
+  overflow: hidden;
 }
 
-/* 標題更大，底線更粗 */
-.section-block h2 {
-  margin-bottom: 1.5rem;
-  font-size: 36px;
+
+.dashboard-title {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.dashboard-title h1 {
+  font-size: 3.5rem;
   font-weight: bold;
-  border-bottom: 3px solid #444;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 4px solid #ff5722;
+  letter-spacing: 0.08em;
+  width: 0;
+  animation: typing 3s steps(30, end) infinite, blink-caret 0.8s step-end infinite;
+  background: linear-gradient(90deg, #7b2ff7, #f107a3, #ff8c00);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@keyframes typing {
+  0% { width: 0 }
+  50% { width: 100% }
+  100% { width: 0 }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #ff5722 }
+}
+
+.dashboard-title p {
+  font-size: 1.3rem;
+  color: #555;
+  margin-top: 0.5rem;
+}
+
+.dashboard-icon {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  width: 100%;
+  max-width: 1200px;
+  justify-content: center;
+}
+
+.section-block {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.section-block h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+  border-bottom: 2px solid #ddd;
   padding-bottom: 0.5rem;
 }
 
-/* 按鈕區塊寬鬆排法 */
 .button-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 16px;
+  gap: 20px;
 }
 
-/* 按鈕更大，圓角、投影、hover 動態 */
 .menu-button {
-  background-color: #fff3c4;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
   padding: 16px 24px;
-  font-size: 20px;
+  font-size: 1.2rem;
   font-weight: 600;
+  border-radius: 12px;
+  border: none;
   cursor: pointer;
-  border-radius: 10px;
-  transition: all 0.3s ease;
-  min-width: 120px;
+  transition: all 0.3s ease-in-out;
+  animation: pulseButton 4s infinite;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .menu-button:hover {
-  background-color: #ffe58f;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: shake 0.4s ease-in-out;
+  background-color: #fff3e0;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.menu-button::before {
+  margin-right: 12px;
+  font-size: 1.3em;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  50% { transform: translateX(3px); }
+  75% { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    padding: 0 1rem;
+  }
+
+  .dashboard-container {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .section-block {
+    padding: 1.5rem;
+  }
+
+  .menu-button {
+    font-size: 1rem;
+    padding: 14px 20px;
+    min-width: unset;
+    width: 100%;
+  }
+
+  .dashboard-title h1 {
+    font-size: 2rem;
+    word-break: break-word;
+  }
+
+  .dashboard-icon {
+    width: 64px;
+    height: 64px;
+  }
 }
